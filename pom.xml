@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>addons-parent-pom</artifactId>
+    <groupId>org.exoplatform.addons</groupId>
+    <version>2</version>
+    <relativePath />
+  </parent>
+  <groupId>org.exoplatform.addons.weemo</groupId>
+  <artifactId>weemo-extension</artifactId>
+  <version>1.0.x-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Video Calls Addon</name>
+  <description>Video Calls Addon obtained via integration with Weemo</description>
+  
+  <modules>
+    <module>exo-addons-weemo-extension</module>
+    <module>exo-addons-weemo-extension-config</module>  
+  </modules>
+  
+  <scm>
+    <connection>scm:git:git://github.com/exo-addons/weemo-extension.git</connection>
+    <developerConnection>scm:git:git@github.com:exo-addons/weemo-extension.git</developerConnection>
+    <url>https://github.com/exo-addons/weemo-extension</url>
+  </scm>
+  <properties>
+    <!-- 3rd party libraries versions -->
+    <commons-lang3.version>3.1</commons-lang3.version>
+    <exoplatform.version>4.0.0</exoplatform.version>
+    <juzu.version>0.6.0</juzu.version>   
+  </properties>
+  <dependencyManagement>
+    <dependencies>      
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>      
+      <dependency>
+        <groupId>org.exoplatform.addons.weemo</groupId>
+        <artifactId>exo-addons-weemo-extension</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.addons.weemo</groupId>
+        <artifactId>exo-addons-weemo-extension-config</artifactId>
+        <version>${project.version}</version>
+        <type>jar</type>
+      </dependency>     
+      <!-- Import versions from platform project -->
+      <dependency>
+        <groupId>org.exoplatform.platform</groupId>
+        <artifactId>platform</artifactId>
+        <version>${exoplatform.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.juzu</groupId>
+        <artifactId>juzu-bom-core</artifactId>
+        <version>${juzu.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.juzu</groupId>
+        <artifactId>juzu-core</artifactId>
+        <version>${juzu.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.juzu</groupId>
+        <artifactId>juzu-core</artifactId>
+        <version>${juzu.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.juzu</groupId>
+        <artifactId>juzu-plugins-less</artifactId>
+        <version>${juzu.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.juzu</groupId>
+        <artifactId>juzu-plugins-portlet</artifactId>
+        <version>${juzu.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.juzu</groupId>
+        <artifactId>juzu-plugins-upload</artifactId>
+        <version>${juzu.version}</version>
+      </dependency>      
+    </dependencies>
+  </dependencyManagement>
+</project>
