@@ -614,7 +614,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
   }
 
   function cbGetConnectionStatus(targetUser, status) {
-    console.log("Status :: target="+targetUser+" : status="+status);
+    //console.log("Status :: target="+targetUser+" : status="+status);
     if (status !== "offline") {
       var $weemoBtn = $("#weemoCall-"+targetUser.replace(".", "-"));
       if ($weemoBtn.attr("data-username") == targetUser) {

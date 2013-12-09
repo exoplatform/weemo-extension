@@ -28,10 +28,17 @@
     <!-- 3rd party libraries versions -->
     <commons-lang3.version>3.1</commons-lang3.version>
     <exoplatform.version>4.0.0</exoplatform.version>
-    <juzu.version>0.6.0</juzu.version>   
+    <javax.enterprise.cdi.version>1.0-SP4</javax.enterprise.cdi.version>
+    <juzu.version>0.6.0</juzu.version>
+    <mongodb-java-driver.version>2.11.1</mongodb-java-driver.version> 
   </properties>
   <dependencyManagement>
-    <dependencies>      
+    <dependencies>   
+      <dependency>
+        <groupId>javax.enterprise</groupId>
+        <artifactId>cdi-api</artifactId>
+        <version>${javax.enterprise.cdi.version}</version>
+      </dependency>   
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
@@ -87,7 +94,12 @@
         <groupId>org.juzu</groupId>
         <artifactId>juzu-plugins-upload</artifactId>
         <version>${juzu.version}</version>
-      </dependency>      
+      </dependency>  
+      <dependency>
+        <groupId>org.mongodb</groupId>
+        <artifactId>mongo-java-driver</artifactId>
+        <version>${mongodb-java-driver.version}</version>
+      </dependency>    
     </dependencies>
   </dependencyManagement>
 </project>
