@@ -16,13 +16,13 @@
 
    <portal>
         <name>intranet</name>
-        <scripts>
-            <depends>
-                <scripts>chat</scripts> 
-            </depends>
+        <scripts>            
             <depends>      
                 <scripts>modal</scripts>         
-            </depends>                     
+            </depends> 
+            <depends>
+                <scripts>notif</scripts> 
+            </depends>                    
         </scripts>
     </portal>
     
@@ -42,62 +42,7 @@
          <scripts>jqueryVideo</scripts>
       </depends>
    </scripts>
-
-   <scripts>
-      <name>taffy</name>
-      <script>
-         <path>/js/taffy-min.js</path>
-      </script>      
-   </scripts>
-
-   <scripts>
-      <name>chat</name>
-      <script>
-         <path>/js/chat.js</path>
-      </script>
-      <depends>
-         <scripts>jqueryVideo</scripts>
-      </depends>
-      <depends>
-         <scripts>juzu-utils</scripts>
-      </depends>
-      <depends>
-         <scripts>taffy</scripts>
-      </depends>
-   </scripts>
    
-   <scripts>
-      <name>sh_main</name>
-      <script>
-         <path>/js/sh_main.min.js</path>
-      </script>      
-   </scripts>
-   <scripts>
-      <name>sh_html</name>
-      <script>
-         <path>/js/sh_html.min.js</path>
-      </script>      
-   </scripts>
-   <scripts>
-      <name>sh_java</name>
-      <script>
-         <path>/js/sh_java.min.js</path>
-      </script>      
-   </scripts>
-   <scripts>
-      <name>sh_javascript</name>
-      <script>
-         <path>/js/sh_javascript.min.js</path>
-      </script>      
-   </scripts>
-   <scripts>
-      <name>sh_css</name>
-      <script>
-         <path>/js/sh_css.min.js</path>
-      </script>      
-   </scripts>
-   
-
    <scripts>
       <name>weemo</name>
       <script>
@@ -117,5 +62,21 @@
          <scripts>weemo</scripts>
       </depends>
    </scripts>
+
    
+   <scripts>
+      <name>notif</name>
+      <script>
+         <path>/js/notif.js</path>
+      </script>
+      <depends>
+         <scripts>jqueryVideo</scripts>
+      </depends>
+      <depends>
+         <scripts>juzu-utils</scripts>
+      </depends>
+      <depends>
+         <scripts>weemo</scripts>
+      </depends>
+   </scripts>
 </gatein-resources>

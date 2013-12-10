@@ -7,7 +7,7 @@ var Modal = function(title, html) {
 	    	title:title,
 	    	description: html,
 	    	top: "center",
-	    	left: "center",
+	    	left: "center"
 	    	};
 
 	    	var overlay= function() {
@@ -46,7 +46,7 @@ var Modal = function(title, html) {
 	    	'display':'none',
 	    	'height': self.options.height + 'px',
 	    	'width': self.options.width + 'px',
-	    	'z-index':'50',
+	    	'z-index':'50'
 	    	});
 	    	$('.weemo_modal_close').css({
 	    	'position':'relative',
@@ -56,7 +56,7 @@ var Modal = function(title, html) {
 	    	'display':'block',
 	    	'color':'#000',
 	    	'font-size':'10px',
-	    	'text-decoration':'none',
+	    	'text-decoration':'none'
 	    	});
 	    	$('.weemo_inner_modal_box').css({
 	    	'background-color':'#fff',
