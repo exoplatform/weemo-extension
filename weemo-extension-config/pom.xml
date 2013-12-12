@@ -26,7 +26,7 @@
     <groupId>org.exoplatform.addons.weemo</groupId>
     <version>1.0.x-SNAPSHOT</version>
   </parent>
-  <artifactId>exo-addons-weemo-extension-config</artifactId>
+  <artifactId>weemo-extension-config</artifactId>
   <packaging>jar</packaging>
   <name>eXo Addons - Weemo Extension Configuration</name>
   <description>eXo Video Call Extension Configuration</description>

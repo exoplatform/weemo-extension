@@ -15,8 +15,9 @@
   <description>Video Calls Addon obtained via integration with Weemo</description>
   
   <modules>
-    <module>exo-addons-weemo-extension</module>
-    <module>exo-addons-weemo-extension-config</module>  
+    <module>weemo-extension-config</module>  
+    <module>weemo-extension-webapp</module>
+    <module>weemo-extension-pkg</module>
   </modules>
   
   <scm>
@@ -46,13 +47,13 @@
       </dependency>      
       <dependency>
         <groupId>org.exoplatform.addons.weemo</groupId>
-        <artifactId>exo-addons-weemo-extension</artifactId>
+        <artifactId>weemo-extension-webapp</artifactId>
         <version>${project.version}</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.exoplatform.addons.weemo</groupId>
-        <artifactId>exo-addons-weemo-extension-config</artifactId>
+        <artifactId>weemo-extension-config</artifactId>
         <version>${project.version}</version>
         <type>jar</type>
       </dependency>     
