@@ -1,5 +1,6 @@
 package org.exoplatform.portlet.videocall;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -57,9 +58,21 @@ public class VideoCallApplication {
 
 
   @View
-  public Response.Content index(RenderContext renderContext)
+  public void index(RenderContext renderContext) throws IOException
   {
-    return index.with().ok();
+    String chatServerURL = PropertyManager.getProperty(PropertyManager.PROPERTY_CHAT_SERVER_URL);
+    String chatPage = PropertyManager.getProperty(PropertyManager.PROPERTY_CHAT_PORTAL_PAGE);
+    remoteUser_ = renderContext.getSecurityContext().getRemoteUser();
+    String chatIntervalStatus = PropertyManager.getProperty(PropertyManager.PROPERTY_INTERVAL_STATUS);
+    String chatIntervalNotif = PropertyManager.getProperty(PropertyManager.PROPERTY_INTERVAL_NOTIF);
+    String chatWeemoKey = PropertyManager.getProperty(PropertyManager.PROPERTY_WEEMO_KEY);
+
+    index.with().set("user", remoteUser_).set("token", token_)
+            .set("chatServerURL", chatServerURL).set("chatPage", chatPage)
+            .set("chatIntervalStatus", chatIntervalStatus)
+            .set("chatIntervalNotif", chatIntervalNotif)
+            .set("weemoKey", chatWeemoKey)
+            .render();
   }
 
   @Ajax

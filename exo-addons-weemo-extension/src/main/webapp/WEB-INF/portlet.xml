@@ -35,5 +35,16 @@
      </portlet-preferences>
    </portlet>
 
+	 
+   <filter>
+     <filter-name>ResponseFilterWeemo</filter-name>
+     <filter-class>org.exoplatform.portlet.videocall.ResponseFilter</filter-class>
+     <lifecycle>RENDER_PHASE</lifecycle>
+   </filter>
+	
+   <filter-mapping>
+     <filter-name>ResponseFilterWeemo</filter-name>
+     <portlet-name>VideoCallApplication</portlet-name>
+   </filter-mapping>
   
 </portlet-app>

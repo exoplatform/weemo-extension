@@ -1,267 +1,3 @@
-// GLOBAL VARIABLES
-var chatNotification = new ChatNotification();
-var weemoExtension = new WeemoExtension();
-
-var jq171 = jQuery.noConflict(true);
-(function($) {
-
-  $(document).ready(function(){
-
-    //GETTING DOM CONTEXT
-    var $notificationApplication = $("#chat-status");
-    // CHAT NOTIFICATION INIT
-    chatNotification.initOptions({
-      "token": $notificationApplication.attr("data-token"),
-      "username": $notificationApplication.attr("data-username"),
-      "urlInitUserProfile": $notificationApplication.jzURL("NotificationApplication.initUserProfile"),
-      "urlNotification": $notificationApplication.attr("data-chat-server-url")+"/notification",
-      "urlGetStatus": $notificationApplication.attr("data-chat-server-url")+"/getStatus",
-      "notificationInterval": $notificationApplication.attr("data-chat-interval-notif"),
-      "statusInterval": $notificationApplication.attr("data-chat-interval-status")
-    });
-    // CHAT NOTIFICATION USER INTERFACE PREPARATION
-    chatNotification.initUserInterface();
-
-    // WEEMO : GETTING AND SETTING KEY
-    var weemoKey = $notificationApplication.attr("data-weemo-key");
-    weemoExtension.setKey(weemoKey);
-
-    // WEEMO : INIT CALL CALLBACK
-    var startWeemo = function(username, fullname) {
-      weemoExtension.initCall(username, fullname);
-      weemoExtension.attachWeemoToPopups();
-      weemoExtension.attachWeemoToConnections();
-    }
-
-    // CHAT NOTIFICATION : START WEEMO ON SUCCESS
-    chatNotification.initUserProfile(startWeemo);
-
-
-
-
-
-  });
-
-})(jq171);
-
-
-/**
- ##################                           ##################
- ##################                           ##################
- ##################   CHAT NOTIFICATION       ##################
- ##################                           ##################
- ##################                           ##################
- */
-
-/**
- * ChatNotification Class
- * @constructor
- */
-
-function ChatNotification() {
-  this.token = "";
-  this.username = "";
-  this.jzInitUserProfile = "";
-  this.jzNotification = "";
-  this.jzGetStatus = "";
-
-  this.notifEventURL = "";
-  this.notifEventInt = "";
-  this.chatIntervalNotif = "";
-  this.statusEventInt = "";
-  this.chatIntervalStatus = "";
-
-  this.oldNotifTotal = "";
-}
-
-/**
- * Init Notifications variables
- * @param options
- */
-ChatNotification.prototype.initOptions = function(options) {
-  this.token = options.token;
-  this.username = options.username;
-  this.jzInitUserProfile = options.urlInitUserProfile;
-  this.jzNotification = options.urlNotification;
-  this.jzGetStatus = options.urlGetStatus;
-  this.chatIntervalNotif = options.notificationInterval;
-  this.chatIntervalStatus = options.statusInterval;
-  this.notifEventURL = this.jzNotification+'?user='+this.username+'&token='+this.token;
-};
-
-/**
- * Create the User Interface in the Intranet DOM
- */
-ChatNotification.prototype.initUserInterface = function() {
-  $(".uiCompanyNavigations > li")
-    .children()
-    .filter(function() {
-      if ($(this).attr("href") == "/portal/intranet/chat") {
-        $(this).css("width", "95%");
-        var html = '<i class="uiChatIcon"></i>Chat';
-        html += '<span id="chat-notification" style="float: right; display: none;"></span>';
-        $(this).html(html);
-      }
-    });
-};
-
-ChatNotification.prototype.updateNotifEventURL = function() {
-  this.notifEventURL = this.jzNotification+'?user='+this.username+'&token='+this.token;
-};
-
-/**
- * Init Chat User Profile
- * @param callback : allows you to call an async callback function(username, fullname) when the profile is initiated.
- */
-ChatNotification.prototype.initUserProfile = function(callback) {
-
-  $.ajax({
-    url: this.jzInitUserProfile,
-    dataType: "json",
-    context: this,
-    success: function(data){
-//      console.log("Profile Update : "+data.msg);
-      this.token = data.token;
-//      console.log("Token : "+data.token);
-
-      var fullname = this.username; //setting fullname with username from that point
-
-      if (typeof callback === "function") {
-        callback(this.username, fullname);
-      }
-
-      this.notifEventInt = window.clearInterval(this.notifEventInt);
-      this.notifEventInt = setInterval($.proxy(this.refreshNotif, this), this.chatIntervalNotif);
-      this.refreshNotif();
-
-      this.statusEventInt = window.clearInterval(this.statusEventInt);
-      this.statusEventInt = setInterval($.proxy(this.refreshStatus, this), this.chatIntervalStatus);
-      this.refreshStatus();
-    },
-    error: function () {
-      //retry in 3 sec
-      setTimeout($.proxy(this.initUserProfile, this), 3000);
-    }
-  });
-
-};
-
-
-/**
- * Refresh Notifications
- */
-ChatNotification.prototype.refreshNotif = function() {
-//  if ( ! $("span.chat-status").hasClass("chat-status-offline-black") ) {
-//  console.log("refreshNotif :: URL="+this.notifEventURL);
-  this.updateNotifEventURL();
-  $.ajax({
-    url: this.notifEventURL,
-    dataType: "json",
-    context: this,
-    success: function(data){
-      if(this.oldNotifTotal!=data.total){
-        var total = data.total;
-        //console.log('refreshNotif :: '+total);
-        var $chatNotification = $("#chat-notification");
-        if (total>0) {
-          $chatNotification.html('<span class="notif-total">'+total+'</span>');
-          $chatNotification.css('display', 'block');
-        } else {
-          $chatNotification.html('<span></span>');
-          $chatNotification.css('display', 'none');
-        }
-        this.oldNotifTotal = data.total;
-      }
-    },
-    error: function(){
-      var $chatNotification = $("#chat-notification");
-      this.changeStatus("offline");
-      $chatNotification.html('<span></span>');
-      $chatNotification.css('display', 'none');
-      this.oldNotifTotal = -1;
-    }
-  });
-
-//  } else {
-//    var $chatNotification = $("#chat-notification");
-//    $chatNotification.html('<span></span>');
-//    $chatNotification.css('display', 'none');
-//    this.oldNotifTotal = -1;
-//  }
-};
-
-
-/**
- * Refresh Status
- */
-ChatNotification.prototype.refreshStatus = function() {
-//  console.log("refreshStatus :: URL="+this.jzGetStatus);
-  $.ajax({
-    url: this.jzGetStatus,
-    data: {
-      "user": this.username,
-      "token": this.token
-    },
-    context: this,
-    success: function(response){
-      this.changeStatus(response);
-    },
-    error: function(response){
-      this.changeStatus("offline");
-    }
-  });
-};
-
-/**
- * Gets target user status
- * @param targetUser
- */
-ChatNotification.prototype.getStatus = function(targetUser, callback) {
-//  console.log("refreshStatus :: URL="+this.jzGetStatus);
-  $.ajax({
-    url: this.jzGetStatus,
-    data: {
-      "user": this.username,
-      "token": this.token,
-      "targetUser": targetUser
-    },
-    context: this,
-    success: function(response){
-      if (typeof callback === "function") {
-        callback(targetUser, response);
-      }
-    },
-    error: function(response){
-      if (typeof callback === "function") {
-        callback(targetUser, "offline");
-      }
-    }
-  });
-};
-
-
-/**
- * Change the current status
- * @param status : the new status : available, donotdisturb, invisible, away or offline
- */
-ChatNotification.prototype.changeStatus = function(status) {
-  var $spanStatus = $("span.chat-status");
-  $spanStatus.removeClass("chat-status-available-black");
-  $spanStatus.removeClass("chat-status-donotdisturb-black");
-  $spanStatus.removeClass("chat-status-invisible-black");
-  $spanStatus.removeClass("chat-status-away-black");
-  $spanStatus.removeClass("chat-status-offline-black");
-  $spanStatus.addClass("chat-status-"+status+"-black");
-  var $spanStatusChat = $("span.chat-status-chat");
-  $spanStatusChat.removeClass("chat-status-available");
-  $spanStatusChat.removeClass("chat-status-donotdisturb");
-  $spanStatusChat.removeClass("chat-status-invisible");
-  $spanStatusChat.removeClass("chat-status-away");
-  $spanStatusChat.removeClass("chat-status-offline");
-  $spanStatusChat.addClass("chat-status-"+status);
-};
-
-
 /**
  ##################                           ##################
  ##################                           ##################
@@ -277,7 +13,16 @@ ChatNotification.prototype.changeStatus = function(status) {
  */
 function WeemoExtension() {
   this.weemoKey = "";
-  this.weemo = new Weemo();
+  try {
+    this.weemo = new Weemo('', '', 'internal', '', '1');
+  } catch (err) {
+    console.log("WEEMO NOT AVAILABLE YET");
+    this.weemo = undefined;
+    jqchat(".btn-weemo-conf").css('display', 'none');
+    jqchat(".btn-weemo").addClass('disabled');
+
+  }
+  this.callObj;
 
   this.callOwner = jzGetParam("callOwner", false);
   this.callActive = jzGetParam("callActive", false);
@@ -352,25 +97,25 @@ WeemoExtension.prototype.initChatMessage = function() {
   this.setChatMessage({});
 };
 
+WeemoExtension.prototype.hangup = function() {
+  if (this.callObj !== undefined) {
+    this.callObj.hangup();
+  }
+};
+
 /**
  * Init Weemo Call
  * @param $uid
  * @param $name
  */
 WeemoExtension.prototype.initCall = function($uid, $name) {
-  if (this.weemoKey!=="") {
-    $(".btn-weemo-conf").css('display', 'none');
-    //this.weemo = new Weemo(); // Creating a Weemo object instance
-    this.weemo.setMode("debug"); // Activate debugging in browser's log console
-    this.weemo.setEnvironment("production"); // Set environment  (development, testing, staging, production)
-    this.weemo.setPlatform("demo.weemo.com"); // Set connection platform (by default: "p1.weemo.com")
-    this.weemo.setDomain("weemo-poc.com"); // Chose your domain, for POC all apikey are created for "weemo-poc.com" domain
-    this.weemo.setApikey(this.weemoKey); // Configure your Api Key
-    this.weemo.setUid("weemo"+$uid); // Configure your UID
+  if (this.weemoKey!=="" && this.weemo !== undefined) {
+    jqchat(".btn-weemo-conf").css('display', 'none');
 
-    //weemo.setDisplayname($name); // Configure the display name
-    this.weemo.connectToWeemoDriver(); // Launches the connection between WeemoDriver and Javascript
-
+    this.weemo.setDebugLevel(1); // Activate debug in JavaScript console
+    this.weemo.setWebAppId(this.weemoKey); // Configure your Web App Identifier (For POC use your Web Application Identifier provided by Weeemo)
+    this.weemo.setToken("weemo"+$uid); // Set user unique identifier
+    this.weemo.initialize(); // Launches the connection between WeemoDriver and Javascript
 
     /**
      * Weemo Driver On Connection Javascript Handler
@@ -379,21 +124,28 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
      * @param code
      */
     this.weemo.onConnectionHandler = function(message, code) {
-//      if(window.console)
-//        console.log("Connection Handler : " + message + ' ' + code);
+      if(window.console)
+        console.log(" =========== Connection Handler : " + message + ' ' + code);
       switch(message) {
         case 'connectedWeemoDriver':
-          this.connectToTheCloud();
+          this.authenticate();
+          break;       
+        case 'loggedasotheruser':
+          // force weemo to kick previous user and replace it with current one
+          this.authenticate(1);
           break;
         case 'sipOk':
           weemoExtension.isConnected = true;
-          $(".btn-weemo").removeClass('disabled');
-          var fn = $(".label-user").text();
-          var fullname = $("#UIUserPlatformToolBarPortlet > a:first").text().trim();
+          console.log(jqchat(".weemoCallOverlay").length);
+          jqchat(".btn-weemo").removeClass('disabled');
+          jqchat(".weemoCallOverlay").removeClass("disabled");
+          var fn = jqchat(".label-user").text();
+          var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
           if (fullname!=="") {
-            this.setDisplayname(fullname); // Configure the display name
+            alert(fullname);
+            this.setDisplayName(fullname); // Configure the display name
           } else if (fn!=="") {
-            this.setDisplayname(fn); // Configure the display name
+            this.setDisplayName(fn); // Configure the display name
           }
           break;
       }
@@ -405,14 +157,14 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
      * @param downloadUrl
      */
     this.weemo.onWeemoDriverNotStarted = function(downloadUrl) {
-      var modal = new Modal('WeemoDriver download', 'Click <a href="'+downloadUrl+'">here</a> to download.');
-      modal.show();
-      $(".weemo_modal_box").css("top", "42px");
-      var $weemo_inner_modal_box = $(".weemo_inner_modal_box");
-      $weemo_inner_modal_box.css("text-align", "center");
-      $weemo_inner_modal_box.css("padding", "25px");
-      $weemo_inner_modal_box.css("font-size", "18px");
-      $weemo_inner_modal_box.children("h2").css("font-size", "24px");
+      var $btnDownload = jqchat(".btn-weemo-download");
+      $btnDownload.css("display", "inline-block");
+      if (navigator.platform === "Linux") {
+        $btnDownload.addClass("disabled");
+        $btnDownload.attr("title", "Weemo is not yet compatible with Linux OS.");
+      } else {
+        $btnDownload.attr("href", downloadUrl);
+      }
     };
 
 
@@ -422,11 +174,15 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
      * @param type
      * @param status
      */
-    this.weemo.onCallHandler = function(type, status)
+    this.weemo.onCallHandler = function(callObj, args)
     {
-      console.log("WEEMO:onCallHandler::"+type+":"+status);
+      weemoExtension.callObj = callObj;
+      var type = args.type;
+      var status = args.status;
+      console.log("WEEMO:onCallHandler  ::"+type+":"+status+":"+weemoExtension.callType+":"+weemoExtension.callOwner+":"+weemoExtension.hasChatMessage());
       var messageWeemo = "";
-      if(weemoExtension.callOwner && type==="call" && ( status==="active" || status==="terminated" ))
+      var optionsWeemo = {};
+      if(type==="call" && ( status==="active" || status==="terminated" ))
       {
         console.log("Call Handler : " + type + ": " + status);
         ts = Math.round(new Date().getTime() / 1000);
@@ -434,48 +190,67 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
         if (status === "terminated") weemoExtension.setCallOwner(false);
 
         if (weemoExtension.callType==="internal" || status==="terminated") {
-          messageWeemo = "Call "+status+"&"+ts;
+          messageWeemo = "Call "+status;
+          optionsWeemo.timestamp = ts;
         } else if (weemoExtension.callType==="host") {
-          messageWeemo = "Call "+status+"&"+ts+"&"+weemoExtension.uidToCall+"&"+weemoExtension.displaynameToCall;
+          messageWeemo = "Call "+status;
+          optionsWeemo.timestamp = ts;
+          optionsWeemo.uidToCall = weemoExtension.uidToCall;
+          optionsWeemo.displaynameToCall = weemoExtension.displaynameToCall;
         }
 
+
         if (status==="active" && weemoExtension.callActive) return; //Call already active, no need to push a new message
-        if (status==="terminated" && !weemoExtension.callActive) return; //Terminate a non started call, no message needed
+        if (status==="terminated" && (!weemoExtension.callActive || weemoExtension.callType==="attendee")) return; //Terminate a non started call or a joined call, no message needed
 
 
-        if (status==="active") weemoExtension.setCallActive(true);
-        else if (status==="terminated") weemoExtension.setCallActive(false);
+        if (weemoExtension.callType==="attendee" && status==="active") {
+          weemoExtension.setCallActive(true);
+          optionsWeemo.type = "call-join";
+          optionsWeemo.username = weemoExtension.chatMessage.user;
+          optionsWeemo.fullname = weemoExtension.chatMessage.fullname;
 
-        if (weemoExtension.callType!=="attendee") {
-          if (weemoExtension.hasChatMessage()) {
-            console.log("WEEMO:hasChatMessage::"+weemoExtension.chatMessage.user+":"+weemoExtension.chatMessage.targetUser);
-            $.ajax({
-              url: weemoExtension.chatMessage.url,
-              data: {"user": weemoExtension.chatMessage.user,
-                "targetUser": weemoExtension.chatMessage.targetUser,
-                "room": weemoExtension.chatMessage.room,
-                "message": messageWeemo,
-                "token": weemoExtension.chatMessage.token,
-                "timestamp": new Date().getTime(),
-                "isSystem": "true"
-              },
-              success:function(response){
-                //console.log("success");
-                try {
-                  if (chatApplication !== undefined) {
-                    chatApplication.refreshChat();
-                  }
-                } catch(err) {
-                  //nothing to do, we're outside chat page
-                }
-              },
-              error:function (xhr, status, error){
+        }
+        else if (status==="active") {
+          weemoExtension.setCallActive(true);
+          optionsWeemo.type = "call-on";
+        }
+        else if (status==="terminated") {
+          weemoExtension.setCallActive(false);
+          optionsWeemo.type = "call-off";
+        }
+
+        if (weemoExtension.hasChatMessage()) {
+
+          console.log("WEEMO:hasChatMessage::"+weemoExtension.chatMessage.user+":"+weemoExtension.chatMessage.targetUser);
+          if (chatApplication !== undefined) {
+            chatApplication.checkIfMeetingStarted(function(callStatus){
+              if (callStatus === 1 && optionsWeemo.type==="call-on") {
+                // Call is already created, not allowed.
+                weemoExtension.initChatMessage();
+                callObj.hangup();
+                return;
               }
-            });
+              if (callStatus === 0 && optionsWeemo.type==="call-off") {
+                // Call is already terminated, no need to terminate again
+                return;
+              }
 
-            if (status==="terminated") {
-              weemoExtension.initChatMessage();
-            }
+              chatApplication.chatRoom.sendFullMessage(
+                weemoExtension.chatMessage.user,
+                weemoExtension.chatMessage.token,
+                weemoExtension.chatMessage.targetUser,
+                weemoExtension.chatMessage.room,
+                messageWeemo,
+                optionsWeemo,
+                "true"
+              )
+
+              if (status==="terminated") {
+                weemoExtension.initChatMessage();
+              }
+
+            });
           }
         }
       }
@@ -483,7 +258,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
 
   } else {
-    $(".btn-weemo").css('display', 'none');
+    jqchat(".btn-weemo").css('display', 'none');
   }
 };
 
@@ -498,13 +273,13 @@ WeemoExtension.prototype.createWeemoCall = function(targetUser, targetFullname, 
       this.setChatMessage(chatMessage);
     }
 
-    if (targetUser.indexOf("space-")===-1) {
+    if (targetUser.indexOf("space-")===-1 && targetUser.indexOf("team-")===-1) {
       this.setUidToCall("weemo"+targetUser);
       this.setDisplaynameToCall(targetFullname);
       this.setCallType("internal");
     } else {
-      this.setUidToCall(this.weemo.getUid());
-      this.setDisplaynameToCall(this.weemo.getDisplayname());
+      this.setUidToCall(this.weemo.getToken());
+      this.setDisplaynameToCall(this.weemo.getDisplayName());
       this.setCallType("host");
     }
     this.setCallOwner(true);
@@ -518,10 +293,14 @@ WeemoExtension.prototype.createWeemoCall = function(targetUser, targetFullname, 
 /**
  *
  */
-WeemoExtension.prototype.joinWeemoCall = function() {
+WeemoExtension.prototype.joinWeemoCall = function(chatMessage) {
   if (this.weemoKey!=="") {
+    if (chatMessage !== undefined) {
+      this.setChatMessage(chatMessage);
+    }
     this.setCallType("attendee");
     this.setCallOwner(false);
+    this.setCallActive(false);
     this.weemo.createCall(this.uidToCall, this.callType, this.displaynameToCall);
 
   }
@@ -529,59 +308,46 @@ WeemoExtension.prototype.joinWeemoCall = function() {
 };
 
 WeemoExtension.prototype.attachWeemoToPopups = function() {
-  var checkTiptip = $('#tiptip_content').html();
+  var checkTiptip = jqchat('#tiptip_content').html();
   if (checkTiptip === undefined) {
-    setTimeout($.proxy(this.attachWeemoToPopups, this), 250);
+    setTimeout(jqchat.proxy(this.attachWeemoToPopups, this), 250);
     return;
   }
-  $('#tiptip_content').bind('DOMNodeInserted', function() {
+  jqchat('#tiptip_content').bind('DOMNodeInserted', function() {
     var username = "";
     var fullname = "";
     var addStyle = "";
     var $uiElement;
-    var $uiDetail = $('#tiptip_content').children('#tipName').children(".detail").children(".name").children("a");
-    if ($uiDetail !== undefined) {
-      var href = $uiDetail.attr("href");
-      if (href !== undefined) {
-        fullname = $uiDetail.html();
-        username = href.substr(href.indexOf("/activities/")+12);
-      }
-    }
 
-    var $uiMessage = $('#connectMessge', this);
-    if ($uiMessage !== undefined) {
-      $uiElement = $uiMessage;
-    }
-
-    var $uiAction = $(".uiAction", this).first();
+    var $uiAction = jqchat(".uiAction", this).first();
     if ($uiAction !== undefined && $uiAction.html() !== undefined) {
       //console.log("uiAction bind on weemoCallOverlay");
-      var attr = $uiAction.children(".connect:first").attr("data-action");
-      if (attr !== undefined) {
-        var $uiFullname = $('#tiptip_content').children('#tipName').children("tbody").children("tr").children("td").children("a");
-        fullname = $uiFullname.html();
-
-        if (attr.indexOf(":")>0) {
-          if (attr.indexOf("Disconnect:")>-1)
-            addStyle = "margin-top:8px;";
-          username = attr.substr(attr.indexOf(":")+1, attr.length-attr.indexOf(":"));
+      var $uiFullname = jqchat('#tiptip_content').children('#tipName').children("tbody").children("tr").children("td").children("a");
+      $uiFullname.each(function() {
+        var html = $(this).html();
+        if (html.indexOf("/rest/")==-1) {
+          fullname = html;
         }
-      }
+        var href = $(this).attr("href");
+        if (href.indexOf("/portal/intranet/activities/")>-1) {
+          username = href.substr(28);
+        }
+      });
       $uiElement = $uiAction;
     }
 
     if (username !== "" && $uiElement.has(".weemoCallOverlay").size()===0) {
-      var out = '<a type="button" class="btn weemoCallOverlay disabled" title="Make a Video Call"';
+      var out = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' disabled" title="Make a Video Call"';
           out += ' data-fullname="'+fullname+'"';
           out += ' data-username="'+username+'" style="margin-left:5px;'+addStyle+'">';
           out += '<i class="icon-facetime-video"></i> Call</a>';
       //$uiElement.append("<div class='btn weemoCallOverlay' data-username='"+username+"' style='margin-left:5px;"+addStyle+"'>Call</div>");
       $uiElement.append(out);
-      $(".weemoCallOverlay").on("click", function() {
-        if (!$(this).hasClass("disabled")) {
+      jqchat(".weemoCallOverlay").on("click", function() {
+        if (!jqchat(this).hasClass("disabled")) {
           //console.log("weemo button clicked");
-          var targetUser = $(this).attr("data-username");
-          var targetFullname = $(this).attr("data-fullname");
+          var targetUser = jqchat(this).attr("data-username");
+          var targetFullname = jqchat(this).attr("data-fullname");
           weemoExtension.createWeemoCall(targetUser, targetFullname);
         }
       });
@@ -589,15 +355,9 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
       function cbGetStatus(targetUser, status) {
         //console.log("Status :: target="+targetUser+" : status="+status);
         if (status !== "offline") {
-          var $weemoBtn = $(".weemoCallOverlay");
-          if ($weemoBtn.attr("data-username") == targetUser) {
-            $weemoBtn.removeClass("disabled");
-          }
+          jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
         }
       }
-      chatNotification.getStatus(username, cbGetStatus);
-
-
     }
 
   });
@@ -607,44 +367,44 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
 WeemoExtension.prototype.attachWeemoToConnections = function() {
   if (window.location.href.indexOf("/portal/intranet/connexions")==-1) return;
 
-  var $uiPeople = $('.uiTabInPage').first();
+  var $uiPeople = jqchat('.uiTabInPage').first();
   if ($uiPeople.html() === undefined) {
-    setTimeout($.proxy(this.attachWeemoToConnections, this), 250);
+    setTimeout(jqchat.proxy(this.attachWeemoToConnections, this), 250);
     return;
   }
 
   function cbGetConnectionStatus(targetUser, status) {
     //console.log("Status :: target="+targetUser+" : status="+status);
     if (status !== "offline") {
-      var $weemoBtn = $("#weemoCall-"+targetUser.replace(".", "-"));
-      if ($weemoBtn.attr("data-username") == targetUser) {
-        $weemoBtn.removeClass("disabled");
-      }
+      jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
     }
   }
 
-  $(".contentBox", ".uiTabInPage").each(function() {
-    var $uiUsername = $(this).children(".spaceTitle").children("a").first();
+  jqchat(".contentBox", ".uiTabInPage").each(function() {
+    var $uiUsername = jqchat(this).children(".spaceTitle").children("a").first();
     var username = $uiUsername.attr("href");
     username = username.substring(username.lastIndexOf("/")+1);
     var fullname = $uiUsername.html();
 
-    var html = $(this).html();
-    html += '<a type="button" class="btn weemoCallOverlay pull-right disabled" id="weemoCall-'+username.replace('.', '-')+'" title="Make a Video Call"';
-    html += ' data-username="'+username+'" data-fullname="'+fullname+'"';
-    html += ' style="margin-left:5px;"><i class="icon-facetime-video"></i> Call</a>';
-    $(this).html(html);
+    var $uiActionWeemo = jqchat(".weemoCallOverlay", this).first();
+    if ($uiActionWeemo !== undefined && $uiActionWeemo.html() == undefined) {
+      var html = jqchat(this).html();
+      html += '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' pull-right disabled" id="weemoCall-'+username.replace('.', '-')+'" title="Make a Video Call"';
+      html += ' data-username="'+username+'" data-fullname="'+fullname+'"';
+      html += ' style="margin-left:5px;"><i class="icon-facetime-video"></i> Call</a>';
+      jqchat(this).html(html);
 
-    chatNotification.getStatus(username, cbGetConnectionStatus);
+      chatNotification.getStatus(username, cbGetConnectionStatus);
+    }
 
   });
 
 
-  $(".weemoCallOverlay").on("click", function() {
-    if (!$(this).hasClass("disabled")) {
+  jqchat(".weemoCallOverlay").on("click", function() {
+    if (!jqchat(this).hasClass("disabled")) {
       //console.log("weemo button clicked");
-      var targetUser = $(this).attr("data-username");
-      var targetFullname = $(this).attr("data-fullname");
+      var targetUser = jqchat(this).attr("data-username");
+      var targetFullname = jqchat(this).attr("data-fullname");
       weemoExtension.createWeemoCall(targetUser, targetFullname);
     }
   });
@@ -671,4 +431,41 @@ var console = console || {
   warn:function(){},
   error:function(){}
 };
+
+
+
+/**
+ ##################                           ##################
+ ##################                           ##################
+ ##################   GLOBAL                  ##################
+ ##################                           ##################
+ ##################                           ##################
+ */
+
+// GLOBAL VARIABLES
+
+var weemoExtension = new WeemoExtension();
+
+
+(function($) {
+
+  $(document).ready(function() {
+    //GETTING DOM CONTEXT
+    var $notificationApplication = $("#chat-status");
+    
+
+    // WEEMO : GETTING AND SETTING KEY
+    var weemoKey = $notificationApplication.attr("data-weemo-key");
+    weemoExtension.setKey(weemoKey);
+    
+    var username = $notificationApplication.attr("data-username");
+    
+    weemoExtension.attachWeemoToPopups();
+    weemoExtension.attachWeemoToConnections();
+
+    weemoExtension.initCall(username, username);
+
+  });
+
+})(jqchat);
 

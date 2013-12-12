@@ -104,7 +104,18 @@
         <container id="WLCFooter" template="war:/groovy/welcomescreens/welcomescreensFooter.gtmpl">
             <access-permissions>*:/platform/users</access-permissions>
         </container>
-    </container>    
+    </container>
+    <container id="VideoCall" template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
+        <access-permissions>*:/platform/users</access-permissions>
+            <portlet-application>
+               <portlet>
+                  <application-ref>weemo-extension</application-ref>
+                  <portlet-ref>VideoCallApplication</portlet-ref>
+               </portlet>
+               <access-permissions>*:/platform/users</access-permissions>
+               <show-info-bar>false</show-info-bar>
+            </portlet-application>
+    </container>
 </container>
 
 
