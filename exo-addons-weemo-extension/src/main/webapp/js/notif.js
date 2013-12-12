@@ -138,11 +138,10 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
           weemoExtension.isConnected = true;
           console.log(jqchat(".weemoCallOverlay").length);
           jqchat(".btn-weemo").removeClass('disabled');
-          jqchat(".weemoCallOverlay").removeClass("disabled");
+          jqchat(".weemoCallOverlay").removeClass('disabled');
           var fn = jqchat(".label-user").text();
           var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
           if (fullname!=="") {
-            alert(fullname);
             this.setDisplayName(fullname); // Configure the display name
           } else if (fn!=="") {
             this.setDisplayName(fn); // Configure the display name
@@ -337,11 +336,11 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
     }
 
     if (username !== "" && $uiElement.has(".weemoCallOverlay").size()===0) {
-      var out = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' disabled" title="Make a Video Call"';
-          out += ' data-fullname="'+fullname+'"';
-          out += ' data-username="'+username+'" style="margin-left:5px;'+addStyle+'">';
-          out += '<i class="icon-facetime-video"></i> Call</a>';
-      //$uiElement.append("<div class='btn weemoCallOverlay' data-username='"+username+"' style='margin-left:5px;"+addStyle+"'>Call</div>");
+      var out = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' " title="Make a Video Call"';
+      out += ' data-fullname="'+fullname+'"';
+      out += ' data-username="'+username+'" style="margin-left:5px;'+addStyle+'">';
+      out += '<i class="icon-facetime-video"></i> Call</a>';
+
       $uiElement.append(out);
       jqchat(".weemoCallOverlay").on("click", function() {
         if (!jqchat(this).hasClass("disabled")) {
@@ -459,11 +458,10 @@ var weemoExtension = new WeemoExtension();
     weemoExtension.setKey(weemoKey);
     
     var username = $notificationApplication.attr("data-username");
-    
+    weemoExtension.initCall(username, username);
     weemoExtension.attachWeemoToPopups();
     weemoExtension.attachWeemoToConnections();
 
-    weemoExtension.initCall(username, username);
 
   });
 
