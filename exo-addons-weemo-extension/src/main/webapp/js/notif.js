@@ -12,6 +12,18 @@
  * @constructor
  */
 function WeemoExtension() {
+  this.username = "";
+  this.jzNotification = "";
+  this.jzGetState = "";
+  this.notifEventURL = "";
+  this.getStateURL = "";
+  this.weemoIntervalNotif = "";
+  this.notifEventInt = "";
+
+
+
+
+
   this.weemoKey = "";
   try {
     this.weemo = new Weemo('', '', 'internal', '', '1');
@@ -35,6 +47,15 @@ function WeemoExtension() {
 
   this.isConnected = false;
 }
+
+WeemoExtension.prototype.initOptions = function(options) {
+  this.username = options.username;
+  this.jzNotification = options.urlNotification;
+  this.jzGetState = options.urlGetState;
+  this.weemoIntervalNotif = options.notificationInterval;
+  this.notifEventURL = this.jzNotification+this.username+'/';
+  this.getStateURL = this.jzGetState;
+};
 
 WeemoExtension.prototype.log = function() {
   console.log("callOwner         :: "+this.callOwner);
@@ -306,6 +327,51 @@ WeemoExtension.prototype.joinWeemoCall = function(chatMessage) {
 
 };
 
+/**
+ * Update state
+ */
+WeemoExtension.prototype.refreshNotif = function() {
+  jqchat.ajax({
+    url: this.notifEventURL,
+    dataType: "json",
+    context: this,
+    success: function(data){
+
+    },
+    error: function(){
+     
+    }
+  });
+
+};
+
+
+/**
+ * Gets target user status
+ * @param targetUser
+ */
+WeemoExtension.prototype.getStatus = function(targetUser, callback) {
+
+  var refreshURL = this.getStateURL + targetUser + "/";
+  jqchat.ajax({
+    url: refreshURL, 
+    dataType: "text",   
+    context: this,
+    success: function(data){
+      if (typeof callback === "function") {
+        callback(targetUser, data);
+      }
+    },
+    error: function(){
+      if (typeof callback === "function") {
+        callback(targetUser, "offline");
+      }
+    }
+  });
+};
+
+
+
 WeemoExtension.prototype.attachWeemoToPopups = function() {
   var checkTiptip = jqchat('#tiptip_content').html();
   if (checkTiptip === undefined) {
@@ -336,7 +402,7 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
     }
 
     if (username !== "" && $uiElement.has(".weemoCallOverlay").size()===0) {
-      var out = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' " title="Make a Video Call"';
+      var out = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' disabled" title="Make a Video Call"';
       out += ' data-fullname="'+fullname+'"';
       out += ' data-username="'+username+'" style="margin-left:5px;'+addStyle+'">';
       out += '<i class="icon-facetime-video"></i> Call</a>';
@@ -352,11 +418,14 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
       });
 
       function cbGetStatus(targetUser, status) {
-        //console.log("Status :: target="+targetUser+" : status="+status);
+        console.log(targetUser + " " +status);
         if (status !== "offline") {
           jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
         }
       }
+      
+      weemoExtension.getStatus(username, cbGetStatus);
+
     }
 
   });
@@ -450,17 +519,33 @@ var weemoExtension = new WeemoExtension();
 
   $(document).ready(function() {
     //GETTING DOM CONTEXT
-    var $notificationApplication = $("#chat-status");
+    var $notificationApplication = $("#weemo-status");
     
+    // WEEMO NOTIFICATION INIT
+    weemoExtension.initOptions({
+      "username": $notificationApplication.attr("data-username"),
+      "urlNotification": "/rest/state/ping/",
+      "urlGetState": "/rest/state/online/",
+      "notificationInterval": $notificationApplication.attr("data-weemo-interval-notif"),
+      "statusInterval": $notificationApplication.attr("data-weemo-interval-status")
+    });
 
     // WEEMO : GETTING AND SETTING KEY
     var weemoKey = $notificationApplication.attr("data-weemo-key");
     weemoExtension.setKey(weemoKey);
+
+    
     
     var username = $notificationApplication.attr("data-username");
     weemoExtension.initCall(username, username);
     weemoExtension.attachWeemoToPopups();
     weemoExtension.attachWeemoToConnections();
+
+
+
+    weemoExtension.notifEventInt = window.clearInterval(weemoExtension.notifEventInt);
+    weemoExtension.notifEventInt = setInterval(jqchat.proxy(weemoExtension.refreshNotif, weemoExtension), weemoExtension.weemoIntervalNotif);
+    weemoExtension.refreshNotif();
 
 
   });
