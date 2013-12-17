@@ -462,7 +462,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
       html += ' style="margin-left:5px;"><i class="icon-facetime-video"></i> Call</a>';
       jqchat(this).html(html);
 
-      chatNotification.getStatus(username, cbGetConnectionStatus);
+      weemoExtension.getStatus(username, cbGetConnectionStatus);
     }
 
   });
@@ -526,8 +526,7 @@ var weemoExtension = new WeemoExtension();
       "username": $notificationApplication.attr("data-username"),
       "urlNotification": "/rest/state/ping/",
       "urlGetState": "/rest/state/online/",
-      "notificationInterval": $notificationApplication.attr("data-weemo-interval-notif"),
-      "statusInterval": $notificationApplication.attr("data-weemo-interval-status")
+      "notificationInterval": $notificationApplication.attr("data-weemo-interval-notif")      
     });
 
     // WEEMO : GETTING AND SETTING KEY

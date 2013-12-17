@@ -26,33 +26,16 @@ import java.util.Properties;
 public class PropertyManager {
   private static Properties properties;
 
-  private static final String PROPERTIES_PATH = System.getProperty("catalina.base")+"/conf/chat.properties";
+  private static final String PROPERTIES_PATH = System.getProperty("catalina.base")+"/conf/weemo.properties";
 
-  public static final String PROPERTY_SYSTEM_PREFIX = "chat.";
-  public static final String PROPERTY_SERVER_HOST = "dbServerHost";
-  public static final String PROPERTY_SERVER_PORT = "dbServerPort";
-  public static final String PROPERTY_DB_NAME = "dbName";
-  public static final String PROPERTY_DB_AUTHENTICATION = "dbAuthentication";
-  public static final String PROPERTY_DB_USER = "dbUser";
-  public static final String PROPERTY_DB_PASSWORD = "dbPassword";
-  public static final String PROPERTY_CHAT_SERVER_URL = "chatServerUrl";
-  public static final String PROPERTY_CHAT_PORTAL_PAGE = "chatPortalPage";
-  public static final String PROPERTY_INTERVAL_CHAT = "chatIntervalChat";
-  public static final String PROPERTY_INTERVAL_SESSION = "chatIntervalSession";
-  public static final String PROPERTY_INTERVAL_STATUS = "chatIntervalStatus";
+  public static final String PROPERTY_SYSTEM_PREFIX = "weemo.";
   public static final String PROPERTY_INTERVAL_NOTIF = "chatIntervalNotif";
-  public static final String PROPERTY_INTERVAL_USERS = "chatIntervalUsers";
-  public static final String PROPERTY_PASSPHRASE = "chatPassPhrase";
-  public static final String PROPERTY_CRON_NOTIF_CLEANUP = "chatCronNotifCleanup";
-  public static final String PROPERTY_PUBLIC_MODE = "publicMode";
-  public static final String PROPERTY_PUBLIC_ADMIN_GROUP = "publicAdminGroup";
   public static final String PROPERTY_WEEMO_KEY = "weemoKey";
 
 
   public static String getProperty(String key)
   {
     String value = (String)properties().get(key);
-    //System.out.println("PROP:"+key+"="+value);
     return value;
   }
 
@@ -71,24 +54,8 @@ public class PropertyManager {
       catch (Exception e)
       {
       }
-
-      overridePropertyIfNotSet(PROPERTY_SERVER_HOST, "localhost");
-      overridePropertyIfNotSet(PROPERTY_SERVER_PORT, "27017");
-      overridePropertyIfNotSet(PROPERTY_DB_NAME, "chat");
-      overridePropertyIfNotSet(PROPERTY_DB_AUTHENTICATION, "false");
-      overridePropertyIfNotSet(PROPERTY_DB_USER, "");
-      overridePropertyIfNotSet(PROPERTY_DB_PASSWORD, "");
-      overridePropertyIfNotSet(PROPERTY_CHAT_SERVER_URL, "/chatServer");
-      overridePropertyIfNotSet(PROPERTY_CHAT_PORTAL_PAGE, "/portal/intranet/chat");
-      overridePropertyIfNotSet(PROPERTY_INTERVAL_CHAT, "3000");
-      overridePropertyIfNotSet(PROPERTY_INTERVAL_SESSION, "60000");
-      overridePropertyIfNotSet(PROPERTY_INTERVAL_STATUS, "15000");
-      overridePropertyIfNotSet(PROPERTY_INTERVAL_NOTIF, "3000");
-      overridePropertyIfNotSet(PROPERTY_INTERVAL_USERS, "5000");
-      overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "chat");
-      overridePropertyIfNotSet(PROPERTY_CRON_NOTIF_CLEANUP, "0 0/60 * * * ?");
-      overridePropertyIfNotSet(PROPERTY_PUBLIC_MODE, "false");
-      overridePropertyIfNotSet(PROPERTY_PUBLIC_ADMIN_GROUP, "/platform/administrators");
+     
+      overridePropertyIfNotSet(PROPERTY_INTERVAL_NOTIF, "3000");      
       overridePropertyIfNotSet(PROPERTY_WEEMO_KEY, "");
     }
     return properties;
