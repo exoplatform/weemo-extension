@@ -27,7 +27,6 @@ public class PropertyManager {
   private static Properties properties;
 
   private static final String PROPERTIES_PATH = System.getProperty("catalina.base")+"/conf/weemo.properties";
-
   public static final String PROPERTY_SYSTEM_PREFIX = "weemo.";
   public static final String PROPERTY_INTERVAL_NOTIF = "chatIntervalNotif";
   public static final String PROPERTY_WEEMO_KEY = "weemoKey";
