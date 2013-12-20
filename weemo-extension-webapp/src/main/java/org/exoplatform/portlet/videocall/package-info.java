@@ -15,7 +15,8 @@
             @Script(src = "js/snack-min.js", id = "snack"),
             @Script(src = "js/jquery-juzu-utils-0.1.0.js", depends = "jquery", id = "juzu-utils"),
             @Script(src = "js/Modal.js", depends = "jquery"),
-            @Script(src = "js/notif.js", id = "notif", depends = {"jquery", "snack", "juzu-utils"})
+            @Script(src = "js/Weemo.js", id = "weemo"),
+            @Script(src = "js/notif.js", id = "notif", depends = {"jquery", "snack", "juzu-utils","weemo"})
         }
 )
 

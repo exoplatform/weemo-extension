@@ -26,7 +26,7 @@ function WeemoExtension() {
 
   this.weemoKey = "";
   try {
-    this.weemo = new Weemo('', '', 'internal', '', '1');
+    this.weemo = new Weemo("1033a56f0e68", "", "internal", "ppr/");
   } catch (err) {
     console.log("WEEMO NOT AVAILABLE YET");
     this.weemo = undefined;
@@ -134,9 +134,9 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     jqchat(".btn-weemo-conf").css('display', 'none');
 
     this.weemo.setDebugLevel(1); // Activate debug in JavaScript console
-    this.weemo.setWebAppId(this.weemoKey); // Configure your Web App Identifier (For POC use your Web Application Identifier provided by Weeemo)
-    this.weemo.setToken("weemo"+$uid); // Set user unique identifier
-    this.weemo.initialize(); // Launches the connection between WeemoDriver and Javascript
+    this.weemo.setWebAppId(this.weemoKey);
+    this.weemo.setToken("weemo"+$uid); 
+    this.weemo.initialize(); 
 
     /**
      * Weemo Driver On Connection Javascript Handler
@@ -157,7 +157,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
           break;
         case 'sipOk':
           weemoExtension.isConnected = true;
-          console.log(jqchat(".weemoCallOverlay").length);
           jqchat(".btn-weemo").removeClass('disabled');
           jqchat(".weemoCallOverlay").removeClass('disabled');
           var fn = jqchat(".label-user").text();
@@ -286,7 +285,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
  *
  */
 WeemoExtension.prototype.createWeemoCall = function(targetUser, targetFullname, chatMessage) {
-  console.log(targetUser+" : "+targetFullname);
   if (this.weemoKey!=="") {
 
     if (chatMessage !== undefined) {
@@ -418,7 +416,6 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
       });
 
       function cbGetStatus(targetUser, status) {
-        console.log(targetUser + " " +status);
         if (status !== "offline") {
           jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
         }
