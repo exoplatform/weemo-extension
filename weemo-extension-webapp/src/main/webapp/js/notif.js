@@ -53,7 +53,7 @@ WeemoExtension.prototype.initOptions = function(options) {
   this.jzNotification = options.urlNotification;
   this.jzGetState = options.urlGetState;
   this.weemoIntervalNotif = options.notificationInterval;
-  this.notifEventURL = this.jzNotification+this.username+'/';
+  this.notifEventURL = this.jzNotification;
   this.getStateURL = this.jzGetState;
 };
 
@@ -522,7 +522,7 @@ var weemoExtension = new WeemoExtension();
     weemoExtension.initOptions({
       "username": $notificationApplication.attr("data-username"),
       "urlNotification": "/rest/state/ping/",
-      "urlGetState": "/rest/state/online/",
+      "urlGetState": "/rest/state/status/",
       "notificationInterval": $notificationApplication.attr("data-weemo-interval-notif")      
     });
 
@@ -547,4 +547,5 @@ var weemoExtension = new WeemoExtension();
   });
 
 })(jqchat);
+
 
