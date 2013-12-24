@@ -30,7 +30,23 @@ public class PropertyManager {
   public static final String PROPERTY_SYSTEM_PREFIX = "weemo.";
   public static final String PROPERTY_INTERVAL_NOTIF = "weemoIntervalNotif";
   public static final String PROPERTY_WEEMO_KEY = "weemoKey";
-
+  
+  public static final String PROPERTY_APP_ID = "app_id";
+  public static final String PROPERTY_DOMAIN_ID = "domain_id";
+  public static final String PROPERTY_PASSPHRASE = "passphrase";
+  public static final String PROPERTY_AUTH_URL = "auth_url";
+  public static final String PROPERTY_CA_FILE = "ca_file";
+  public static final String PROPERTY_P12_FILE = "p12_file";
+  
+  public static final String PROPERTY_USER_ID_AUTH = "user_id_auth";
+  public static final String PROPERTY_PASS_AUTH = "pass_auth";
+  public static final String PROPERTY_CLIENT_KEY_AUTH = "client_key_auth";
+  public static final String PROPERTY_CLIENT_SECRET_AUTH = "client_secret_auth";
+  
+  public static final String PROPERTY_USER_ID_ALLOW = "user_id_allow";
+  public static final String PROPERTY_PASS_ALLOW = "pass_allow";
+  public static final String PROPERTY_CLIENT_KEY_ALLOW = "client_key_allow";
+  public static final String PROPERTY_CLIENT_SECRET_ALLOW = "client_secret_allow";
 
   public static String getProperty(String key)
   {
