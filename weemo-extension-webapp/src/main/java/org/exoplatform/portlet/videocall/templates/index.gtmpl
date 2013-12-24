@@ -2,6 +2,12 @@
   data-username="<%=user%>" 
   data-weemo-interval-notif="<%=chatIntervalNotif%>"
   data-weemo-key="<%=weemoKey%>"
-  style="display: none;">
- 
+  style="display: none;"> 
+</div>
+
+<div id="weemo-alert" class="alert" style="display:none; position: absolute; top: 32px; width: 100%; text-align:center;border: none;
+border-bottom: 2px solid #E7E7E7;">
+	<a href="#" style="margin-right: 40px;" class="close" data-dismiss="alert">x</a>
+	<strong>Weemo must be installed on your computer to enable video calls.</strong> 
+        <a href="#"><strong>Download Weemo</strong></a> | <a href="#">Don't ask me again</a>
 </div>

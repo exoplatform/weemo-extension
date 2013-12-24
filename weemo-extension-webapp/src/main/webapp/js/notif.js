@@ -19,10 +19,7 @@ function WeemoExtension() {
   this.getStateURL = "";
   this.weemoIntervalNotif = "";
   this.notifEventInt = "";
-
-
-
-
+  this.isSupport = true;
 
   this.weemoKey = "";
   try {
@@ -32,8 +29,113 @@ function WeemoExtension() {
     this.weemo = undefined;
     jqchat(".btn-weemo-conf").css('display', 'none');
     jqchat(".btn-weemo").addClass('disabled');
-
   }
+  
+     /**
+     * Weemo Driver On Connection Javascript Handler
+     *
+     * @param message
+     * @param code
+     */
+    this.weemo.onConnectionHandler = function(message, code) {
+      if(window.console)
+        console.log(" =========== Connection Handler : " + message + ' ' + code);
+      switch(message) {
+        case 'connectedWeemoDriver':
+          this.authenticate();
+          break;       
+        case 'loggedasotheruser':
+          // force weemo to kick previous user and replace it with current one
+          this.authenticate(1);
+          break;
+        case 'unsupportedOS':
+          weemoExtension.isSupport = false;
+        case 'sipOk':
+          weemoExtension.isConnected = true;
+          jqchat(".btn-weemo").removeClass('disabled');
+          jqchat(".weemoCallOverlay").removeClass('disabled');
+          var fn = jqchat(".label-user").text();
+          var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
+          if (fullname!=="") {
+            this.setDisplayName(fullname); // Configure the display name
+          } else if (fn!=="") {
+            this.setDisplayName(fn); // Configure the display name
+          }
+          break;
+      }
+    }
+
+    /**
+     * Weemo Driver On Driver Started Javascript Handler
+     *
+     * @param downloadUrl
+     */
+    this.weemo.onWeemoDriverNotStarted = function(downloadUrl) {
+      var $btnDownload = jqchat(".btn-weemo-download");
+      $btnDownload.css("display", "inline-block");
+      if (navigator.platform === "Linux") {
+        $btnDownload.addClass("disabled");
+        $btnDownload.attr("title", "Weemo is not yet compatible with Linux OS.");
+      } else {
+        $btnDownload.attr("href", downloadUrl);
+      }
+    };
+
+
+    /**
+     * Weemo Driver On Call Javascript Handler
+     *
+     * @param type
+     * @param status
+     */
+    this.weemo.onCallHandler = function(callObj, args)
+    {
+      weemoExtension.callObj = callObj;
+      var type = args.type;
+      var status = args.status;
+      console.log("WEEMO:onCallHandler  ::"+type+":"+status+":"+weemoExtension.callType+":"+weemoExtension.callOwner+":"+weemoExtension.hasChatMessage());
+      var messageWeemo = "";
+      var optionsWeemo = {};
+      if(type==="call" && ( status==="active" || status==="terminated" ))
+      {
+        console.log("Call Handler : " + type + ": " + status);
+        ts = Math.round(new Date().getTime() / 1000);
+
+        if (status === "terminated") weemoExtension.setCallOwner(false);
+
+        if (weemoExtension.callType==="internal" || status==="terminated") {
+          messageWeemo = "Call "+status;
+          optionsWeemo.timestamp = ts;
+        } else if (weemoExtension.callType==="host") {
+          messageWeemo = "Call "+status;
+          optionsWeemo.timestamp = ts;
+          optionsWeemo.uidToCall = weemoExtension.uidToCall;
+          optionsWeemo.displaynameToCall = weemoExtension.displaynameToCall;
+        }
+
+
+        if (status==="active" && weemoExtension.callActive) return; //Call already active, no need to push a new message
+        if (status==="terminated" && (!weemoExtension.callActive || weemoExtension.callType==="attendee")) return; //Terminate a non started call or a joined call, no message needed
+
+
+        if (weemoExtension.callType==="attendee" && status==="active") {
+          weemoExtension.setCallActive(true);
+          optionsWeemo.type = "call-join";
+          optionsWeemo.username = weemoExtension.chatMessage.user;
+          optionsWeemo.fullname = weemoExtension.chatMessage.fullname;
+
+        }
+        else if (status==="active") {
+          weemoExtension.setCallActive(true);
+          optionsWeemo.type = "call-on";
+        }
+        else if (status==="terminated") {
+          weemoExtension.setCallActive(false);
+          optionsWeemo.type = "call-off";
+        }
+        
+      }
+    }
   this.callObj;
 
   this.callOwner = jzGetParam("callOwner", false);
@@ -137,144 +239,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     this.weemo.setWebAppId(this.weemoKey);
     this.weemo.setToken("weemo"+$uid); 
     this.weemo.initialize(); 
-
-    /**
-     * Weemo Driver On Connection Javascript Handler
-     *
-     * @param message
-     * @param code
-     */
-    this.weemo.onConnectionHandler = function(message, code) {
-      if(window.console)
-        console.log(" =========== Connection Handler : " + message + ' ' + code);
-      switch(message) {
-        case 'connectedWeemoDriver':
-          this.authenticate();
-          break;       
-        case 'loggedasotheruser':
-          // force weemo to kick previous user and replace it with current one
-          this.authenticate(1);
-          break;
-        case 'sipOk':
-          weemoExtension.isConnected = true;
-          jqchat(".btn-weemo").removeClass('disabled');
-          jqchat(".weemoCallOverlay").removeClass('disabled');
-          var fn = jqchat(".label-user").text();
-          var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
-          if (fullname!=="") {
-            this.setDisplayName(fullname); // Configure the display name
-          } else if (fn!=="") {
-            this.setDisplayName(fn); // Configure the display name
-          }
-          break;
-      }
-    }
-
-    /**
-     * Weemo Driver On Driver Started Javascript Handler
-     *
-     * @param downloadUrl
-     */
-    this.weemo.onWeemoDriverNotStarted = function(downloadUrl) {
-      var $btnDownload = jqchat(".btn-weemo-download");
-      $btnDownload.css("display", "inline-block");
-      if (navigator.platform === "Linux") {
-        $btnDownload.addClass("disabled");
-        $btnDownload.attr("title", "Weemo is not yet compatible with Linux OS.");
-      } else {
-        $btnDownload.attr("href", downloadUrl);
-      }
-    };
-
-
-    /**
-     * Weemo Driver On Call Javascript Handler
-     *
-     * @param type
-     * @param status
-     */
-    this.weemo.onCallHandler = function(callObj, args)
-    {
-      weemoExtension.callObj = callObj;
-      var type = args.type;
-      var status = args.status;
-      console.log("WEEMO:onCallHandler  ::"+type+":"+status+":"+weemoExtension.callType+":"+weemoExtension.callOwner+":"+weemoExtension.hasChatMessage());
-      var messageWeemo = "";
-      var optionsWeemo = {};
-      if(type==="call" && ( status==="active" || status==="terminated" ))
-      {
-        console.log("Call Handler : " + type + ": " + status);
-        ts = Math.round(new Date().getTime() / 1000);
-
-        if (status === "terminated") weemoExtension.setCallOwner(false);
-
-        if (weemoExtension.callType==="internal" || status==="terminated") {
-          messageWeemo = "Call "+status;
-          optionsWeemo.timestamp = ts;
-        } else if (weemoExtension.callType==="host") {
-          messageWeemo = "Call "+status;
-          optionsWeemo.timestamp = ts;
-          optionsWeemo.uidToCall = weemoExtension.uidToCall;
-          optionsWeemo.displaynameToCall = weemoExtension.displaynameToCall;
-        }
-
-
-        if (status==="active" && weemoExtension.callActive) return; //Call already active, no need to push a new message
-        if (status==="terminated" && (!weemoExtension.callActive || weemoExtension.callType==="attendee")) return; //Terminate a non started call or a joined call, no message needed
-
-
-        if (weemoExtension.callType==="attendee" && status==="active") {
-          weemoExtension.setCallActive(true);
-          optionsWeemo.type = "call-join";
-          optionsWeemo.username = weemoExtension.chatMessage.user;
-          optionsWeemo.fullname = weemoExtension.chatMessage.fullname;
-
-        }
-        else if (status==="active") {
-          weemoExtension.setCallActive(true);
-          optionsWeemo.type = "call-on";
-        }
-        else if (status==="terminated") {
-          weemoExtension.setCallActive(false);
-          optionsWeemo.type = "call-off";
-        }
-
-        if (weemoExtension.hasChatMessage()) {
-
-          console.log("WEEMO:hasChatMessage::"+weemoExtension.chatMessage.user+":"+weemoExtension.chatMessage.targetUser);
-          if (chatApplication !== undefined) {
-            chatApplication.checkIfMeetingStarted(function(callStatus){
-              if (callStatus === 1 && optionsWeemo.type==="call-on") {
-                // Call is already created, not allowed.
-                weemoExtension.initChatMessage();
-                callObj.hangup();
-                return;
-              }
-              if (callStatus === 0 && optionsWeemo.type==="call-off") {
-                // Call is already terminated, no need to terminate again
-                return;
-              }
-
-              chatApplication.chatRoom.sendFullMessage(
-                weemoExtension.chatMessage.user,
-                weemoExtension.chatMessage.token,
-                weemoExtension.chatMessage.targetUser,
-                weemoExtension.chatMessage.room,
-                messageWeemo,
-                optionsWeemo,
-                "true"
-              )
-
-              if (status==="terminated") {
-                weemoExtension.initChatMessage();
-              }
-
-            });
-          }
-        }
-      }
-    }
-
 
   } else {
     jqchat(".btn-weemo").css('display', 'none');
@@ -398,8 +362,7 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
       });
       $uiElement = $uiAction;
     }
-
-    if (username !== "" && $uiElement.has(".weemoCallOverlay").size()===0) {
+    if (username !== "" && $uiElement.has(".weemoCallOverlay").size()===0 && weemoExtension.isSupport) {
       var out = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' disabled" title="Make a Video Call"';
       out += ' data-fullname="'+fullname+'"';
       out += ' data-username="'+username+'" style="margin-left:5px;'+addStyle+'">';
@@ -452,7 +415,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
     var fullname = $uiUsername.html();
 
     var $uiActionWeemo = jqchat(".weemoCallOverlay", this).first();
-    if ($uiActionWeemo !== undefined && $uiActionWeemo.html() == undefined) {
+    if ($uiActionWeemo !== undefined && $uiActionWeemo.html() == undefined && weemoExtension.isSupport) {
       var html = jqchat(this).html();
       html += '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' pull-right disabled" id="weemoCall-'+username.replace('.', '-')+'" title="Make a Video Call"';
       html += ' data-username="'+username+'" data-fullname="'+fullname+'"';
@@ -547,5 +510,6 @@ var weemoExtension = new WeemoExtension();
   });
 
 })(jqchat);
+
 
 
