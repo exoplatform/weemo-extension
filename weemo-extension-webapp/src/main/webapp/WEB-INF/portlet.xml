@@ -16,7 +16,8 @@
        <mime-type>text/html</mime-type>
      </supports>
      <supported-locale>en</supported-locale>
-     <supported-locale>fr</supported-locale>
+     <supported-locale>fr</supported-locale>     
+     <resource-bundle>locale.portlet.videocall.Resource</resource-bundle>
      <portlet-info>
        <title>Video Call Application</title>
        <keywords>Video Call</keywords>

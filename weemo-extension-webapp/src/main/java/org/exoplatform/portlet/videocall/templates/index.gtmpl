@@ -7,7 +7,8 @@
 
 <div id="weemo-alert" class="alert" style="display:none; position: absolute; top: 32px; width: 100%; text-align:center;border: none;
 border-bottom: 2px solid #E7E7E7;">
-	<a href="#" style="margin-right: 40px;" class="close" data-dismiss="alert">x</a>
-	<strong>Weemo must be installed on your computer to enable video calls.</strong> 
-        <a href="#"><strong>Download Weemo</strong></a> | <a href="#">Don't ask me again</a>
+    <a href="#" style="margin-right: 20px; margin-top: 3px;" title="&{exoplatform.videocall.installer.close}" data-dismiss="alert" class="uiIconClose pull-right"></a>
+	<strong>&{exoplatform.videocall.installer.message}</strong> 
+        <a id="weemo-alert-download" href="javascript:void(0);"><strong>&{exoplatform.videocall.installer.download}</strong></a> | 
+        <a id="weemo-alert-dismiss" href="javascript:void(0);">&{exoplatform.videocall.installer.dismiss}</a>
 </div>

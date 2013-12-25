@@ -71,7 +71,8 @@ function WeemoExtension() {
      * @param downloadUrl
      */
     this.weemo.onWeemoDriverNotStarted = function(downloadUrl) {
-      var $btnDownload = jqchat(".btn-weemo-download");
+      weemoExtension.showWeemoInstaller();      
+      $btnDownload = jqchat(".btn-weemo-download");
       $btnDownload.css("display", "inline-block");
       if (navigator.platform === "Linux") {
         $btnDownload.addClass("disabled");
@@ -166,6 +167,34 @@ WeemoExtension.prototype.log = function() {
   console.log("uidToCall         :: "+this.uidToCall);
   console.log("displayNameToCall :: "+this.displaynameToCall);
   console.log("chatMessage       :: "+this.chatMessage);
+}
+
+WeemoExtension.prototype.setCookie = function(key, value) {  
+   var expires = new Date();  
+   expires.setTime(expires.getTime() + 31536000000); //1 year  
+   document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();  
+}  
+  
+WeemoExtension.prototype.getCookie = function(key) {  
+   var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');  
+   return keyValue ? keyValue[2] : null;  
+}  
+
+WeemoExtension.prototype.showWeemoInstaller = function() {
+
+  var isDismiss = weemoExtension.getCookie("isDismiss");
+  if ( (typeof(isDismiss) == "undefined" && isDismiss == null) || !isDismiss ) {
+    var uiToolbarContainer = jqchat("#UIToolbarContainer");
+    var height = uiToolbarContainer.outerHeight() - jqchat(".alert").css("marginTop").replace('px', '');
+
+    $("#weemo-alert").css({ top: height+'px' });
+    jqchat("#weemo-alert").show();        
+    jqchat("#weemo-alert-dismiss").click(function() {
+      weemoExtension.setCookie("isDismiss", "true");
+      jqchat("#weemo-alert").hide();
+    });
+  }
+
 }
 
 WeemoExtension.prototype.setKey = function(weemoKey) {
@@ -379,7 +408,7 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
       });
 
       function cbGetStatus(targetUser, status) {
-        if (status !== "offline") {
+        if (status !== "offline" && weemoExtension.isConnected) {
           jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
         }
       }
@@ -403,7 +432,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
 
   function cbGetConnectionStatus(targetUser, status) {
     //console.log("Status :: target="+targetUser+" : status="+status);
-    if (status !== "offline") {
+    if (status !== "offline" && weemoExtension.isConnected) {
       jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
     }
   }
@@ -478,6 +507,7 @@ var weemoExtension = new WeemoExtension();
 (function($) {
 
   $(document).ready(function() {
+    weemoExtension.showWeemoInstaller();
     //GETTING DOM CONTEXT
     var $notificationApplication = $("#weemo-status");
     
