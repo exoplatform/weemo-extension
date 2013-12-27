@@ -50,6 +50,7 @@ function WeemoExtension() {
           break;
         case 'unsupportedOS':
           weemoExtension.isSupport = false;
+          weemoExtension.showWeemoInstaller();
         case 'sipOk':
           weemoExtension.isConnected = true;
           jqchat(".btn-weemo").removeClass('disabled');
@@ -181,7 +182,10 @@ WeemoExtension.prototype.getCookie = function(key) {
 }  
 
 WeemoExtension.prototype.showWeemoInstaller = function() {
-
+  if(!weemoExtension.isSupport) {
+    jqchat("#weemo-alert").hide();
+    return;
+  }
   var isDismiss = weemoExtension.getCookie("isDismiss");
   if ( (typeof(isDismiss) == "undefined" && isDismiss == null) || !isDismiss ) {
     var uiToolbarContainer = jqchat("#UIToolbarContainer");
