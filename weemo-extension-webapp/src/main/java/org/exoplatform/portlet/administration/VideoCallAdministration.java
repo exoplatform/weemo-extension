@@ -26,29 +26,34 @@ public class VideoCallAdministration {
   OrganizationService organizationService_;
 
   SpaceService spaceService_;
+  
+  VideoCallService videoCallService_;
 
   @Inject
   Provider<PortletPreferences> providerPreferences;
 
   @Inject
-  public VideoCallAdministration(OrganizationService organizationService, SpaceService spaceService)
+  public VideoCallAdministration(OrganizationService organizationService, SpaceService spaceService, VideoCallService videoCallService)
   {
     organizationService_ = organizationService;
     spaceService_ = spaceService;
+    videoCallService_ = videoCallService;
   }
 
 
   @View
   public void index(RenderContext renderContext) throws IOException
   {   
-    index.render();
+    String weemoKey = videoCallService_.getWeemoKey();
+    boolean turnOffVideoCall = videoCallService_.isDisableVideoCall();
+    index.with().set("turnOffVideoCall", turnOffVideoCall)
+              .set("weemoKey", weemoKey)
+              .render();
   }  
   
   @Action
   @Route("/save")
   public Response.View save(VideoCallModel videoCallModel) {
-     System.out.println("==== disableVideoCalls : " + videoCallModel.getDisableVideoCall());
-     System.out.println("==== weemoKey : " + videoCallModel.getWeemoKey());
      VideoCallService videoCallService = new VideoCallService();
      videoCallService.saveVideoCallProfile(videoCallModel);
      return VideoCallAdministration_.index();

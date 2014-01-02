@@ -511,10 +511,13 @@ var weemoExtension = new WeemoExtension();
 (function($) {
 
   $(document).ready(function() {
-    weemoExtension.showWeemoInstaller();
+    
     //GETTING DOM CONTEXT
     var $notificationApplication = $("#weemo-status");
-    
+    var isTurnOff = $notificationApplication.attr("data-weemo-turnoff");
+    if(isTurnOff == "true") return;
+
+    weemoExtension.showWeemoInstaller();
     // WEEMO NOTIFICATION INIT
     weemoExtension.initOptions({
       "username": $notificationApplication.attr("data-username"),

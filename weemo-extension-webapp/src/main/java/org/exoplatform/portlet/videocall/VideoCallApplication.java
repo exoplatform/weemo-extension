@@ -12,6 +12,7 @@ import javax.portlet.PortletPreferences;
 
 import org.exoplatform.utils.videocall.PropertyManager;
 import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class VideoCallApplication {
@@ -32,15 +33,18 @@ public class VideoCallApplication {
   OrganizationService organizationService_;
 
   SpaceService spaceService_;
+  
+  VideoCallService videoCallService_;
 
   @Inject
   Provider<PortletPreferences> providerPreferences;
 
   @Inject
-  public VideoCallApplication(OrganizationService organizationService, SpaceService spaceService)
+  public VideoCallApplication(OrganizationService organizationService, SpaceService spaceService, VideoCallService videoCallService)
   {
     organizationService_ = organizationService;
     spaceService_ = spaceService;
+    videoCallService_ = videoCallService;
   }
 
 
@@ -49,10 +53,13 @@ public class VideoCallApplication {
   {
     remoteUser_ = renderContext.getSecurityContext().getRemoteUser();
     String chatIntervalNotif = PropertyManager.getProperty(PropertyManager.PROPERTY_INTERVAL_NOTIF);
-    String chatWeemoKey = PropertyManager.getProperty(PropertyManager.PROPERTY_WEEMO_KEY);
-
-    index.with().set("user", remoteUser_).set("chatIntervalNotif", chatIntervalNotif)
-            .set("weemoKey", chatWeemoKey)
+    String weemoKey = videoCallService_.getWeemoKey();
+    boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
+    
+    index.with().set("user", remoteUser_)
+            .set("chatIntervalNotif", chatIntervalNotif)
+            .set("weemoKey", weemoKey)
+            .set("turnOffVideoCall", turnOffVideoCall)
             .render();
   }  
 }

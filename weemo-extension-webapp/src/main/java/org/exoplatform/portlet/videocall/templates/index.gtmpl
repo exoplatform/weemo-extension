@@ -2,6 +2,7 @@
   data-username="<%=user%>" 
   data-weemo-interval-notif="<%=chatIntervalNotif%>"
   data-weemo-key="<%=weemoKey%>"
+  data-weemo-turnoff="<%=turnOffVideoCall%>"
   style="display: none;"> 
 </div>
 

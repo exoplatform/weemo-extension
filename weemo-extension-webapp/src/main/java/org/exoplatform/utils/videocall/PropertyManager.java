@@ -23,6 +23,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.services.videocall.VideoCallService;
+
 public class PropertyManager {
   private static Properties properties;
 
@@ -47,6 +50,8 @@ public class PropertyManager {
   public static final String PROPERTY_PASS_ALLOW = "pass_allow";
   public static final String PROPERTY_CLIENT_KEY_ALLOW = "client_key_allow";
   public static final String PROPERTY_CLIENT_SECRET_ALLOW = "client_secret_allow";
+  
+  public static VideoCallService videoCallService = null;
 
   public static String getProperty(String key)
   {
@@ -68,10 +73,20 @@ public class PropertyManager {
       }
       catch (Exception e)
       {
-      }
-     
+      }     
       overridePropertyIfNotSet(PROPERTY_INTERVAL_NOTIF, "3000");      
-      overridePropertyIfNotSet(PROPERTY_WEEMO_KEY, "");
+      //overridePropertyIfNotSet(PROPERTY_WEEMO_KEY, "");
+      videoCallService = new VideoCallService();
+      if(!videoCallService.isExistVideoCallProfile()) {
+        VideoCallModel videoCallModel = new VideoCallModel();
+        videoCallModel.setDisableVideoCall(Boolean.toString(false));
+        if(properties().getProperty(PROPERTY_WEEMO_KEY)==null) {
+          videoCallModel.setWeemoKey("");
+        } else {
+          videoCallModel.setWeemoKey(properties().getProperty(PROPERTY_WEEMO_KEY));
+        }
+        videoCallService.saveVideoCallProfile(videoCallModel);
+      }
     }
     return properties;
   }
