@@ -10,8 +10,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.portlet.PortletPreferences;
 
-import org.exoplatform.utils.videocall.PropertyManager;
+import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class VideoCallAdministration {
@@ -42,4 +43,14 @@ public class VideoCallAdministration {
   {   
     index.render();
   }  
+  
+  @Action
+  @Route("/save")
+  public Response.View save(VideoCallModel videoCallModel) {
+     System.out.println("==== disableVideoCalls : " + videoCallModel.getDisableVideoCall());
+     System.out.println("==== weemoKey : " + videoCallModel.getWeemoKey());
+     VideoCallService videoCallService = new VideoCallService();
+     videoCallService.saveVideoCallProfile(videoCallModel);
+     return VideoCallAdministration_.index();
+  }
 }

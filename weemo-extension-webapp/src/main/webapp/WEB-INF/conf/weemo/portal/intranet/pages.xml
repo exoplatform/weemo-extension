@@ -27,7 +27,5 @@
       <access-permissions>*:/platform/users</access-permissions>
       <edit-permission>*:/platform/administrators</edit-permission>
       <show-max-window>false</show-max-window>     
-   </page>
-
-   
+   </page>   
 </page-set>

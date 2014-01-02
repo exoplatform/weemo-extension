@@ -1,4 +1,4 @@
-<div id="searchPortlet" class="uiSearchPortlet" style="margin: 50px 40px">
+<div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" style="margin: 50px 40px">
 
   <div style="
     font-size: 28px;
@@ -10,26 +10,84 @@
   	Video Calls Administration
   </div>
   
-  <div class="uiBox" style="width: 800px; margin-left: auto; margi-right: auto;">
+  <div class="uiBox" style="  ">
 	  <div class="uiContentBox">
-		  	<form id="videoCallAdminForm"  class="form-horizontal">
+		  	<form action="@{VideoCallAdministration.save()}" method="post" class="form-horizontal">
 			  <div class="control-group">
-			    <label class="checkbox">
-			      <input id="disableVideoCalls" type="checkbox" value="">
+			    <label class="checkbox" style="font-weight: bold;">
+			      <input id="disableVideoCalls" name="disableVideoCall" value="true" type="checkbox">
 				  Turn off Video Calls
 				</label>	    
 			  </div>
 			  <div class="control-group">
 			    <label style="text-align: left; width: auto; font-weight: bold;" class="control-label" for="weemoKey">Weemo Key</label>
 			    <div class="controls" style="margin-left: 85px;">
-			      <input class="span2" type="text" id="weemoKey" placeholder="Weemo Key">
+			      <input class="span2" type="text" id="weemoKey" name="weemoKey" placeholder="Weemo Key">
 			    </div>
-			  </div>
+			  </div>		  
+			  
+			  
+			<div class="UIViewPermissionContainer" id="UIViewPermissionContainer" style="padding-bottom: 20px;">
+
+			<div id="UIViewPermissionList">
+			    <h6>Permissions</h6>
+				<table class="uiGrid table table-hover table-striped">
+				  <thead>
+				    <tr>
+				          <th>Owner</th>
+				          <th>1:1 Video Calls</th>				        
+				          <th class="span2 center">Action</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				  
+				    <tr>
+				      <td class="empty center" colspan="3">
+				      	<div class="actionContainer">
+					        There is no permission on this view
+					    </div>
+				      </td>
+				    </tr>  
+				  
+				  </tbody>
+				</table> 
+				<!--End UIGrid-->
+			  
+			</div>
+			
+			
+			<div class="uiViewPermissionForm">
+			<div>							
+				<div class="permission">
+						<div class="clearfix">
+							<div class="PemissionInputset pull-left">
+						 		<input name="userOrGroup" type="text" id="userOrGroup" readonly="">
+						 	</div><div class="pull-left">
+							
+									<a class="actionIcon" rel="tooltip" data-placement="bottom" data-original-title="Select User"><i class="uiIconSelectUser uiIconLightGray"></i></a>
+								
+									<a class="actionIcon"  rel="tooltip" data-placement="bottom" data-original-title="Select Membership"><i class="uiIconSelectMember uiIconLightGray"></i></a>
+								
+							
+							     <button type="button" class="btn btn-primary">Add</button>
+						 
+						 	</div>
+						 	
+						</div>
+				    	<div class="form-inline">		      
+				    	</div>
+					</div>
+			
+				</div>
+			</div>
+			</div>			  
+			  
+			  
+			  
+			  <div class="uiAction uiActionBorder">				
+			     <button type="submit" class="btn btn-primary">Save</button>		 
+  			  </div>
 		  </form>
 	  </div>
   </div>
 </div>
-
-
-
-

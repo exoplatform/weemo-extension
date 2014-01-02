@@ -32,6 +32,7 @@
     <javax.enterprise.cdi.version>1.0-SP4</javax.enterprise.cdi.version>
     <juzu.version>0.6.0</juzu.version>
     <mongodb-java-driver.version>2.11.1</mongodb-java-driver.version> 
+    <org.exoplatform.ecms.version>4.1.x-ecms-weemo-addon-SNAPSHOT</org.exoplatform.ecms.version>
   </properties>
   <dependencyManagement>
     <dependencies>   
@@ -101,6 +102,11 @@
         <artifactId>mongo-java-driver</artifactId>
         <version>${mongodb-java-driver.version}</version>
       </dependency>    
+      <dependency>
+        <groupId>org.exoplatform.ecms</groupId>
+        <artifactId>ecms-core-services</artifactId>
+        <version>${org.exoplatform.ecms.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>
