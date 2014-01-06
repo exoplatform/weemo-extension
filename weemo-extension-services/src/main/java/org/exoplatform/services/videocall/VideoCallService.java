@@ -16,6 +16,7 @@
  */
 package org.exoplatform.services.videocall;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -37,7 +38,8 @@ import org.apache.commons.lang.StringUtils;
 
 
 public class VideoCallService {
-  
+  private static ExoCache<Serializable, VideoCallModel> videoProfileCache;
+  private static String VIDEO_PROFILE_KEY = "videoCallsProfile";
   public static String BASE_PATH = "exo:applications";
   public static String VIDEOCALL_BASE_PATH = "VideoCall";
   public static String VIDEOCALL_NODETYPE = "exo:videoCallProfile";
@@ -68,8 +70,8 @@ public class VideoCallService {
     
     SessionProvider sessionProvider = null;
     try {
+      sessionProvider = SessionProvider.createSystemProvider();
       RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
-      sessionProvider = WCMCoreUtils.getUserSessionProvider();
       Session session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());
       
       Node rootNode = session.getRootNode();
@@ -83,7 +85,8 @@ public class VideoCallService {
       session.save();
       videoCallNode.setProperty(DISABLEVIDEOCALL_PROP, Boolean.valueOf(disbaleVideoCall));
       videoCallNode.setProperty(WEEMOKEY_PROP, weemoKey);
-      session.save();      
+      session.save();  
+      
     } catch (LoginException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("saveVideoCallProfile() failed because of ", e);
@@ -95,6 +98,10 @@ public class VideoCallService {
     } catch (RepositoryException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("saveVideoCallProfile() failed because of ", e);
+      }
+    } finally {
+      if (sessionProvider != null) {
+        sessionProvider.close();
       }
     }
   }
@@ -193,7 +200,7 @@ public class VideoCallService {
     boolean isExist = false;
     SessionProvider sessionProvider = null;
     RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
-    sessionProvider = WCMCoreUtils.getUserSessionProvider();
+    sessionProvider = WCMCoreUtils.getSystemSessionProvider();
     Session session;
     try {
       session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    

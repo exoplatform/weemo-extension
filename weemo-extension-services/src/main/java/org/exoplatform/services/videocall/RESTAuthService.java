@@ -17,9 +17,11 @@
 package org.exoplatform.services.videocall;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import org.exoplatform.services.log.ExoLogger;
@@ -48,8 +50,8 @@ public class RESTAuthService implements ResourceContainer{
   @GET
   @Path("/auth/{profileId}/")
   @RolesAllowed("users")
-  public Response auth(@PathParam("profileId") String profileId) {
-    String weemoToken = authService.authenticate(profileId);
+  public Response auth(@Context HttpServletRequest servletRequest, @PathParam("profileId") String profileId) {
+    String weemoToken = authService.authenticate(servletRequest, profileId);
     JSONArray json = new JSONArray();    
     json.put(weemoToken);
     return Response.ok(json.toString(), MediaType.APPLICATION_JSON).build();

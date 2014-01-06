@@ -17,6 +17,7 @@
   <modules>
     <module>weemo-extension-config</module>  
     <module>weemo-extension-webapp</module>
+    <module>weemo-extension-services</module>
     <module>weemo-extension-pkg</module>
   </modules>
   
@@ -55,6 +56,12 @@
       <dependency>
         <groupId>org.exoplatform.addons.weemo</groupId>
         <artifactId>weemo-extension-config</artifactId>
+        <version>${project.version}</version>
+        <type>jar</type>
+      </dependency>   
+      <dependency>
+        <groupId>org.exoplatform.addons.weemo</groupId>
+        <artifactId>weemo-extension-services</artifactId>
         <version>${project.version}</version>
         <type>jar</type>
       </dependency>     
