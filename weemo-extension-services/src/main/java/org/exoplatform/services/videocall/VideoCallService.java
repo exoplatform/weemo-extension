@@ -29,6 +29,8 @@ import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.ExoCache;
 import org.exoplatform.services.jcr.RepositoryService;
+import org.exoplatform.services.jcr.access.PermissionType;
+import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -92,6 +94,11 @@ public class VideoCallService {
       videoCallNode.setProperty(WEEMOKEY_PROP, weemoKey);
       videoCallNode.setProperty(VIDEO_TOKEN_KEY, videoCallModel.getTokenKey());
       videoCallNode.setProperty(VIDEO_PERMISSIONS_PROP, permissions);
+      ExtendedNode node = (ExtendedNode) videoCallNode;
+      if (node.canAddMixin("exo:privilegeable")) { 
+        node.addMixin("exo:privilegeable");
+        node.setPermission("*:/platform/users",new String[] { PermissionType.READ });
+      }
       session.save();  
       videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
     } catch (LoginException e) {

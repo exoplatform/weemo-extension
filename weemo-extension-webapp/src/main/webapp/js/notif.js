@@ -423,7 +423,8 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
       });
 
       function cbGetStatus(targetUser, activity) {
-        if (activity !== "offline" && weemoExtension.isConnected) {
+        //if (activity !== "offline" && weemoExtension.isConnected) {
+	if (activity !== "offline") {
           jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
         }
       }
@@ -446,7 +447,8 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
   }
 
   function cbGetConnectionStatus(targetUser, activity) {
-    if (activity !== "offline" && weemoExtension.isConnected) {
+    //if (activity !== "offline" && weemoExtension.isConnected) {
+    if (activity !== "offline") {
       jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
     }
   }

@@ -30,7 +30,7 @@ var Weemo = function (pAppId, pToken, pType, pHap, pDebugLevel, pDisplayName) {
     var token = pToken;
     var webAppId = (pAppId != '' && pAppId != undefined) ? pAppId : "1033a56f0e68"
     var weemoAuth = true;
-    var endpointUrl = '/weemo/auth/';
+    var endpointUrl = '/rest/weemo/auth/';
     var force = false;
 	
 	var debugLevel = 0;
