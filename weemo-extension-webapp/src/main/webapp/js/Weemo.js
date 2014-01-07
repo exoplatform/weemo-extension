@@ -28,9 +28,9 @@ var Weemo = function (pAppId, pToken, pType, pHap, pDebugLevel, pDisplayName) {
     var self = this;
     var longpollId = null;
     var token = pToken;
-    var webAppId = (pAppId != '' && pAppId != undefined) ? pAppId : "ecro7etqvzgnmc2e"
-    var weemoAuth = false;
-    var endpointUrl = '';
+    var webAppId = (pAppId != '' && pAppId != undefined) ? pAppId : "1033a56f0e68"
+    var weemoAuth = true;
+    var endpointUrl = '/weemo/auth/';
     var force = false;
 	
 	var debugLevel = 0;
@@ -38,7 +38,7 @@ var Weemo = function (pAppId, pToken, pType, pHap, pDebugLevel, pDisplayName) {
 	
 	var weemoType = pType;
 	
-	var hap = (pHap != '' && pHap != undefined) ? pHap : '';
+	var hap = (pHap != '' && pHap != undefined) ? pHap : 'ppr/';
 	
 	var displayName = '';
 	if(pDisplayName != undefined) displayName = pDisplayName;

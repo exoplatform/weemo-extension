@@ -45,14 +45,14 @@ public class VideoCallService {
   public static String VIDEOCALL_NODETYPE = "exo:videoCallProfile";
   public static String DISABLEVIDEOCALL_PROP ="exo:disableVideoCall";
   public static String WEEMOKEY_PROP = "exo:weemoKey";
-  public static String VIDEO_PROFILES_PROP = "exo:videoCallPermissions";
+  public static String VIDEO_PERMISSIONS_PROP = "exo:videoCallPermissions";
   public static String VIDEO_TOKEN_KEY = "exo:tokenKey";
   
   private static final Log LOG = ExoLogger.getLogger(VideoCallService.class.getName());
   
   protected static final String WORKSPACE_NAME = "collaboration";
   
-  public void VideoService() {
+  public VideoCallService() {
     videoProfileCache = WCMCoreUtils.getService(CacheService.class).getCacheInstance(VideoCallService.class.getName());
   }
   
@@ -90,8 +90,10 @@ public class VideoCallService {
       session.save();
       videoCallNode.setProperty(DISABLEVIDEOCALL_PROP, Boolean.valueOf(disbaleVideoCall));
       videoCallNode.setProperty(WEEMOKEY_PROP, weemoKey);
+      videoCallNode.setProperty(VIDEO_TOKEN_KEY, videoCallModel.getTokenKey());
+      videoCallNode.setProperty(VIDEO_PERMISSIONS_PROP, permissions);
       session.save();  
-      //videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
+      videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
     } catch (LoginException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("saveVideoCallProfile() failed because of ", e);
@@ -111,7 +113,7 @@ public class VideoCallService {
     }
   }
   
-  private VideoCallModel getVideoCallProfile() {
+  public VideoCallModel getVideoCallProfile() {
     VideoCallModel videoCallModel = null;
     if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
       videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);
@@ -160,6 +162,19 @@ public class VideoCallService {
     weemoKey = videoCallModel.getWeemoKey();
     return weemoKey;
   }
+  ///////////////////////////////////////////////////////////////////////////////////////////  
+  public String getTokenKey() {
+    String tokenKey = null;
+    VideoCallModel videoCallModel = null;
+    if(videoProfileCache != null && videoProfileCache.get(VIDEO_TOKEN_KEY) != null) {
+      videoCallModel = videoProfileCache.get(VIDEO_TOKEN_KEY);      
+     } else {
+       videoCallModel = getVideoCallProfile();      
+     }
+    tokenKey = videoCallModel.getWeemoKey();
+    return tokenKey;
+  }
+  
   /////////////////////////////////
   public boolean isDisableVideoCall() {
     boolean disableVideoCall = false;
