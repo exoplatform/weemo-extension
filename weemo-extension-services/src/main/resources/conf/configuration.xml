@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2009 eXo Platform SAS.
+    
+    This is free software; you can redistribute it and/or modify it
+    under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation; either version 2.1 of
+    the License, or (at your option) any later version.
+    
+    This software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    Lesser General Public License for more details.
+    
+    You should have received a copy of the GNU Lesser General Public
+    License along with this software; if not, write to the Free
+    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+    02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
+-->
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplaform.org/xml/ns/kernel_1_0.xsd http://www.exoplaform.org/xml/ns/kernel_1_0.xsd"
+	xmlns="http://www.exoplaform.org/xml/ns/kernel_1_0.xsd">
+	
+	<component>    
+      <type>org.exoplatform.services.videocall.VideoCallService</type>
+    </component>   
+    
+	
+
+	<external-component-plugins>
+	    <target-component>org.exoplatform.services.cache.CacheService</target-component>
+	    <!-- SettingService configuration -->    
+	    <component-plugin profiles="cluster">
+	      <name>addExoCacheConfig</name>
+	      <set-method>addExoCacheConfig</set-method>
+	      <type>org.exoplatform.services.cache.ExoCacheConfigPlugin</type>
+	      <description>The JBoss Cache configuration for the setting service</description>
+	      <init-params>
+	        <object-param>
+	          <name>org.exoplatform.services.videocall.VideoCallService</name>
+	          <description>The JBoss Cache configuration for the navigation service</description>
+	          <object type="org.exoplatform.services.cache.impl.jboss.ea.EAExoCacheConfig">
+	            <field name="name">
+	              <string>VideoCallService</string>
+	            </field>
+	            <field name="expirationTimeout">
+	              <long>${cache.exo.videocall.VideoCallService.ExpirationTimeout:600000}</long>
+	            </field>           
+	            <field name="distributed">
+	              <boolean>true</boolean>
+	            </field>
+	          </object>
+	        </object-param>
+	      </init-params>
+	    </component-plugin>
+	</external-component-plugins>
+
+
+</configuration>

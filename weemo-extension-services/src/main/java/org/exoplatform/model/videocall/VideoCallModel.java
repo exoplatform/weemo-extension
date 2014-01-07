@@ -25,6 +25,7 @@ public class VideoCallModel {
   
   private String disableVideoCall = null;
   private String weemoKey = null;
+  private String tokenKey = null;
   private HashMap< String, Boolean> videoCallPermissions = null;
   
 
@@ -43,6 +44,14 @@ public class VideoCallModel {
   
   public void setWeemoKey(String weemoKey) {
     this.weemoKey = weemoKey;
+  }
+  
+  public String getTokenKey() {
+    return tokenKey;
+  }
+  
+  public void setTokenKey(String tokenKey) {
+    this.tokenKey = tokenKey;
   }
   
   public HashMap<String, Boolean> getVideoCallPermissions() {

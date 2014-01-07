@@ -51,10 +51,7 @@ public class RESTAuthService implements ResourceContainer{
   @Path("/auth/{profileId}/")
   @RolesAllowed("users")
   public Response auth(@Context HttpServletRequest servletRequest, @PathParam("profileId") String profileId) {
-    String weemoToken = authService.authenticate(servletRequest, profileId);
-    JSONArray json = new JSONArray();    
-    json.put(weemoToken);
-    return Response.ok(json.toString(), MediaType.APPLICATION_JSON).build();
-    
+    String content = authService.authenticate(servletRequest, profileId);    
+    return Response.ok(content, MediaType.APPLICATION_JSON).build();    
   }
 }

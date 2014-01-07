@@ -76,6 +76,22 @@ public class PropertyManager {
       }     
       overridePropertyIfNotSet(PROPERTY_INTERVAL_NOTIF, "3000");      
       //overridePropertyIfNotSet(PROPERTY_WEEMO_KEY, "");
+      overridePropertyIfNotSet(PROPERTY_APP_ID, "1033a56f0e68");
+      overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "exo_domain");
+      overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "XnyexbUF");
+      overridePropertyIfNotSet(PROPERTY_AUTH_URL, "https://oauths-ppr.weemo.com/auth/");
+      overridePropertyIfNotSet(PROPERTY_CA_FILE, "/weemo-extension/resources/weemo-ca.pem");
+      overridePropertyIfNotSet(PROPERTY_P12_FILE, "/weemo-extension/resources/client.p12");
+      overridePropertyIfNotSet(PROPERTY_USER_ID_AUTH, "eXoCloud");
+      overridePropertyIfNotSet(PROPERTY_PASS_AUTH, "bc2e05cf11");
+      overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_AUTH, "33cc7f1e82763049a4944a702c880d");
+      overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_AUTH, "3569996f0d03b2cd3880223747c617");
+      overridePropertyIfNotSet(PROPERTY_USER_ID_ALLOW, "eXoCloud");
+      overridePropertyIfNotSet(PROPERTY_PASS_ALLOW, "7625b9b08d");
+      overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_ALLOW, "33cc7f1e82763049a4944a702c880d");
+      overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_ALLOW, "3569996f0d03b2cd3880223747c617");
+      
+      
       videoCallService = new VideoCallService();
       if(!videoCallService.isExistVideoCallProfile()) {
         VideoCallModel videoCallModel = new VideoCallModel();

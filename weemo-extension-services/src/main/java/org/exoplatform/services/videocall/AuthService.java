@@ -16,57 +16,37 @@
  */
 package org.exoplatform.services.videocall;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.StrictHostnameVerifier;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.exoplatform.portal.application.PortalRequestContext;
-import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.webui.application.WebuiRequestContext;
-import org.exoplatform.webui.application.portlet.PortletRequestContext;
-import org.gatein.common.logging.Logger;
-import org.gatein.common.logging.LoggerFactory;
 
 
 
@@ -80,7 +60,9 @@ public class AuthService {
   private String passphrase = null;
   private String app_id = null;
   private String domain_id = null;
-  private SSLContext sslContext = null;
+  
+  private static File local_ca_file = null;
+  private static File local_p12_file = null;
   
   private static final Log LOG = ExoLogger.getLogger(AuthService.class.getName());
   
@@ -98,68 +80,89 @@ public class AuthService {
   
   
   public String authenticate(HttpServletRequest servletRequest, String profile_id) {
-    String weemoToken = null;
-    
-    DefaultHttpClient httpClient = new DefaultHttpClient();
+    String responseContent = null;    
     try {
-      SSLContext ctx = SSLContext.getInstance("TLS");
-      
-      StringBuffer sb = new StringBuffer();
-      String scheme = servletRequest.getScheme();
-      String serverName = servletRequest.getServerName();
-      int serverPort = servletRequest.getServerPort();
-      sb.append(scheme).append("://").append(serverName);
-      if(serverPort!=80 && serverPort!=43) {
-        sb.append(":").append(serverPort);      
+      SSLContext ctx = SSLContext.getInstance("SSL");
+      URL url = null;
+      try {
+        String urlStr = authUrl + "?client_id=" + clientId + "&client_secret=" + clientSecret;
+        LOG.info("Request URL: " + urlStr);
+        url = new URL(urlStr);
       }
-      String relPath = sb.toString();
-      
-      
-      InputStream p12InputStream = new URL(relPath + p12File).openStream();
-      File p12File = convertInputStreamToFile(p12InputStream, "client.p12");
-      InputStream pemInputStream = new URL(relPath + caFile).openStream();
-      File pemFile = convertInputStreamToFile(pemInputStream, "weemo-ca.pem");      
-      
-      
-      KeyManager[] keyManagers = getKeyManagers("PKCS12", new FileInputStream(p12File), "XnyexbUF");
-      TrustManager[] trustManagers = getTrustManagers(new FileInputStream(pemFile), "XnyexbUF");     
-      
-      
-      ctx.init(keyManagers, trustManagers, new SecureRandom());
-      SSLSocketFactory factory = new SSLSocketFactory(ctx, new StrictHostnameVerifier());
-
-      ClientConnectionManager manager = httpClient.getConnectionManager();
-      manager.getSchemeRegistry().register(new Scheme("https", 443, factory));
-      
-      Scheme sch = new Scheme("https", 443, factory);
-      httpClient.getConnectionManager().getSchemeRegistry().register(sch);
-
-      httpClient.getConnectionManager().getSchemeRegistry().register(sch);
-      
-      HttpGet httpget = new HttpGet(authUrl);
-      httpget.addHeader("client_id", clientId);
-      httpget.addHeader("client_secret", clientSecret);
-      httpget.addHeader("uid", app_id);
-      httpget.addHeader("identifier_client", domain_id);
-      httpget.addHeader("id_profile", profile_id);
-      System.out.println("Executing request" + httpget.getRequestLine());
-      HttpResponse response = httpClient.execute(httpget);
-      HttpEntity entity = response.getEntity();
-
-      System.out.println(response.getStatusLine());
-      if (entity != null) {
-          System.out.println("Response content length: " + entity.toString());
+      catch (MalformedURLException e) {
+        if (LOG.isErrorEnabled()) {
+          LOG.error("Could not create valid URL with base (see log for full URL)");
+        }
       }
-      EntityUtils.consume(entity);
+      HttpsURLConnection connection = null;
+      try {
+        connection = (HttpsURLConnection) url.openConnection();
+      } catch (IOException e) {
+        if (LOG.isErrorEnabled()) {
+          LOG.error("Could not connect (see log for full URL)");
+        }
+      }
       
+      String post = "uid=" + URLEncoder.encode(app_id, "UTF-8")
+          + "&identifier_client=" + URLEncoder.encode(domain_id, "UTF-8")
+          +  "&id_profile=" + URLEncoder.encode(profile_id, "UTF-8");
+      LOG.info("Post: " + post);
       
+      if(local_p12_file == null || local_ca_file == null) {
+        StringBuffer sb = new StringBuffer();
+        String scheme = servletRequest.getScheme();
+        String serverName = servletRequest.getServerName();
+        int serverPort = servletRequest.getServerPort();
+        sb.append(scheme).append("://").append(serverName);
+        if(serverPort!=80 && serverPort!=43) {
+          sb.append(":").append(serverPort);      
+        }
+        String relPath = sb.toString();
+        
+        InputStream p12InputStream = new URL(relPath + p12File).openStream();
+        local_p12_file = convertInputStreamToFile(p12InputStream, p12File.substring(p12File.lastIndexOf("/")+1, p12File.length()));
+       
+        InputStream pemInputStream = new URL(relPath + caFile).openStream();
+        local_ca_file = convertInputStreamToFile(pemInputStream, caFile.substring(caFile.lastIndexOf("/")+1, caFile.length())); 
+      }     
       
+      KeyManager[] keyManagers = getKeyManagers("PKCS12", new FileInputStream(local_p12_file), passphrase);
+      TrustManager[] trustManagers = getTrustManagers(new FileInputStream(local_ca_file), passphrase);          
+      ctx.init(keyManagers, trustManagers, new SecureRandom());      
+      try {
+        connection.setSSLSocketFactory(ctx.getSocketFactory());
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true);
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Content-Length", String.valueOf(post.getBytes().length));
+      } catch (Exception e) {
+        if (LOG.isErrorEnabled()) {
+          LOG.error("Could not configure request for POST (see log for full URL & post body)");
+        }
+      }
       
-
+      try {
+        LOG.info("Connecting");
+        connection.connect();
+      } catch (IOException e) {
+        if (LOG.isErrorEnabled()) {
+          LOG.error("Could not connect request (see log for full URL)");
+        }
+      }
+      
+      BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+      StringBuilder sbuilder = new StringBuilder();
+      String line;
+      while ((line = br.readLine()) != null) {
+        sbuilder.append(line+"\n");
+      }
+      br.close();
+      responseContent = sbuilder.toString();
+      
     } catch(Exception ex) {
       ex.printStackTrace();
     }    
-    return weemoToken;
+    return responseContent;
   }
   
   protected static KeyManager[] getKeyManagers(String keyStoreType, InputStream keyStoreFile, String keyStorePassword) throws Exception {
@@ -200,7 +203,9 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
       certificateFactory = CertificateFactory.getInstance("X.509");
     }
     catch (CertificateException e) {
-      e.printStackTrace();
+      if (LOG.isErrorEnabled()) {
+        LOG.error("Could not initialize the certificate " + e);
+      }
     }
     
     Certificate caCert = null;
@@ -232,8 +237,7 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
       if (LOG.isErrorEnabled()) {
         LOG.error("Could not initialize truststore ", e);
       }
-    }
-    
+    }    
     
     try {
       trustStore.setCertificateEntry("CA", caCert);
@@ -255,8 +259,9 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
       LOG.error("Java implementation cannot manipulate " + KeyStore.getDefaultType() + " trusts", e);
     }     
     return tmf.getTrustManagers();
-  }
-
+  } 
+  
+  ///////////////////////////////////////////////////////////////////
   public static File convertInputStreamToFile(InputStream inputStream, String fileName) {
     File file = null;
     OutputStream outputStream = null;
@@ -291,11 +296,17 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
     return file;
   }
   
+  //////////////////////////////////////////////////////
   public static void main(String[] args) {
-    DefaultHttpClient httpClient = new DefaultHttpClient();
     try {
-      SSLContext ctx = SSLContext.getInstance("TLS"); 
-      
+      SSLContext ctx = SSLContext.getInstance("SSL"); 
+      URL url ;  
+      String urlStr = "https://oauths-ppr.weemo.com/auth/" + "?client_id=33cc7f1e82763049a4944a702c880d&client_secret=3569996f0d03b2cd3880223747c617";
+      String post = "uid=" + URLEncoder.encode("1033a56f0e68", "UTF-8")
+          + "&identifier_client=" + URLEncoder.encode("exo_domain", "UTF-8")
+          + "&id_profile=" + URLEncoder.encode("basic", "UTF-8");      
+      url = new URL(urlStr);      
+      HttpsURLConnection connection = (HttpsURLConnection) url.openConnection(); 
       
       InputStream p12InputStream = new URL("http://localhost:8080/weemo-extension/resources/client.p12").openStream();
       File p12File = convertInputStreamToFile(p12InputStream, "client.p12");
@@ -303,43 +314,36 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
       InputStream pemInputStream = new URL("http://localhost:8080/weemo-extension/resources/weemo-ca.pem").openStream();
       File pemFile = convertInputStreamToFile(pemInputStream, "weemo-ca.pem");
       
-      
-      //TrustManager[] trustManagers = getTrustManagers(new FileInputStream(new File("/home/tanhq/java/eXoProjects/weemo-extension/weemo-extension-services/src/main/resources/conf/weemo-ca.pem")), "XnyexbUF");
-      //KeyManager[] keyManagers = getKeyManagers("PKCS12", new FileInputStream(new File("/home/tanhq/java/eXoProjects/weemo-extension/weemo-extension-services/src/main/resources/conf/client.p12")), "XnyexbUF");
+      //KeyManager[] keyManagers = getKeyManagers("PKCS12", new FileInputStream(new File("/home/tanhq/java/eXoProjects/weemo-extension/weemo-extension-webapp/src/main/webapp/resources/client.p12")), "XnyexbUF");      
+      //TrustManager[] trustManagers = getTrustManagers(new FileInputStream(new File("/home/tanhq/java/eXoProjects/weemo-extension/weemo-extension-webapp/src/main/webapp/resources/weemo-ca.pem")), "XnyexbUF");
       
       KeyManager[] keyManagers = getKeyManagers("PKCS12", new FileInputStream(p12File), "XnyexbUF");
       TrustManager[] trustManagers = getTrustManagers(new FileInputStream(pemFile), "XnyexbUF");
-      
-      
+      HostnameVerifier hv = new HostnameVerifier() {
+        public boolean verify(String hostname, SSLSession session) { return true; }
+
+       
+      };
       
       ctx.init(keyManagers, trustManagers, new SecureRandom());
-      SSLSocketFactory factory = new SSLSocketFactory(ctx, new StrictHostnameVerifier());
-
-      ClientConnectionManager manager = httpClient.getConnectionManager();
-      manager.getSchemeRegistry().register(new Scheme("https", 443, factory));
+      connection.setSSLSocketFactory(ctx.getSocketFactory());
+      connection.setRequestMethod("POST");
+      connection.setDoOutput(true);
+      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+      connection.setRequestProperty("Content-Length", String.valueOf(post.getBytes().length));
+      connection.connect();
       
-      Scheme sch = new Scheme("https", 443, factory);
-      httpClient.getConnectionManager().getSchemeRegistry().register(sch);
-
-      httpClient.getConnectionManager().getSchemeRegistry().register(sch);
+      connection.getOutputStream().write(post.getBytes());
       
-      HttpGet httpget = new HttpGet("https://oauths-ppr.weemo.com/auth/");
-      httpget.addHeader("client_id", "33cc7f1e82763049a4944a702c880d");
-      httpget.addHeader("client_secret", "3569996f0d03b2cd3880223747c617");
-      httpget.addHeader("uid", "1033a56f0e68");
-      httpget.addHeader("identifier_client", "exo_domain");
-      httpget.addHeader("id_profile", "basic");
-      System.out.println("Executing request" + httpget.getRequestLine());
-      HttpResponse response = httpClient.execute(httpget);
-      HttpEntity entity = response.getEntity();
-
-      System.out.println("----------------------------------------");
-      System.out.println(response.getStatusLine());
-      if (entity != null) {
-          System.out.println("Response content length: " + entity.toString());
+      
+      BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+      StringBuilder sb = new StringBuilder();
+      String line;
+      while ((line = br.readLine()) != null) {
+          sb.append(line+"\n");
       }
-      EntityUtils.consume(entity);
-
+      br.close();
+      System.out.println(sb.toString());
     } catch(Exception ex) {
       ex.printStackTrace();
     }

@@ -19,14 +19,14 @@ package org.exoplatform.services.videocall;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
-
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.ExoCache;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
@@ -39,17 +39,22 @@ import org.apache.commons.lang.StringUtils;
 
 public class VideoCallService {
   private static ExoCache<Serializable, VideoCallModel> videoProfileCache;
-  private static String VIDEO_PROFILE_KEY = "videoCallsProfile";
+  private static String VIDEO_PROFILE_KEY = "videoCallsProfile" + CommonsUtils.getRepository().getConfiguration().getName();
   public static String BASE_PATH = "exo:applications";
   public static String VIDEOCALL_BASE_PATH = "VideoCall";
   public static String VIDEOCALL_NODETYPE = "exo:videoCallProfile";
   public static String DISABLEVIDEOCALL_PROP ="exo:disableVideoCall";
   public static String WEEMOKEY_PROP = "exo:weemoKey";
   public static String VIDEO_PROFILES_PROP = "exo:videoCallPermissions";
+  public static String VIDEO_TOKEN_KEY = "exo:tokenKey";
   
   private static final Log LOG = ExoLogger.getLogger(VideoCallService.class.getName());
   
   protected static final String WORKSPACE_NAME = "collaboration";
+  
+  public void VideoService() {
+    videoProfileCache = WCMCoreUtils.getService(CacheService.class).getCacheInstance(VideoCallService.class.getName());
+  }
   
   public void saveVideoCallProfile(VideoCallModel videoCallModel) {
     String disbaleVideoCall = videoCallModel.getDisableVideoCall();
@@ -86,7 +91,7 @@ public class VideoCallService {
       videoCallNode.setProperty(DISABLEVIDEOCALL_PROP, Boolean.valueOf(disbaleVideoCall));
       videoCallNode.setProperty(WEEMOKEY_PROP, weemoKey);
       session.save();  
-      
+      //videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
     } catch (LoginException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("saveVideoCallProfile() failed because of ", e);
@@ -106,157 +111,132 @@ public class VideoCallService {
     }
   }
   
-  public String getWeemoKey() {
-    String weemoKey = null;
-    SessionProvider sessionProvider = null;
-    RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
-    sessionProvider = WCMCoreUtils.getUserSessionProvider();
-    Session session;
-    try {
-      session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
-      Node rootNode = session.getRootNode();
-      Node baseNode = rootNode.getNode(BASE_PATH);
-      if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
-        Node videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);
-        weemoKey = videoCallNode.getProperty(WEEMOKEY_PROP).getString();
-      }
-    } catch (LoginException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
-      }
-    } catch (NoSuchWorkspaceException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
-      }
-    } catch (RepositoryException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
+  private VideoCallModel getVideoCallProfile() {
+    VideoCallModel videoCallModel = null;
+    if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
+      videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);
+    } else {
+      SessionProvider sessionProvider = null;
+      RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
+      sessionProvider = WCMCoreUtils.getUserSessionProvider();
+      Session session;
+      try {
+        session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
+        Node rootNode = session.getRootNode();
+        Node baseNode = rootNode.getNode(BASE_PATH);
+        if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
+          Node videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);
+          videoCallModel = new VideoCallModel();
+          videoCallModel.setWeemoKey(videoCallNode.getProperty(WEEMOKEY_PROP).getString());
+          videoCallModel.setDisableVideoCall(videoCallNode.getProperty(DISABLEVIDEOCALL_PROP).getString());
+          videoCallModel.setTokenKey(videoCallNode.getProperty(VIDEO_TOKEN_KEY).getString());
+          videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
+        }
+      } catch (LoginException e) {
+        if (LOG.isErrorEnabled()) {
+          LOG.error("getWeemoKey() failed because of ", e);
+        }
+      } catch (NoSuchWorkspaceException e) {
+        if (LOG.isErrorEnabled()) {
+          LOG.error("getWeemoKey() failed because of ", e);
+        }
+      } catch (RepositoryException e) {
+        if (LOG.isErrorEnabled()) {
+          LOG.error("getWeemoKey() failed because of ", e);
+        }
       }
     }
+    return videoCallModel;
+  }
+  ///////////////////////////////////////////////////////////////////////////////////////////  
+  public String getWeemoKey() {
+    String weemoKey = null;
+    VideoCallModel videoCallModel = null;
+    if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
+      videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);      
+    } else {
+      videoCallModel = getVideoCallProfile();      
+    }
+    weemoKey = videoCallModel.getWeemoKey();
     return weemoKey;
   }
   /////////////////////////////////
   public boolean isDisableVideoCall() {
     boolean disableVideoCall = false;
-    SessionProvider sessionProvider = null;
-    RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
-    sessionProvider = WCMCoreUtils.getUserSessionProvider();
-    Session session;
-    try {
-      session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
-      Node rootNode = session.getRootNode();
-      Node baseNode = rootNode.getNode(BASE_PATH);
-      if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
-        Node videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);
-        String str = videoCallNode.getProperty(DISABLEVIDEOCALL_PROP).getString();
-        disableVideoCall = Boolean.valueOf(str);
-      }
-    } catch (LoginException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
-      }
-    } catch (NoSuchWorkspaceException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
-      }
-    } catch (RepositoryException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
-      }
+    VideoCallModel videoCallModel = null;
+    if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
+      videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);      
+    } else {
+      videoCallModel = getVideoCallProfile();
+    }
+    if(videoCallModel.getDisableVideoCall() != null) {
+      disableVideoCall = Boolean.valueOf(videoCallModel.getDisableVideoCall());
     }
     return disableVideoCall;
   }
   
   //////////////////////////////////////////////////////
   public void setDisableVideoCall(boolean disableVideoCall) {
-    SessionProvider sessionProvider = null;
-    RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
-    sessionProvider = WCMCoreUtils.getUserSessionProvider();
-    Session session;
-    try {
-      session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
-      Node rootNode = session.getRootNode();
-      Node baseNode = rootNode.getNode(BASE_PATH);
-      if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
-        Node videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);
-        videoCallNode.setProperty(VIDEOCALL_BASE_PATH, disableVideoCall);
-      }
-    } catch (LoginException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
-      }
-    } catch (NoSuchWorkspaceException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
-      }
-    } catch (RepositoryException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
-      }
+    VideoCallModel videoCallModel = null;
+    if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
+      videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);      
+    } else {
+      videoCallModel = getVideoCallProfile();
     }
+    videoCallModel.setDisableVideoCall(String.valueOf(disableVideoCall));
+    saveVideoCallProfile(videoCallModel);   
   }
   //////////////////////////////////////////////////////////
   public boolean isExistVideoCallProfile() {
     boolean isExist = false;
-    SessionProvider sessionProvider = null;
-    RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
-    sessionProvider = WCMCoreUtils.getSystemSessionProvider();
-    Session session;
-    try {
-      session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
-      Node rootNode = session.getRootNode();
-      Node baseNode = rootNode.getNode(BASE_PATH);
-      if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
-        isExist = true;
+    VideoCallModel videoCallModel = null;
+    if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
+      videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY); 
+      if(videoCallModel != null) isExist = true;  
+    } else {
+      SessionProvider sessionProvider = null;
+      RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
+      sessionProvider = WCMCoreUtils.getSystemSessionProvider();
+      Session session;
+      try {
+        session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
+        Node rootNode = session.getRootNode();
+        Node baseNode = rootNode.getNode(BASE_PATH);
+        if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
+          isExist = true;
+        }
+      } catch (LoginException e) {
+        if (LOG.isErrorEnabled()) {
+          LOG.error("getWeemoKey() failed because of ", e);
+        }
+      } catch (NoSuchWorkspaceException e) {
+        if (LOG.isErrorEnabled()) {
+          LOG.error("getWeemoKey() failed because of ", e);
+        }
+      } catch (RepositoryException e) {
+        if (LOG.isErrorEnabled()) {
+          LOG.error("getWeemoKey() failed because of ", e);
+        }
+      } finally {
+        if (sessionProvider != null) {
+          sessionProvider.close();
+        }
       }
-    } catch (LoginException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
-      }
-    } catch (NoSuchWorkspaceException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
-      }
-    } catch (RepositoryException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e);
-      }
-    }  
+    }     
     return isExist;
   }
   ////////////////////////////////////////////////////////
   public boolean isTurnOffVideoCall() {
     boolean isTurnOff = false;
-    SessionProvider sessionProvider = null;
-    RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
-    sessionProvider = WCMCoreUtils.getUserSessionProvider();
-    try {
-      Session session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());      
-      Node rootNode = session.getRootNode();
-      Node baseNode = rootNode.getNode(BASE_PATH);
-      Node videoCallNode = null;
-      if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
-        videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);
-        String weemoKey = videoCallNode.getProperty(WEEMOKEY_PROP).getString();
-        String str = videoCallNode.getProperty(DISABLEVIDEOCALL_PROP).getString();
-        if(Boolean.valueOf(str) || StringUtils.isEmpty(weemoKey)) return true;
-      } else {
-        return true;
-      }      
-    } catch (LoginException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("saveVideoCallProfile() failed because of ", e);
-      }
-    } catch (NoSuchWorkspaceException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("saveVideoCallProfile() failed because of ", e);
-      }
-    } catch (RepositoryException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("saveVideoCallProfile() failed because of ", e);
-      }
+    VideoCallModel videoCallModel = null;
+    if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
+      videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);      
+    } else {
+      videoCallModel = getVideoCallProfile();
     }
-    
+    String weemoKey = videoCallModel.getWeemoKey();
+    String str = videoCallModel.getDisableVideoCall();
+    if(Boolean.valueOf(str) || StringUtils.isEmpty(weemoKey)) return true; 
     return isTurnOff;
   }
 
