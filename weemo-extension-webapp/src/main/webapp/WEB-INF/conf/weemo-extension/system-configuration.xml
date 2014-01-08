@@ -33,9 +33,8 @@
 	   
    <component>    
      <type>org.exoplatform.services.videocall.RESTAuthService</type>
-   </component>   
+   </component> 
    
-
   <external-component-plugins>
     <target-component>org.exoplatform.services.jcr.RepositoryService</target-component>
     <component-plugin>

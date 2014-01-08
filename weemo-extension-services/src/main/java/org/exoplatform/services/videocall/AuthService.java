@@ -47,6 +47,10 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 
 
 
@@ -82,10 +86,11 @@ public class AuthService {
   public String authenticate(HttpServletRequest servletRequest, String profile_id) {
     String responseContent = null;    
     try {
+      String userId = ConversationState.getCurrent().getIdentity().getUserId();     
       SSLContext ctx = SSLContext.getInstance("SSL");
       URL url = null;
       try {
-        String urlStr = authUrl + "?client_id=" + clientId + "&client_secret=" + clientSecret;
+        String urlStr = authUrl + "?client_id=" + clientId + "&client_secret=" + clientSecret + "&uid=userId" + userId;
         LOG.info("Request URL: " + urlStr);
         url = new URL(urlStr);
       }
@@ -103,8 +108,7 @@ public class AuthService {
         }
       }
       
-      String post = "uid=" + URLEncoder.encode(app_id, "UTF-8")
-          + "&identifier_client=" + URLEncoder.encode(domain_id, "UTF-8")
+      String post = "identifier_client=" + URLEncoder.encode(domain_id, "UTF-8")
           +  "&id_profile=" + URLEncoder.encode(profile_id, "UTF-8");
       LOG.info("Post: " + post);
       

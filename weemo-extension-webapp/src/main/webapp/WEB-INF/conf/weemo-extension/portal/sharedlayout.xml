@@ -105,6 +105,7 @@
             <access-permissions>*:/platform/users</access-permissions>
         </container>
     </container>
+    
     <container id="VideoCall" template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
         <access-permissions>*:/platform/users</access-permissions>
             <portlet-application>

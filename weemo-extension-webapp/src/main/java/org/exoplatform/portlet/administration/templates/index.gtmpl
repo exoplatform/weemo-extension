@@ -22,7 +22,7 @@
 			  <div class="control-group">
 			    <label style="text-align: left; width: auto; font-weight: bold;" class="control-label" for="weemoKey">Weemo Key</label>
 			    <div class="controls" style="margin-left: 85px;">
-			      <input class="span2" type="text" id="weemoKey" name="weemoKey" value=<%=weemoKey%> placeholder="Weemo Key">
+			      <input class="span2" type="text" id="weemoKey" name="weemoKey" value="<%=weemoKey%>" placeholder="Weemo Key">
 			    </div>
 			  </div>		  
 			  

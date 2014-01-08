@@ -32,7 +32,7 @@
               <string>portal</string>
             </field>
             <field name="templateLocation">
-              <string>war:/conf/weemo/</string>
+              <string>war:/conf/weemo-extension/portal</string>
             </field>
             <field name="importMode"><string>merge</string></field>
           </object>

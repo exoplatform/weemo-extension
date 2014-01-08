@@ -78,6 +78,7 @@ function WeemoExtension() {
       var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
       if(!isNotInstallWeemoDriver || 0 === isNotInstallWeemoDriver.length) {
         weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
+	weemoExtension.setCookie("downloadUrl", downloadUrl, 365);
       }
       weemoExtension.showWeemoInstaller();
       if (navigator.platform !== "Linux") {        
@@ -202,7 +203,9 @@ WeemoExtension.prototype.showWeemoInstaller = function() {
       var height = uiToolbarContainer.outerHeight() - jqchat(".alert").css("marginTop").replace('px', '');
 
       jqchat("#weemo-alert").css({ top: height+'px' });
-      jqchat("#weemo-alert").show();        
+      jqchat("#weemo-alert").show();   
+      var downloadUrl = weemoExtension.getCookie("downloadUrl");
+      jqchat("#weemo-alert-download").attr("href", downloadUrl);    
       jqchat("#weemo-alert-dismiss").click(function() {
         weemoExtension.setCookie("isDismiss", "true", 365);
         jqchat("#weemo-alert").hide();
@@ -532,12 +535,7 @@ var weemoExtension = new WeemoExtension();
     
     //GETTING DOM CONTEXT
     var $notificationApplication = $("#weemo-status");
-    var isTurnOff = $notificationApplication.attr("data-weemo-turnoff");
-    if(isTurnOff == "true") return;
-    var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
-    if(isNotInstallWeemoDriver) {
-	weemoExtension.showWeemoInstaller();
-    }
+    
     
     // WEEMO NOTIFICATION INIT
     weemoExtension.initOptions({
@@ -546,6 +544,17 @@ var weemoExtension = new WeemoExtension();
       "urlGetState": "/rest/state/status/",
       "notificationInterval": $notificationApplication.attr("data-weemo-interval-notif")      
     });
+
+    weemoExtension.notifEventInt = window.clearInterval(weemoExtension.notifEventInt);
+    weemoExtension.notifEventInt = setInterval(jqchat.proxy(weemoExtension.refreshNotif, weemoExtension), 	    		    weemoExtension.weemoIntervalNotif);
+    weemoExtension.refreshNotif();
+
+    var isTurnOff = $notificationApplication.attr("data-weemo-turnoff");
+    if(isTurnOff == "true") return;
+    var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
+    if(isNotInstallWeemoDriver) {
+	weemoExtension.showWeemoInstaller();
+    }
 
     // WEEMO : GETTING AND SETTING KEY
     var weemoKey = $notificationApplication.attr("data-weemo-key");
@@ -562,9 +571,7 @@ var weemoExtension = new WeemoExtension();
 
 
 
-    weemoExtension.notifEventInt = window.clearInterval(weemoExtension.notifEventInt);
-    weemoExtension.notifEventInt = setInterval(jqchat.proxy(weemoExtension.refreshNotif, weemoExtension), 		  weemoExtension.weemoIntervalNotif);
-    weemoExtension.refreshNotif();
+    
 
     
   });
