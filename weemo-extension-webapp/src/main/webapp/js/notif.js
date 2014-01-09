@@ -75,11 +75,11 @@ function WeemoExtension() {
      * @param downloadUrl
      */
     this.weemo.onWeemoDriverNotStarted = function(downloadUrl) {
-      var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
+      var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");      
       if(!isNotInstallWeemoDriver || 0 === isNotInstallWeemoDriver.length) {
         weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
 	weemoExtension.setCookie("downloadUrl", downloadUrl, 365);
-      }
+      }    
       weemoExtension.showWeemoInstaller();
       if (navigator.platform !== "Linux") {        
         jqchat("#weemo-alert-download").attr("href", downloadUrl);
@@ -198,6 +198,7 @@ WeemoExtension.prototype.showWeemoInstaller = function() {
   }
   var isDismiss = weemoExtension.getCookie('isDismiss');
   if(!weemoExtension.isConnected) {
+    console.log(document.cookie.split(';'));
     if ((typeof(isDismiss) == "undefined" && isDismiss == null) || !isDismiss ) {
       var uiToolbarContainer = jqchat("#UIToolbarContainer");
       var height = uiToolbarContainer.outerHeight() - jqchat(".alert").css("marginTop").replace('px', '');
@@ -308,7 +309,7 @@ WeemoExtension.prototype.createWeemoCall = function(targetUser, targetFullname, 
     }
 
     if (targetUser.indexOf("space-")===-1 && targetUser.indexOf("team-")===-1) {
-      this.setUidToCall("weemo"+targetUser);
+      this.setUidToCall("weemo_"+targetUser);
       this.setDisplaynameToCall(targetFullname);
       this.setCallType("internal");
     } else {

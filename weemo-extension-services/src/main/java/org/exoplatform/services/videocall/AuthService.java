@@ -90,7 +90,7 @@ public class AuthService {
       SSLContext ctx = SSLContext.getInstance("SSL");
       URL url = null;
       try {
-        String urlStr = authUrl + "?client_id=" + clientId + "&client_secret=" + clientSecret + "&uid=userId" + userId;
+        String urlStr = authUrl + "?client_id=" + clientId + "&client_secret=" + clientSecret + "&uid=weemo_" + userId;
         LOG.info("Request URL: " + urlStr);
         url = new URL(urlStr);
       }
