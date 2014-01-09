@@ -49,7 +49,7 @@
      </supports>
      <supported-locale>en</supported-locale>
      <supported-locale>fr</supported-locale>     
-     <resource-bundle>locale.portlet.administration.Resource</resource-bundle>
+     <resource-bundle>locale.portlet.videocall.Resource</resource-bundle>
      <portlet-info>
        <title>Video Call Administration</title>
        <keywords>Video Call</keywords>

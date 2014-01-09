@@ -127,7 +127,7 @@
     
     <page>
       <name>videoCallAdmin</name>
-      <title>Video Call Administration</title>
+      <title>Video Calls Administration</title>
       <access-permissions>manager:/platform/administrators</access-permissions>
       <edit-permission>manager:/platform/administrators</edit-permission>
       <portlet-application>
@@ -135,8 +135,8 @@
                 <application-ref>weemo-extension</application-ref>
                 <portlet-ref>VideoCallAdministration</portlet-ref>
             </portlet>
-            <title>Video Call Administration</title>
-            <access-permissions>manager:/platform/administrators</access-permissions>
+            <title>Video Calls Administration</title>
+            <access-permissions>*:/platform/administrators</access-permissions>
             <show-info-bar>false</show-info-bar>
         </portlet-application>
     </page>

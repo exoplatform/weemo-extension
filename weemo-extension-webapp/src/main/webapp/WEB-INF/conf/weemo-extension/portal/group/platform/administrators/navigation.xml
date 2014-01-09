@@ -30,8 +30,8 @@
         <node>
             <uri>videoCallAdmin</uri>
             <name>videoCallAdmin</name>
-            <label>Video Call Administration</label>
-            <page-reference>portal::intranet::videoCallAdmin</page-reference>
+            <label>#{administration.videocalls}</label>
+            <page-reference>group::/platform/administrators::videoCallAdmin</page-reference>
         </node>
     </page-nodes>
 </node-navigation>

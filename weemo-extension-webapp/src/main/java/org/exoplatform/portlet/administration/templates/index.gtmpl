@@ -7,7 +7,7 @@
     padding: 10px 0;
     text-shadow: 0 3px 4px #fff;
     margin-bottom: 20px;">
-  	Video Calls Administration
+  	&{exoplatform.videocall.administration.title}
   </div>
   
   <div class="uiBox" style="  ">
@@ -16,13 +16,13 @@
 			  <div class="control-group">
 			    <label class="checkbox" style="font-weight: bold;">
 			      <input id="disableVideoCalls" name="disableVideoCall" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">
-				  Turn off Video Calls
+				  &{exoplatform.videocall.turnoff}
 				</label>	    
 			  </div>
 			  <div class="control-group">
-			    <label style="text-align: left; width: auto; font-weight: bold;" class="control-label" for="weemoKey">Weemo Key</label>
+			    <label style="text-align: left; width: auto; font-weight: bold;" class="control-label" for="weemoKey">&{exoplatform.videocall.weemokey}</label>
 			    <div class="controls" style="margin-left: 85px;">
-			      <input class="span2" type="text" id="weemoKey" name="weemoKey" value="<%=weemoKey%>" placeholder="Weemo Key">
+			      <input class="span2" type="text" id="weemoKey" name="weemoKey" value="<%=weemoKey%>" placeholder="&{exoplatform.videocall.weemokey}">
 			    </div>
 			  </div>		  
 			  
@@ -30,13 +30,13 @@
 			<div class="UIViewPermissionContainer" id="UIViewPermissionContainer" style="padding-bottom: 20px;">
 
 			<div id="UIViewPermissionList">
-			    <h6>Permissions</h6>
+			    <h6>&{exoplatform.videocall.permissions}</h6>
 				<table class="uiGrid table table-hover table-striped">
 				  <thead>
 				    <tr>
-				          <th>Owner</th>
-				          <th>1:1 Video Calls</th>				        
-				          <th class="span2 center">Action</th>
+				          <th>&{exoplatform.videocall.owner}</th>
+				          <th>&{exoplatform.videocall.1_1profile}</th>				        
+				          <th class="span2 center">&{exoplatform.videocall.action}</th>
 				    </tr>
 				  </thead>
 				  <tbody>
@@ -44,7 +44,7 @@
 				    <tr>
 				      <td class="empty center" colspan="3">
 				      	<div class="actionContainer">
-					        There is no permission on this view
+					        &{exoplatform.videocall.permissions.empty.message}
 					    </div>
 				      </td>
 				    </tr>  
@@ -69,7 +69,7 @@
 									<a class="actionIcon"  rel="tooltip" data-placement="bottom" data-original-title="Select Membership"><i class="uiIconSelectMember uiIconLightGray"></i></a>
 								
 							
-							     <button type="button" class="btn btn-primary">Add</button>
+							     <button type="button" class="btn btn-primary">&{exoplatform.videocall.action.add}</button>
 						 
 						 	</div>
 						 	
@@ -85,7 +85,7 @@
 			  
 			  
 			  <div class="uiAction uiActionBorder">				
-			     <button type="submit" class="btn btn-primary">Save</button>		 
+			     <button type="submit" class="btn btn-primary">&{exoplatform.videocall.action.save}</button>		 
   			  </div>
 		  </form>
 	  </div>
