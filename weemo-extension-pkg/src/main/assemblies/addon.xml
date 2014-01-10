@@ -44,5 +44,14 @@
       <outputFileNameMapping>weemo-extension-config.jar</outputFileNameMapping>
       <useProjectArtifact>false</useProjectArtifact>
     </dependencySet>
+    <dependencySet>
+      <outputDirectory>/${project.build.finalName}/lib</outputDirectory>
+      <includes>
+        <include>${project.groupId}:weemo-extension-services:jar</include>
+      </includes>
+      <scope>provided</scope>
+      <outputFileNameMapping>weemo-extension-services.jar</outputFileNameMapping>
+      <useProjectArtifact>false</useProjectArtifact>
+    </dependencySet>
   </dependencySets>
 </assembly>
