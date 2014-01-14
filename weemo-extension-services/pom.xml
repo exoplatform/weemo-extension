@@ -44,12 +44,7 @@
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
     </dependency>
-    <!-- Application dependencies-->
-   
-    <dependency>
-      <groupId>org.mongodb</groupId>
-      <artifactId>mongo-java-driver</artifactId>
-    </dependency>
+    <!-- Application dependencies-->  
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>

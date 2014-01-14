@@ -23,9 +23,9 @@ import juzu.Mapped;
 @Mapped
 public class VideoCallModel {
   
-  private String disableVideoCall = null;
-  private String weemoKey = null;
-  private String tokenKey = null;
+  private String disableVideoCall = "true";
+  private String weemoKey = "";
+  private String tokenKey = "";
   private HashMap< String, Boolean> videoCallPermissions = null;
   
 

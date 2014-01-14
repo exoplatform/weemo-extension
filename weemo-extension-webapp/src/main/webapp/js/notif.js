@@ -421,7 +421,7 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
       var out = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' disabled" title="Make a Video Call"';
       out += ' data-fullname="'+fullname+'"';
       out += ' data-username="'+username+'" style="margin-left:5px;'+addStyle+'">';
-      out += '<i class="icon-facetime-video"></i> Call</a>';
+      out += '<i class="uiIconVideoCalls uiIconLightGray"></i> Call</a>';
 
       $uiElement.append(out);
       jqchat(".weemoCallOverlay").on("click", function() {
@@ -475,7 +475,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
       var html = jqchat(this).html();
       html += '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' pull-right disabled" id="weemoCall-'+username.replace('.', '-')+'" title="Make a Video Call"';
       html += ' data-username="'+username+'" data-fullname="'+fullname+'"';
-      html += ' style="margin-left:5px;"><i class="icon-facetime-video"></i> Call</a>';
+      html += ' style="margin-left:5px;"><i class="uiIconVideoCalls uiIconLightGray"></i> Call</a>';
       jqchat(this).html(html);
 
       weemoExtension.getStatus(username, cbGetConnectionStatus);

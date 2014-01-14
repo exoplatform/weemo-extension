@@ -20,6 +20,9 @@ public class VideoCallAdministration {
   @Inject
   @Path("index.gtmpl")
   Template index; 
+  
+  @Inject
+  VideoCalls videoCalls;
 
   Logger log = Logger.getLogger("VideoCallAdministration");
 
@@ -46,6 +49,7 @@ public class VideoCallAdministration {
   {   
     String weemoKey = videoCallService_.getWeemoKey();
     boolean turnOffVideoCall = videoCallService_.isDisableVideoCall();
+    videoCalls.setDisplaySuccessMsg(false);
     index.with().set("turnOffVideoCall", turnOffVideoCall)
               .set("weemoKey", weemoKey)
               .render();
@@ -53,9 +57,10 @@ public class VideoCallAdministration {
   
   @Action
   @Route("/save")
-  public Response.View save(VideoCallModel videoCallModel) {
+  public Response save(VideoCallModel videoCallModel) {
      VideoCallService videoCallService = new VideoCallService();
      videoCallService.saveVideoCallProfile(videoCallModel);
+     videoCalls.setDisplaySuccessMsg(true);
      return VideoCallAdministration_.index();
   }
 }

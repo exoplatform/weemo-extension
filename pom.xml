@@ -103,12 +103,7 @@
         <groupId>org.juzu</groupId>
         <artifactId>juzu-plugins-upload</artifactId>
         <version>${juzu.version}</version>
-      </dependency>  
-      <dependency>
-        <groupId>org.mongodb</groupId>
-        <artifactId>mongo-java-driver</artifactId>
-        <version>${mongodb-java-driver.version}</version>
-      </dependency>    
+      </dependency>      
       <dependency>
         <groupId>org.exoplatform.ecms</groupId>
         <artifactId>ecms-core-services</artifactId>

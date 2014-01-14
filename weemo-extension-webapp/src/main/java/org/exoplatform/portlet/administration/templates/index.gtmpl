@@ -1,4 +1,4 @@
-<div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" style="margin: 50px 40px">
+<div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet ${videoCalls.displaySuccessMsg}" style="margin: 50px 40px">
 
   <div style="
     font-size: 28px;
@@ -9,6 +9,8 @@
     margin-bottom: 20px;">
   	&{exoplatform.videocall.administration.title}
   </div>
+  
+  <div id="videocalls-alert" style="display: none;" class="alert alert-success videoCallsAlertSuccess"></div>
   
   <div class="uiBox" style="  ">
 	  <div class="uiContentBox">
