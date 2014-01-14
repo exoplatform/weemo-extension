@@ -9,17 +9,19 @@
 
 
 @Assets(
-        location = AssetLocation.SERVER       
+        location = AssetLocation.SERVER,
+        scripts = {
+            @Script(src = "js/jquery-1.8.3.min.js", id = "jquery"),
+            @Script(src = "js/Utils.js", depends = "jquery")
+        }
 )
-
-
-
 
 package org.exoplatform.portlet.administration;
 
 import juzu.Application;
 import juzu.asset.AssetLocation;
 import juzu.plugin.asset.Assets;
+import juzu.plugin.asset.Script;
 import juzu.plugin.binding.Binding;
 import juzu.plugin.binding.Bindings;
 import juzu.plugin.portlet.Portlet;

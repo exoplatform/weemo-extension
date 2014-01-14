@@ -49,10 +49,10 @@ public class VideoCallAdministration {
   {   
     String weemoKey = videoCallService_.getWeemoKey();
     boolean turnOffVideoCall = videoCallService_.isDisableVideoCall();
-    videoCalls.setDisplaySuccessMsg(false);
     index.with().set("turnOffVideoCall", turnOffVideoCall)
               .set("weemoKey", weemoKey)
               .render();
+    videoCalls.setDisplaySuccessMsg(false);
   }  
   
   @Action
@@ -60,7 +60,7 @@ public class VideoCallAdministration {
   public Response save(VideoCallModel videoCallModel) {
      VideoCallService videoCallService = new VideoCallService();
      videoCallService.saveVideoCallProfile(videoCallModel);
-     videoCalls.setDisplaySuccessMsg(true);
+     videoCalls.setDisplaySuccessMsg(true);    
      return VideoCallAdministration_.index();
   }
 }
