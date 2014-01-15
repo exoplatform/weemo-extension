@@ -15,11 +15,13 @@
             @Script(src = "js/snack-min.js", id = "snack"),
             @Script(src = "js/jquery-juzu-utils-0.1.0.js", depends = "jquery", id = "juzu-utils"),
             @Script(src = "js/Modal.js", depends = "jquery"),
-            @Script(src = "js/Weemo.js", id = "weemo"),
-            @Script(src = "js/notif.js", id = "notif", depends = {"jquery", "snack", "juzu-utils","weemo"})
+            //@Script(src = "js/Weemo.js", id = "weemo"),
+            @Script(src = "js/notif.js", id = "notif", depends = {"jquery", "snack", "juzu-utils"})
+        },
+        stylesheets = {            
+            @Stylesheet(src = "css/style.css")
         }
 )
-
 
 
 
@@ -29,8 +31,8 @@ import juzu.Application;
 import juzu.asset.AssetLocation;
 import juzu.plugin.asset.Assets;
 import juzu.plugin.asset.Script;
-import juzu.plugin.asset.Stylesheet;
 import juzu.plugin.binding.Binding;
 import juzu.plugin.binding.Bindings;
-import juzu.plugin.less.Less;
 import juzu.plugin.portlet.Portlet;
+import juzu.plugin.asset.Stylesheet;
+

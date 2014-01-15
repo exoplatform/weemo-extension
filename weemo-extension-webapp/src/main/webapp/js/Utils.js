@@ -10,3 +10,15 @@ function Utils() {
 };
 
 var utils = new Utils();
+
+$( document ).ready(function() {
+  $("#chkTurnOff").change(function() {
+    if ($("#chkTurnOff").is(':checked')) {
+      $("#disableVideoCall").val("true");
+    } else {
+      $("#disableVideoCall").val("false");
+      alert('test');
+    }
+  });
+});
+

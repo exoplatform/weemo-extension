@@ -58,6 +58,9 @@ public class VideoCallAdministration {
   @Action
   @Route("/save")
   public Response save(VideoCallModel videoCallModel) {
+     if(videoCallModel.getDisableVideoCall() == null) {
+       videoCallModel.setDisableVideoCall("false");
+     }
      VideoCallService videoCallService = new VideoCallService();
      videoCallService.saveVideoCallProfile(videoCallModel);
      videoCalls.setDisplaySuccessMsg(true);    

@@ -1,5 +1,5 @@
 [class^="uiIconWeemo"] {
-  background-image: url('../img/uiIconWeemoDarkGray.png');
+  background-image: url('/weemo-extension/img/uiIconWeemoDarkGray.png');
 }
 
 [class^="uiIconWeemo"]:hover, .uiIconWeemoBlue
@@ -8,12 +8,12 @@
 }
 
 .uiIconWeemoLightGray {
-  background-image: url('../img/uiIconWeemoLightGray.png');
+  background-image: url('/weemo-extension/img/uiIconWeemoLightGray.png');
 }
 
 .uiIconWeemoWhite
  {
-  background-image: url('../img/uiIconWeemoWhite.png');
+  background-image: url('/weemo-extension/img/uiIconWeemoWhite.png');
 }
 
 .uiIconWeemoVideoCalls {

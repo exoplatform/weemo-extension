@@ -19,7 +19,8 @@
 		  	<form action="@{VideoCallAdministration.save()}" method="post" class="form-horizontal">
 			  <div class="control-group">
 			    <label class="checkbox" style="font-weight: bold;">
-			      <input id="disableVideoCalls" name="disableVideoCall" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">
+			      <input id="chkTurnOff" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">
+			      <input type="hidden" id="disableVideoCall" name="disableVideoCall" value="false">
 				  &{exoplatform.videocall.turnoff}
 				</label>	    
 			  </div>
