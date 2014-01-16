@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import juzu.*;
+import juzu.Response.Render;
+import juzu.plugin.ajax.Ajax;
 import juzu.request.RenderContext;
 import juzu.template.Template;
 import javax.inject.Inject;
@@ -65,5 +67,12 @@ public class VideoCallAdministration {
      videoCallService.saveVideoCallProfile(videoCallModel);
      videoCalls.setDisplaySuccessMsg(true);    
      return VideoCallAdministration_.index();
+  }
+  
+  @Ajax
+  @Resource
+  public Response.Content openUserPermission() {
+    String out = "test";
+    return Response.ok(out).withMimeType("text/html; charset=UTF-8").withHeader("Cache-Control", "no-cache");
   }
 }

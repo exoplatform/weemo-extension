@@ -2,7 +2,7 @@
   background-image: url('/weemo-extension/img/uiIconWeemoDarkGray.png');
 }
 
-[class^="uiIconWeemo"]:hover, .uiIconWeemoBlue
+[class^="uiIconWeemo"]:hover, .uiIconWeemoBlue, .connectAction > a:hover > i [class^="uiIconWeemo"]
  {
   background-image: url('../img/uiIconWeemoBlue.png');
 }
