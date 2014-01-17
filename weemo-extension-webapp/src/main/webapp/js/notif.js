@@ -448,15 +448,6 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
 
 };
 
-WeemoExtension.prototype.openUserPermission = function(elem, modalId) {
-    var $videoAdminApplication = jqchat('#videocalls-alert');
-    console.log($videoAdminApplication);
-    var url = jqchat(elem).attr("link");
-    console.log(" URL = " + url);
-    jqchat('#'+modalId).appendTo("body");
-    jqchat('#'+modalId).modal('show');
-};
-
 WeemoExtension.prototype.attachWeemoToConnections = function() {
   if (window.location.href.indexOf("/portal/intranet/connexions")==-1) return;
 

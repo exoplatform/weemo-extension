@@ -1,6 +1,8 @@
 package org.exoplatform.portlet.administration;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import juzu.*;
@@ -12,10 +14,17 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.portlet.PortletPreferences;
 
+import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.portal.webui.page.PageIterator;
 import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.Query;
+import org.exoplatform.services.organization.User;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.webui.core.UIPageIterator;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class VideoCallAdministration {
 
@@ -71,8 +80,22 @@ public class VideoCallAdministration {
   
   @Ajax
   @Resource
-  public Response.Content openUserPermission() {
-    String out = "test";
-    return Response.ok(out).withMimeType("text/html; charset=UTF-8").withHeader("Cache-Control", "no-cache");
+  public Response.Content openUserPermission() throws Exception {
+    ObjectPageList objPageList = new ObjectPageList(organizationService_.getUserHandler().findUsers(new Query()).getAll(), 10);
+    UIPageIterator uiIterator = new UIPageIterator();
+    uiIterator.setPageList(objPageList);
+    List<User> users = uiIterator.getCurrentPageData();
+    JSONArray arrays = new JSONArray();
+    for(int i=0; i< users.size(); i++) {
+      User user = users.get(i);
+      JSONObject obj = new JSONObject();
+      obj.put("userName", user.getUserName());
+      obj.put("firstName", user.getFirstName());
+      obj.put("lastName", user.getLastName());
+      obj.put("email", user.getEmail());
+      arrays.put(obj.toString());
+    }
+    
+    return Response.ok(arrays.toString()).withMimeType("application/json; charset=UTF-8").withHeader("Cache-Control", "no-cache");
   }
 }
