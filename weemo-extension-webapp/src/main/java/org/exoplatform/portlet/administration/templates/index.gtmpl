@@ -69,9 +69,9 @@
 						 		<input name="userOrGroup" type="text" id="userOrGroup" readonly="">
 						 	</div><div class="pull-left">
 							
-									<a class="actionIcon" link="@{VideoCallAdministration.openUserPermission()}" href="javascript:void(0);" onClick="utils.openUserPermission(this, 'myModal');" rel="tooltip" data-placement="bottom" data-original-title="Select User"><i class="uiIconSelectUser uiIconLightGray"></i></a>
+									<a class="actionIcon" link="@{VideoCallAdministration.openUserPermission()}" href="javascript:void(0);" onClick="utils.openUserPermission(this, 'userSelector');" rel="tooltip" data-placement="bottom" data-original-title="Select User"><i class="uiIconSelectUser uiIconLightGray"></i></a>
 								
-									<a class="actionIcon"  rel="tooltip" data-placement="bottom" data-original-title="Select Membership"><i class="uiIconSelectMember uiIconLightGray"></i></a>
+									<a class="actionIcon" link="@{VideoCallAdministration.openUserPermission()}" href="javascript:void(0);" onClick="utils.openGroupPermission(this, 'groupSelector');"  rel="tooltip" data-placement="bottom" data-original-title="Select Membership"><i class="uiIconSelectMember uiIconLightGray"></i></a>
 								
 							
 							     <button type="button" class="btn btn-primary">&{exoplatform.videocall.action.add}</button>
@@ -108,27 +108,67 @@
         <h4 class="modal-title" id="userModalTitle">User Selector</h4>
       </div>
       <div class="modal-body">
-        <h4>Text in a modal</h4>
-        <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</p>
+        
+        <form class="UIForm" id="UIUserSelector" action="/portal/intranet/wiki?portal:componentId=bfda3efa-aafd-45f4-b296-832d3e332b47&amp;interactionstate=JBPNS_rO0ABXcqAAt1aWNvbXBvbmVudAAAAAEADlVJVXNlclNlbGVjdG9yAAdfX0VPRl9f&amp;portal:type=action" method="post"><div><input type="hidden" name="formOp" value=""><input type="hidden" name="gtn:csrf" value="A64A2D967F00010111B72C96CA121B53"></div>
+		<div class="uiUserSelector" id="UIUserSelector">
+			<div class="selectUserContainer resizable">
+					
+		      <div class="uiSearch clearfix">
+		        
+					<span class="searchByUser">
+						<span class="inputLarge ">
+							<a id="" class="btnSearchUser" data-placement="left" rel="tooltip" href="javascript:eXo.webui.UIForm.submitForm('bfda3efa-aafd-45f4-b296-832d3e332b47#UIUserSelector','Search',true)" data-original-title="Quick Search"><i class="uiIconSearch uiIconLightGray"></i></a>
+							<input name="Quick Search" type="text" id="Quick Search" placeholder="Search">
+						</span>
+						<span class="selectboxMedium">
+							<span class="uiSelectbox">
+								<select class="selectbox" name="filter">
+									<option value="userName">User Name</option>
+									<option value="lastName">Last Name</option>
+									<option value="firstName">First Name</option>
+									<option value="email">Email Name</option>
+								</select>
+							</span>		
+						</span>
+					</span>
+		        
+		      </div>
+					
+		      
+					<table id="UIListUsers" class="uiGrid table table-hover table-striped">
+						<thead>
+							<tr>
+								
+								<th class="center">
+								<span class="uiCheckbox">
+									<input type="checkbox" class="checkbox" name="selectall"><span></span>
+								</span>							
+								</th>
+								
+								<th>
+									User Name
+								</th>
+								<th>
+									First Name
+								</th>
+								<th>
+									Last Name
+								</th>
+								<th>
+									Email
+								</th>
+								
+							</tr>
+						</thead>
+						
+					</table>
+					
+			</div>
+			
 
-        <h4>Popover in a modal</h4>
-        <p>This <a href="#" role="button" class="btn btn-default popover-test" title="" data-content="And here's some amazing content. It's very engaging. right?" data-original-title="A Title">button</a> should trigger a popover on click.</p>
-
-        <h4>Tooltips in a modal</h4>
-        <p><a href="#" class="tooltip-test" title="" data-original-title="Tooltip">This link</a> and <a href="#" class="tooltip-test" title="" data-original-title="Tooltip">that link</a> should have tooltips on hover.</p>
-
-        <hr>
-
-        <h4>Overflowing text to show scroll behavior</h4>
-        <p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-        <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
-        <p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-        <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
-        <p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-        <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
+		</div>
+		</form>
+        
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
