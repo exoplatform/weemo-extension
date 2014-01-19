@@ -108,7 +108,10 @@
         <h4 class="modal-title" id="userModalTitle">User Selector</h4>
       </div>
       <div class="modal-body">
-        
+        <div class="alert alert-info alert-dismissable" style="display:none;">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          &{exoplatform.videocall.permissions.empty.alertMessage}
+        </div>
         <form class="UIForm" id="UIUserSelector" action="/portal/intranet/wiki?portal:componentId=bfda3efa-aafd-45f4-b296-832d3e332b47&amp;interactionstate=JBPNS_rO0ABXcqAAt1aWNvbXBvbmVudAAAAAEADlVJVXNlclNlbGVjdG9yAAdfX0VPRl9f&amp;portal:type=action" method="post"><div><input type="hidden" name="formOp" value=""><input type="hidden" name="gtn:csrf" value="A64A2D967F00010111B72C96CA121B53"></div>
 		<div class="uiUserSelector" id="UIUserSelector">
 			<div class="selectUserContainer resizable">
@@ -140,9 +143,7 @@
 							<tr>
 								
 								<th class="center">
-								<span class="uiCheckbox">
-									<input type="checkbox" class="checkbox" name="selectall"><span></span>
-								</span>							
+								  <input type="checkbox" class="checkbox" id="selectAllUsers" name="selectall">
 								</th>
 								
 								<th>
@@ -172,7 +173,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Add</button>
+        <button type="button" onClick="utils.addUserPermission(this)" emptyMsg="&{exoplatform.videocall.permissions.empty.alertMessage}" class="btn btn-primary">Add</button>
       </div>
 
     </div><!-- /.modal-content -->

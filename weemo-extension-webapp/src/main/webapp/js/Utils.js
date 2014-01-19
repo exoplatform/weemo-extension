@@ -20,74 +20,9 @@ function Utils() {
       dataType: "json",
       context: this,
       success: function(data){
-        //Create modal object
-        /*$('#userSelector').remove();
-        var modalObj = $('<div/>', {
-	    'id':'userSelector',
-	    'class':'modal fade',
-	    'tabindex':-1,
-	    'role':'dialog',
-            'aria-labelledby':'myModalLabel',
-            'aria-hidden':'true',
-	    'style':'display: none;'
-	});
-        $("body").append(modalObj);
-        var modalDialog = $('<div/>', {
-	    'class':'modal-dialog'
-	});
-        $(modalObj).append(modalDialog);
-	var modalContent = $('<div/>', {
-	    'class':'modal-content'
-	});
-        $(modalDialog).append(modalContent);
-        // Modal Header
-	var modalHeader = $('<div/>', {
-	    'class':'modal-header'
-	});
-	$(modalContent).append(modalHeader);
-        var closeButton = $('<button/>', {
-	    'class':'close',
-	    'type':'button',
-	    'data-dismiss':'modal',
-            'aria-hidden':'true',
-            'text':'x'
-	});
-        $(modalHeader).append(closeButton);
-        var modalTitle = $('<h4/>', {
-	    'class':'modal-title',
-	    'id':'modalTitle',	
-            'text':'User Selector'
-	});
-	$(modalHeader).append(modalTitle);
-
-	//Modal Body
-	var modalBody = $('<div/>', {
-	    'class':'modal-body'
-	});
-	$(modalContent).append(modalBody);
-
-	//Modal Footer
-	var modalFooter = $('<div/>', {
-	    'class':'modal-footer'
-	});
-	$(modalContent).append(modalFooter);
-        var closeButton = $('<button/>', {
-	    'class':'btn btn-default',
-	    'type':'button',
-	    'data-dismiss':'modal',            
-            'text':'Close'
-	});
-	var addButton = $('<button/>', {
-	    'class':'btn btn-primary',
-	    'type':'button',
-	    'data-dismiss':'modal',            
-            'text':'Add'
-	});
-	$(modalFooter).append(closeButton);
-	$(modalFooter).append(addButton);*/
-
-	
+        
         var listUsers = $("#UIListUsers");
+        $("#UIListUsers").children('tbody').remove();
         var tbody = $('<tbody/>');
         $(listUsers).append(tbody);
 
@@ -103,18 +38,14 @@ function Utils() {
 	    'class':'center'
 	  });
 	  $(tr).append(td);
-	  var span = $('<span/>', {
-	    'class':'uiCheckbox'
-	  });
-	  $(td).append(span);
-	  var input = $('<input/>', {
+	   var input = $('<input/>', {
 	    'class':'checkbox',
 	    'type':'checkbox',
             'name':userName,
             'id':userName
-	  });
-	  $(span).append(input);
-          
+	  });	
+	  $(td).append(input);
+
  	  var td2 = $('<td/>');
 	  var span2 = $('<span/>', {
 	    'class':'text',
@@ -156,10 +87,28 @@ function Utils() {
       },
       error: function(){
       }
+    });   
+  };
+
+  Utils.prototype.addUserPermission = function(elem) {
+    var isSelected = false;
+    var permissions = "";
+    $('#UIListUsers tbody tr').find('td:first :checkbox').each(function () {
+      if ($(this).is(':checked')) {
+        isSelected = true;
+        var tdElem = $(this).parent().next();
+        var spanElem = $(tdElem).find('span:first');
+        permissions = permissions.concat($(spanElem).text().concat(", "));        
+      }
     });
-    
-    //$('#userSelector').appendTo("body");
-    //$('#userSelector').modal('show');
+    if(!isSelected) {
+      $(".alert").show(permissions);
+    } else {
+      permissions = permissions.trim();
+      permissions = permissions.substring(0, permissions.length-1);
+      $("#userOrGroup").val(permissions);
+      $('#userSelector').modal('hide');
+    }
   };
 
   Utils.prototype.openGroupPermission = function(elem, modalId) {
@@ -205,7 +154,21 @@ $( document ).ready(function() {
       $("#disableVideoCall").val("false");	      
     }
   });
-});
 
+  $('#selectAllUsers').click (function () {
+     var checkedStatus = this.checked;
+     $('#UIListUsers tbody tr').find('td:first :checkbox').each(function () {
+        $(this).prop('checked', checkedStatus);
+     });
+  });  
+
+  $( '#UIListUsers' ).on( 'change', 'input[type="checkbox"]', function() {
+    if (!$(this).is(':checked')) {
+      $('#selectAllUsers').attr('checked',false);
+    }
+  });
+
+
+});
 
 
