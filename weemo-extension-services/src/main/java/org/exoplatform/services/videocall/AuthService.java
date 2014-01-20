@@ -25,8 +25,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.Authenticator;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -123,7 +126,14 @@ public class AuthService {
         InputStream p12InputStream = new URL(relPath + p12File).openStream();
         local_p12_file = convertInputStreamToFile(p12InputStream, p12File.substring(p12File.lastIndexOf("/")+1, p12File.length()));
        
-        InputStream pemInputStream = new URL(relPath + caFile).openStream();
+        Authenticator.setDefault(new MyAuthenticator("eXoCloud", passphrase)); 
+        
+        URL urlCA = new URL(relPath + caFile);
+        String userPassword = "eXoCloud" + ":" + passphrase;
+        String encoding = URLEncoder.encode(userPassword, "UTF-8");
+        URLConnection uc = urlCA.openConnection();
+        uc.setRequestProperty("Authorization", "UTF-8" + encoding);        
+        InputStream pemInputStream = (InputStream) uc.getInputStream();        
         local_ca_file = convertInputStreamToFile(pemInputStream, caFile.substring(caFile.lastIndexOf("/")+1, caFile.length())); 
       }     
       
@@ -165,6 +175,25 @@ public class AuthService {
     }    
     return responseContent;
   }
+  
+  static class MyAuthenticator extends Authenticator {  
+    private String username, password;  
+  
+    public MyAuthenticator(String user, String pass) {  
+      username = user;  
+      password = pass;  
+    }  
+  
+    protected PasswordAuthentication getPasswordAuthentication() {  
+      System.out.println("Requesting Host  : " + getRequestingHost());  
+      System.out.println("Requesting Port  : " + getRequestingPort());  
+      System.out.println("Requesting Prompt : " + getRequestingPrompt());  
+      System.out.println("Requesting Protocol: " + getRequestingProtocol());  
+      System.out.println("Requesting Scheme : " + getRequestingScheme());  
+      System.out.println("Requesting Site  : " + getRequestingSite());  
+      return new PasswordAuthentication(username, password.toCharArray());  
+    }  
+  }  
   
   protected static KeyManager[] getKeyManagers(String keyStoreType, InputStream keyStoreFile, String keyStorePassword) throws Exception {
     KeyStore keyStore = null;
