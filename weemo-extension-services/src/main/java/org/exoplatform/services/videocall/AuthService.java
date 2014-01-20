@@ -47,10 +47,7 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.organization.User;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 
 
 

@@ -66,7 +66,8 @@
 				<div class="permission">
 						<div class="clearfix">
 							<div class="PemissionInputset pull-left">
-						 		<input name="userOrGroup" type="text" id="userOrGroup" readonly="">
+						 		<input name="txtUserOrGroup" type="text" id="txtUserOrGroup" readonly="">
+						 		<input name="userOrGroup" type="hidden" id="userOrGroup" readonly="">
 						 	</div><div class="pull-left">
 							
 									<a class="actionIcon" link="@{VideoCallAdministration.openUserPermission()}" href="javascript:void(0);" onClick="utils.openUserPermission(this, 'userSelector');" rel="tooltip" data-placement="bottom" data-original-title="Select User"><i class="uiIconSelectUser uiIconLightGray"></i></a>
@@ -112,7 +113,7 @@
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
           &{exoplatform.videocall.permissions.empty.alertMessage}
         </div>
-        <form class="UIForm" id="UIUserSelector" action="/portal/intranet/wiki?portal:componentId=bfda3efa-aafd-45f4-b296-832d3e332b47&amp;interactionstate=JBPNS_rO0ABXcqAAt1aWNvbXBvbmVudAAAAAEADlVJVXNlclNlbGVjdG9yAAdfX0VPRl9f&amp;portal:type=action" method="post"><div><input type="hidden" name="formOp" value=""><input type="hidden" name="gtn:csrf" value="A64A2D967F00010111B72C96CA121B53"></div>
+        <form class="UIForm" id="UIUserSelector" action="" method="post"><div><input type="hidden" name="formOp" value=""><input type="hidden" name="gtn:csrf" value="A64A2D967F00010111B72C96CA121B53"></div>
 		<div class="uiUserSelector" id="UIUserSelector">
 			<div class="selectUserContainer resizable">
 					
@@ -120,12 +121,12 @@
 		        
 					<span class="searchByUser">
 						<span class="inputLarge ">
-							<a id="" class="btnSearchUser" data-placement="left" rel="tooltip" href="javascript:eXo.webui.UIForm.submitForm('bfda3efa-aafd-45f4-b296-832d3e332b47#UIUserSelector','Search',true)" data-original-title="Quick Search"><i class="uiIconSearch uiIconLightGray"></i></a>
-							<input name="Quick Search" type="text" id="Quick Search" placeholder="Search">
+							<a id="searchLink" class="btnSearchUser" data-placement="left" rel="tooltip" href="javascript:void(0);" onClick="utils.searchUserPermission(this);" ajaxLink="@{VideoCallAdministration.searchUserPermission()}" data-original-title="Quick Search"><i class="uiIconSearch uiIconLightGray"></i></a>
+							<input name="Quick Search" type="text" id="keyword" name="keyword" placeholder="Search">
 						</span>
 						<span class="selectboxMedium">
 							<span class="uiSelectbox">
-								<select class="selectbox" name="filter">
+								<select class="selectbox" id="filter" name="filter">
 									<option value="userName">User Name</option>
 									<option value="lastName">Last Name</option>
 									<option value="firstName">First Name</option>
