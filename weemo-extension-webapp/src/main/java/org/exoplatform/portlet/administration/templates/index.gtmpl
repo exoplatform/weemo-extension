@@ -1,18 +1,18 @@
 <div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" style="margin: 50px 40px">
-
-  <div style="
-    font-size: 28px;
-    line-height: 34px;
-    text-align: center;
-    padding: 10px 0;
+   
+   
+   <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" displaySuccessMsg="${videoCalls.isDisplaySuccessMsg()}" style="left: 50%; position: absolute; top: 39px; display:none;" class="alert alert-success videoCallsAlertSuccess">
+     <i class="uiIconSuccess"></i>
+   </div>
+   
+   
+  <h4 style="
+    text-align: left;
     text-shadow: 0 3px 4px #fff;
-    margin-bottom: 20px;">
+    margin:-7px 0 20px; color: #2F5E92;">    
   	&{exoplatform.videocall.administration.title}
-  </div>
-  
-  <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" displaySuccessMsg="${videoCalls.isDisplaySuccessMsg()}" style="width:400px; margin-left: 27%; text-align: center; display: none;" class="alert alert-success videoCallsAlertSuccess">
-    <i class="uiIconSuccess"></i>
-  </div>
+  </h4> 
+ 
   
   <div class="uiBox">
 	  <div class="uiContentBox">
@@ -72,7 +72,7 @@
 							
 									<a class="actionIcon" link="@{VideoCallAdministration.openUserPermission()}" href="javascript:void(0);" onClick="utils.openUserPermission(this, 'userSelector');" rel="tooltip" data-placement="bottom" data-original-title="Select User"><i class="uiIconSelectUser uiIconLightGray"></i></a>
 								
-									<a class="actionIcon" link="@{VideoCallAdministration.openUserPermission()}" href="javascript:void(0);" onClick="utils.openGroupPermission(this, 'groupSelector');"  rel="tooltip" data-placement="bottom" data-original-title="Select Membership"><i class="uiIconSelectMember uiIconLightGray"></i></a>
+									<a class="actionIcon" link="@{VideoCallAdministration.openGroupPermission()}" href="javascript:void(0);" onClick="utils.openGroupPermission(this, 'groupSelector');"  rel="tooltip" data-placement="bottom" data-original-title="Select Membership"><i class="uiIconSelectMember uiIconLightGray"></i></a>
 								
 							
 							     <button type="button" class="btn btn-primary">&{exoplatform.videocall.action.add}</button>
@@ -191,14 +191,103 @@
         <h4 class="modal-title" id="groupModalTitle">Group Selector</h4>
       </div>
       <div class="modal-body">
-        <h4>Text in a modal</h4>
-        <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</p>
-
-        <h4>Popover in a modal</h4>
-        <p>This <a href="#" role="button" class="btn btn-default popover-test" title="" data-content="And here's some amazing content. It's very engaging. right?" data-original-title="A Title">button</a> should trigger a popover on click.</p>
-
-        <h4>Tooltips in a modal</h4>
-        <p><a href="#" class="tooltip-test" title="" data-original-title="Tooltip">This link</a> and <a href="#" class="tooltip-test" title="" data-original-title="Tooltip">that link</a> should have tooltips on hover.</p>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        
+       <div class="uiGroupSelector uiGroupMembershipSelector uiMemberSelector resizable" id="UIGroupMemberSelector" style="max-height: 305px;">
+			<div class="uiGrayLightBox uiBox noRounded ">
+			
+			<ul class="breadcrumb">
+				<li>
+					<i class="uiIconTree uiIconLightGray"></i>
+				</li>
+				
+					
+			</ul></div>
+				
+				<div class="row-fluid">
+					<div class="span6">
+						<div class="uiBox selectGroup noRounded">
+							<h6 class="title">Select Group</h6>
+							
+			<div class="uiTrees scrollArea">
+				<div class="treeContainer jsContainer">
+					
+						<div class="homeNode clearfix">
+							<a class="actionIcon pull-left" href="#" rel="tooltip" style="display: block;" data-original-title="Up Level"><i class="uiIconUpLevel uiIconLightGray"></i></a>
+						</div>
+						
+						<ul class="nodeGroup">
+							
+							<li class="node">
+								
+								 <a href="javascript:void(0);" class="uiIconNode collapseIcon" title="Development" onclick="javascript:ajaxGet('/portal/g/:platform:web-contributors/wcmAdmin?portal:componentId=e163af5f-239b-4c96-924e-dd2f112796da&amp;interactionstate=JBPNS_rO0ABXdhAAJvcAAAAAEACkNoYW5nZU5vZGUACG9iamVjdElkAAAAAQALL2RldmVsb3BlcnMAC3VpY29tcG9uZW50AAAAAQAWVHJlZU1lbWJlcnNoaXBTZWxlY3RvcgAHX19FT0ZfXw**&amp;portal:type=action&amp;ajaxRequest=true')"><i class="uiIconGroup uiIconLightGray"></i>Development </a>											
+															 
+								</li>
+							
+							<li class="node">
+								
+								 <a href="javascript:void(0);" class="uiIconNode collapseIcon" title="Organization" onclick="javascript:ajaxGet('/portal/g/:platform:web-contributors/wcmAdmin?portal:componentId=e163af5f-239b-4c96-924e-dd2f112796da&amp;interactionstate=JBPNS_rO0ABXdjAAJvcAAAAAEACkNoYW5nZU5vZGUACG9iamVjdElkAAAAAQANL29yZ2FuaXphdGlvbgALdWljb21wb25lbnQAAAABABZUcmVlTWVtYmVyc2hpcFNlbGVjdG9yAAdfX0VPRl9f&amp;portal:type=action&amp;ajaxRequest=true')"><i class="uiIconGroup uiIconLightGray"></i>Organization </a>											
+															 
+								</li>
+							
+							<li class="node">
+								
+								 <a href="javascript:void(0);" class="uiIconNode collapseIcon" title="Platform" onclick="javascript:ajaxGet('/portal/g/:platform:web-contributors/wcmAdmin?portal:componentId=e163af5f-239b-4c96-924e-dd2f112796da&amp;interactionstate=JBPNS_rO0ABXdfAAJvcAAAAAEACkNoYW5nZU5vZGUACG9iamVjdElkAAAAAQAJL3BsYXRmb3JtAAt1aWNvbXBvbmVudAAAAAEAFlRyZWVNZW1iZXJzaGlwU2VsZWN0b3IAB19fRU9GX18*&amp;portal:type=action&amp;ajaxRequest=true')"><i class="uiIconGroup uiIconLightGray"></i>Platform </a>											
+															 
+								</li>
+							
+							<li class="node">
+								
+								 <a href="javascript:void(0);" class="uiIconNode collapseIcon" title="Spaces" onclick="javascript:ajaxGet('/portal/g/:platform:web-contributors/wcmAdmin?portal:componentId=e163af5f-239b-4c96-924e-dd2f112796da&amp;interactionstate=JBPNS_rO0ABXddAAJvcAAAAAEACkNoYW5nZU5vZGUACG9iamVjdElkAAAAAQAHL3NwYWNlcwALdWljb21wb25lbnQAAAABABZUcmVlTWVtYmVyc2hpcFNlbGVjdG9yAAdfX0VPRl9f&amp;portal:type=action&amp;ajaxRequest=true')"><i class="uiIconGroup uiIconLightGray"></i>Spaces </a>											
+															 
+								</li>
+							
+						</ul>
+						
+				</div>	
+			</div>
+						</div>
+					</div>
+					<div class="span6">
+						<div class="uiBox noRounded childGoup">
+							<h6 class="title">
+								
+							  Select Membership
+							</h6>
+							
+							<div class="uiContentBox">
+							  <ul>
+							  
+							  </ul>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
       
       </div>
       <div class="modal-footer">

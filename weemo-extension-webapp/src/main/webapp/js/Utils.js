@@ -217,13 +217,7 @@ function Utils() {
 	$('#groupSelector').appendTo("body");	
 	$('#groupSelector').modal('show');
 
-        $.each(data, function (index, value) {
-	  var obj = jQuery.parseJSON(value);
-          var userName = obj.userName;
-          var firstName = obj.firstName;
-          var lastName = obj.lastName;
-          var email = obj.email;
-        });
+        console.log("GRoup data = " + data);
       },
       error: function(){
       }

@@ -77,9 +77,11 @@ public class VideoCallApplication {
       String passphrase = PropertyManager.getProperty(PropertyManager.PROPERTY_PASSPHRASE);
       AuthService authService = new AuthService(app_id, domain_id, authUrl, caFile, p12File, passphrase, client_id, clientSecret);      
       String content = authService.authenticate(request, PropertyManager.PROPERTY_VIDEO_PROFILE);
-      JSONObject json = new JSONObject(content);
-      tokenKey = json.get("token").toString();
-      videoCallModel.setTokenKey(tokenKey);
+      if(!StringUtils.isEmpty(content)) {
+        JSONObject json = new JSONObject(content);
+        tokenKey = json.get("token").toString();
+        videoCallModel.setTokenKey(tokenKey);
+      }      
       videoCallService_.saveVideoCallProfile(videoCallModel);
     }
     

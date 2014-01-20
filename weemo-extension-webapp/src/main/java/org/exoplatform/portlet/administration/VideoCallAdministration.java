@@ -2,6 +2,8 @@ package org.exoplatform.portlet.administration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -18,9 +20,13 @@ import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.portal.webui.page.PageIterator;
+import org.exoplatform.services.jcr.ext.organization.GroupImpl;
+import org.exoplatform.services.organization.MembershipType;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.Query;
 import org.exoplatform.services.organization.User;
+import org.exoplatform.services.organization.hibernate.GroupDAOImpl;
+import org.exoplatform.services.organization.idm.ExtGroup;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.webui.core.UIPageIterator;
@@ -155,5 +161,27 @@ public class VideoCallAdministration {
     }    
     return Response.ok(arrays.toString()).withMimeType("application/json; charset=UTF-8").withHeader("Cache-Control", "no-cache");
   }  
+  
+  
+  @Ajax
+  @Resource
+  public Response.Content openGroupPermission() throws Exception {
+    Collection<?> collection = organizationService_.getMembershipTypeHandler().findMembershipTypes();
+    List<String> listMemberhip = new ArrayList<String>(5);
+    for(Object obj : collection){
+      listMemberhip.add(((MembershipType)obj).getName());
+      System.out.println(" == member ship == " + ((MembershipType)obj).getName());
+    }
+    if (!listMemberhip.contains("*")) listMemberhip.add("*");
+    Collections.sort(listMemberhip);
+    
+    JSONArray groups = new JSONArray();
+    Collection<?> sibblingsGroup = organizationService_.getGroupHandler().findGroups(null);
+    for(Object obj : sibblingsGroup){
+      String groupName = ((ExtGroup)obj).getGroupName();
+      groups.put(groupName);
+    }
+    return Response.ok(groups.toString()).withMimeType("application/json; charset=UTF-8").withHeader("Cache-Control", "no-cache");
+  }
   
 }
