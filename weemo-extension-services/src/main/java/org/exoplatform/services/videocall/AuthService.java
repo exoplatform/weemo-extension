@@ -51,6 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.utils.videocall.PropertyManager;
 
 
 
@@ -125,8 +126,10 @@ public class AuthService {
         
         InputStream p12InputStream = new URL(relPath + p12File).openStream();
         local_p12_file = convertInputStreamToFile(p12InputStream, p12File.substring(p12File.lastIndexOf("/")+1, p12File.length()));
-       
-        Authenticator.setDefault(new MyAuthenticator("eXoCloud", passphrase)); 
+        
+        
+        
+        Authenticator.setDefault(new MyAuthenticator(PropertyManager.getProperty(PropertyManager.PROPERTY_USER_ID_AUTH), passphrase)); 
         
         URL urlCA = new URL(relPath + caFile);
         String userPassword = "eXoCloud" + ":" + passphrase;

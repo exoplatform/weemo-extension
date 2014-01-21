@@ -4,17 +4,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.logging.Logger;
 
 import juzu.*;
 import juzu.Response.Render;
+import juzu.impl.common.JSON;
 import juzu.plugin.ajax.Ajax;
 import juzu.request.RenderContext;
 import juzu.template.Template;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.portlet.PortletPreferences;
+import org.exoplatform.services.organization.Group;
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ObjectPageList;
@@ -31,7 +35,9 @@ import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.webui.core.UIPageIterator;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.internal.runners.model.EachTestNotifier;
 
 public class VideoCallAdministration {
 
@@ -168,20 +174,64 @@ public class VideoCallAdministration {
   public Response.Content openGroupPermission() throws Exception {
     Collection<?> collection = organizationService_.getMembershipTypeHandler().findMembershipTypes();
     List<String> listMemberhip = new ArrayList<String>(5);
+    StringBuffer sb = new StringBuffer();
+    String memberships = "";
     for(Object obj : collection){
-      listMemberhip.add(((MembershipType)obj).getName());
-      System.out.println(" == member ship == " + ((MembershipType)obj).getName());
+      listMemberhip.add(((MembershipType)obj).getName());      
     }
     if (!listMemberhip.contains("*")) listMemberhip.add("*");
     Collections.sort(listMemberhip);
-    
-    JSONArray groups = new JSONArray();
-    Collection<?> sibblingsGroup = organizationService_.getGroupHandler().findGroups(null);
-    for(Object obj : sibblingsGroup){
-      String groupName = ((ExtGroup)obj).getGroupName();
-      groups.put(groupName);
+    for (String string : listMemberhip) {
+      sb.append(string).append(",");
     }
-    return Response.ok(groups.toString()).withMimeType("application/json; charset=UTF-8").withHeader("Cache-Control", "no-cache");
+    memberships = sb.toString();
+    memberships = memberships.substring(0, memberships.length()-1);
+    
+    String groups = "";
+    StringBuffer sbGroups = new StringBuffer();
+    Collection<?> sibblingsGroup = organizationService_.getGroupHandler().findGroups(null);
+    for(Object obj : sibblingsGroup){      
+      String groupName = ((ExtGroup)obj).getGroupName();
+      String groupObj = loadGroups(groupName);
+      sbGroups.append(groupObj).append(",");
+    }
+    groups = sbGroups.toString();
+    if(groups.length() > 0) {
+      groups = groups.substring(0, groups.length()-1);
+    }
+    System.out.println(" == GROUP ==" + groups);
+    JSONObject response = new JSONObject();
+    response.put("memberships", memberships);
+    response.put("groups", groups);
+    System.out.println(" JSON OBJECT " + response.toString());
+    return Response.ok(response.toString()).withMimeType("application/json; charset=UTF-8").withHeader("Cache-Control", "no-cache");
+  }
+  
+  public String loadGroups(String groupName) throws Exception {
+    JSONObject objGroup = new JSONObject();
+    Queue<String> queue = new LinkedList<String>();
+    queue.add(groupName);
+    while (!queue.isEmpty()) {
+      String groupId = queue.poll();     
+      String children = "";
+      StringBuffer sbChildren = new StringBuffer();
+      Group group = organizationService_.getGroupHandler().findGroupById(groupId);
+      if(group != null) {
+        Collection<?> collection = organizationService_.getGroupHandler().findGroups(group);
+        for(Object obj : collection){
+          queue.add(((ExtGroup)obj).getGroupName());
+          sbChildren.append(((ExtGroup)obj).getGroupName()).append(",");
+        }     
+        children = sbChildren.toString();
+      }
+      if(children.length() > 0) {        
+        children = children.substring(0, children.length()-1);
+        objGroup.put("children", children);
+      }
+      objGroup.put("group", groupId);
+    }
+    //System.out.println("  load group ==" + objGroup.toString());
+    return objGroup.toString();
   }
   
 }

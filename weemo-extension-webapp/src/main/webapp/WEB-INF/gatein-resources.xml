@@ -30,21 +30,13 @@
     <module>      
       <depends>
         <module>bts_alert</module>
-      </depends>     
-    </module>
-  </portlet>
-  
-  <portlet>
-    <name>VideoCallAdministration</name>
-    <module>      
+      </depends>   
       <depends>
         <module>bts_modal</module>
-      </depends>     
+      </depends>   
     </module>
   </portlet>
   
-  
-  
-
+ 
 </gatein-resources>
 
