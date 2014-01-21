@@ -1,4 +1,4 @@
-<div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" style="margin: 50px 40px">
+<div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" style="padding: 50px 40px; background: white;">
    
    
    <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" displaySuccessMsg="${videoCalls.isDisplaySuccessMsg()}" style="left: 50%; position: absolute; top: 39px; display:none;" class="alert alert-success videoCallsAlertSuccess">
@@ -9,25 +9,33 @@
   <h4 style="
     text-align: left;
     text-shadow: 0 3px 4px #fff;
-    margin:-7px 0 20px; color: #2F5E92;">    
+    margin:-7px 0 0px; color: #2F5E92;">    
   	&{exoplatform.videocall.administration.title}
   </h4> 
  
   
-  <div class="uiBox">
-	  <div class="uiContentBox">
+
 		  	<form action="@{VideoCallAdministration.save()}" method="post" class="form-horizontal">
 			  <div class="control-group">
-			    <label class="checkbox" style="font-weight: bold;">
+			    <label class="checkbox">
 			      <input id="chkTurnOff" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">
 			      <input type="hidden" id="disableVideoCall" name="disableVideoCall" value="false">
-				  &{exoplatform.videocall.turnoff}
+				  &{exoplatform.videocall.turnoff} 
+				  <!--div style="display:inline-block;" onmouseover="(function(elm) {eXo.ecm.WCMUtils.showPopover(elm);})(this)"
+					onmouseout="(function(elm) {eXo.ecm.WCMUtils.hidePopover(elm);})(this)" data-toggle="popover" data-placement="left" data-content=""-->
+					  <i class="uiIconQuestion uiIconLightGray"></i>	
+					
+				  <!--/div-->
+				  
+				  
+				  
+				  
 				</label>	    
 			  </div>
 			  <div class="control-group">
-			    <label style="text-align: left; width: auto; font-weight: bold;" class="control-label" for="weemoKey">&{exoplatform.videocall.weemokey}</label>
+			    <label style="text-align: left; width: auto;" class="control-label" for="weemoKey">&{exoplatform.videocall.weemokey}: </label>
 			    <div class="controls" style="margin-left: 85px;">
-			      <input class="span2" type="text" id="weemoKey" name="weemoKey" value="<%=weemoKey%>" placeholder="&{exoplatform.videocall.weemokey}">
+			      <input class="span2" type="text" id="weemoKey" name="weemoKey" value="" >
 			    </div>
 			  </div>		  
 			  
@@ -53,6 +61,21 @@
 					    </div>
 				      </td>
 				    </tr>  
+					
+					<tr>
+						<td>
+							<div data-placement="bottom" rel="tooltip" class="Text" data-original-title="Owner">All users</div>
+						</td>
+						<td>
+							<div class="spaceRole">
+								<input type="checkbox" tabindex="3" class="yesno" checked="checked" style="visibility: hidden;" id="rememberme" name="rememberme" value="true" data-yes="" data-no=""/>
+								<label class="rememberTxt" for="rememberme">Remember use and pass</label>
+							</div>
+						</td>
+						<td class="center">         
+							<a data-original-title="Delete" data-placement="bottom" rel="tooltip" onclick="" class="actionIcon"><i class="uiIconDelete"></i></a>
+						</td>
+					</tr>
 				  
 				  </tbody>
 				</table> 
@@ -75,7 +98,7 @@
 									<a class="actionIcon" link="@{VideoCallAdministration.openGroupPermission()}" href="javascript:void(0);" onClick="utils.openGroupPermission(this, 'groupSelector');"  rel="tooltip" data-placement="bottom" data-original-title="Select Membership"><i class="uiIconSelectMember uiIconLightGray"></i></a>
 								
 							
-							     <button type="button" class="btn btn-primary">&{exoplatform.videocall.action.add}</button>
+							     <button type="button" class="btn">&{exoplatform.videocall.action.add} permission</button>
 						 
 						 	</div>
 						 	
@@ -90,12 +113,12 @@
 			  
 			  
 			  
-			  <div class="uiAction uiActionBorder">				
-			     <button type="submit" class="btn btn-primary">&{exoplatform.videocall.action.save}</button>		 
+			  <div class="uiAction">				
+			    <button type="submit" class="btn">&{exoplatform.videocall.action.save}</button>
+				<button type="submit" class="btn">Cancel</button>				 
   			  </div>
 		  </form>
-	  </div>
-  </div>
+
 </div>
 
 
