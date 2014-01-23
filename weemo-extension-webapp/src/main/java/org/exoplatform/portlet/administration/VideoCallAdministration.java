@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Stack;
 import java.util.logging.Logger;
 
 import juzu.*;
@@ -20,6 +22,7 @@ import javax.inject.Provider;
 import javax.portlet.PortletPreferences;
 import org.exoplatform.services.organization.Group;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.model.videocall.VideoCallModel;
@@ -171,7 +174,7 @@ public class VideoCallAdministration {
   
   @Ajax
   @Resource
-  public Response.Content openGroupPermission() throws Exception {
+  public Response.Content openGroupPermission(String groupId) throws Exception {
     Collection<?> collection = organizationService_.getMembershipTypeHandler().findMembershipTypes();
     List<String> listMemberhip = new ArrayList<String>(5);
     StringBuffer sb = new StringBuffer();
@@ -187,50 +190,103 @@ public class VideoCallAdministration {
     memberships = sb.toString();
     memberships = memberships.substring(0, memberships.length()-1);
     
-    String groups = "";
+    String groups = "[";
     StringBuffer sbGroups = new StringBuffer();
-    Collection<?> sibblingsGroup = organizationService_.getGroupHandler().findGroups(null);
-    for(Object obj : sibblingsGroup){      
-      String groupName = ((ExtGroup)obj).getGroupName();
-      String groupObj = loadGroups(groupName);
-      sbGroups.append(groupObj).append(",");
+    Collection<?> sibblingsGroup = null;
+    if(StringUtils.isEmpty(groupId)) {
+      sibblingsGroup = organizationService_.getGroupHandler().findGroups(null);      
+    } else {
+      Group group = organizationService_.getGroupHandler().findGroupById(groupId);
+      String parentId = group.getParentId();
+      Group parentGroup = null;
+      if(parentId != null) {
+        parentGroup = organizationService_.getGroupHandler().findGroupById(parentId);
+      }
+      sibblingsGroup = organizationService_.getGroupHandler().findGroups(parentGroup);      
     }
-    groups = sbGroups.toString();
-    if(groups.length() > 0) {
+    if(sibblingsGroup != null && sibblingsGroup.size() > 0) { 
+      for(Object obj : sibblingsGroup){      
+        String groupLabel = ((ExtGroup)obj).getLabel();
+        if(groupId != null && ((ExtGroup)obj).getId().equalsIgnoreCase(groupId)) {
+          String groupObj = loadChildrenGroups(groupId, groupLabel);
+          sbGroups.append(groupObj).append(",");
+        } else {
+          sb = new StringBuffer();
+          sb.append("{\"group\":\""+((ExtGroup)obj).getId()+"\",\"label\":\""+groupLabel+"\"}");
+          sbGroups.append(sb.toString()).append(",");
+        }
+      }
+    }
+    
+    
+    groups = groups.concat(sbGroups.toString());
+    if(groups.length() > 1) {
       groups = groups.substring(0, groups.length()-1);
     }
-    System.out.println(" == GROUP ==" + groups);
-    JSONObject response = new JSONObject();
-    response.put("memberships", memberships);
-    response.put("groups", groups);
-    System.out.println(" JSON OBJECT " + response.toString());
-    return Response.ok(response.toString()).withMimeType("application/json; charset=UTF-8").withHeader("Cache-Control", "no-cache");
+    groups = groups.concat("]");
+    StringBuffer sbResponse = new StringBuffer();
+    sbResponse.append("{\"memberships\":\""+memberships+"\", \"groups\":"+groups+"}");
+    return Response.ok(sbResponse.toString()).withMimeType("application/json; charset=UTF-8").withHeader("Cache-Control", "no-cache");
   }
   
-  public String loadGroups(String groupName) throws Exception {
+  public String loadChildrenGroups(String groupId, String groupLabel) throws Exception {
     JSONObject objGroup = new JSONObject();
-    Queue<String> queue = new LinkedList<String>();
-    queue.add(groupName);
-    while (!queue.isEmpty()) {
-      String groupId = queue.poll();     
-      String children = "";
-      StringBuffer sbChildren = new StringBuffer();
-      Group group = organizationService_.getGroupHandler().findGroupById(groupId);
+    Group group = organizationService_.getGroupHandler().findGroupById(groupId);
+    objGroup.put("group", groupId);
+    objGroup.put("label", groupLabel);
+    if(group != null) {
+      Collection<?> collection = organizationService_.getGroupHandler().findGroups(group);
+      if(collection.size() > 0) {
+        StringBuffer sbChildren = new StringBuffer();
+        sbChildren.append("[");
+        for(Object obj : collection){          
+          sbChildren.append("{\"group\":\""+((ExtGroup)obj).getId()+"\",\"label\":\""+((ExtGroup)obj).getLabel()+"\"},");
+        } 
+        String childrenGroups = sbChildren.toString();
+        if(childrenGroups.length() > 1) {
+          childrenGroups = childrenGroups.substring(0, childrenGroups.length()-1);
+        }
+        childrenGroups = childrenGroups.concat("]");
+        objGroup.put("children", childrenGroups);
+      }          
+    }     
+    
+    
+    /*List<String> visitedNodes = new ArrayList<String>();
+    Map<String, String> maps = new HashedMap();
+    Stack stack = new Stack();
+    stack.push(groupName);
+    visitedNodes.add(groupName);
+    System.out.println(" == " + groupName);
+    objGroup.put("group", groupName);
+    objGroup.put("label", groupLabel);
+    while(!stack.isEmpty()) {
+      String groupId = (String) stack.peek();
+      if(maps.get(groupId) != null) {
+        groupId = maps.get(groupId) + "/" + groupId;
+      }
+      Group group = organizationService_.getGroupHandler().findGroupById("/" + groupId);
       if(group != null) {
         Collection<?> collection = organizationService_.getGroupHandler().findGroups(group);
-        for(Object obj : collection){
-          queue.add(((ExtGroup)obj).getGroupName());
-          sbChildren.append(((ExtGroup)obj).getGroupName()).append(",");
-        }     
-        children = sbChildren.toString();
-      }
-      if(children.length() > 0) {        
-        children = children.substring(0, children.length()-1);
-        objGroup.put("children", children);
-      }
-      objGroup.put("group", groupId);
-    }
-    //System.out.println("  load group ==" + objGroup.toString());
+        String unvisittedGroup = null;
+        for(Object obj : collection) {          
+          if(!visitedNodes.contains(((ExtGroup)obj).getGroupName())) {
+            unvisittedGroup = ((ExtGroup)obj).getGroupName();
+            maps.put(unvisittedGroup, groupId);
+            break;          
+          }
+        }
+        if(!StringUtils.isEmpty(unvisittedGroup)) {
+          visitedNodes.add(unvisittedGroup);
+          System.out.println("  ==== " + unvisittedGroup);
+          objGroup.put("group", groupId);
+          objGroup.put("label", groupLabel);
+          stack.push(unvisittedGroup);
+        } else {
+          stack.pop();
+        }
+      } else stack.pop();
+    }*/
     return objGroup.toString();
   }
   
