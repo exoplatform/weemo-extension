@@ -131,9 +131,9 @@
         <h4 class="modal-title" id="userModalTitle">User Selector</h4>
       </div>
       <div class="modal-body">
-        <div class="alert alert-info alert-dismissable" style="display:none;">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-          &{exoplatform.videocall.permissions.empty.alertMessage}
+        <div class="alert alert-warning alert-dismissable" style="display:none; left: 30%; position: absolute; top: 27px;">
+          <button style="right: -9px; top: 0px;" type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <i class="uiIconWarning"></i> &{exoplatform.videocall.permissions.empty.alertMessage}
         </div>
         <form class="UIForm" id="UIUserSelector" action="" method="post"><div><input type="hidden" name="formOp" value=""><input type="hidden" name="gtn:csrf" value="A64A2D967F00010111B72C96CA121B53"></div>
 		<div class="uiUserSelector" id="UIUserSelector">
