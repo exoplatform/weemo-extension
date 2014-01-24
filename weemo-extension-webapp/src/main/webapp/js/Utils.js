@@ -386,10 +386,16 @@
         var contentBox = $("#UIGroupMemberSelector .uiContentBox:first");
     
         var arrMemberships = memberships.split(",");
-        if(arrMemberships.length > 0) {
+        if(arrMemberships.length > 0) {          
           var ulElem = $('<ul/>', {});
           $(contentBox).append(ulElem);    
           for(var i=0; i < arrMemberships.length; i++) {
+            var membershipLabel = "";
+            if(arrMemberships[i] === "*") {
+	      membershipLabel = "Any ";
+	    } else {
+	      membershipLabel = eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i] + " ");
+	    }
             var li = $('<li/>', {});
             var span = $('<span/>', {
 	    'class':'uiIconMiniArrowRight'
@@ -397,9 +403,11 @@
             var a = $('<a/>', {
 	      'class':'ItemIcon',
               'href':'javascript:void(0);',
-              'onClick':'eXo.ecm.VideoCallsUtils.selectGroupPermision(this);',
+              'onClick':'eXo.ecm.VideoCallsUtils.selectMembership(this);',
               'rel':'tooltip',
               'data-placement':'bottom',
+              'membership':arrMemberships[i] + ":" +groupId,
+              'membershipLabel':membershipLabel + "in " + eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(groupId.substring(1)),
               'text':eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i]),
               'title':eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i])
 	    });
@@ -452,6 +460,113 @@
 
     });
   }
+
+  Utils.prototype.selectMembership = function(elem)
+  {
+    var membership = $(elem).attr("membership");   
+    var membershipLabel = $(elem).attr("membershipLabel");    
+    $("#userOrGroup").val(membership);
+    $("#txtUserOrGroup").val(membershipLabel);
+    $('#groupSelector').modal('hide');
+  }
+
+  Utils.prototype.addPermissions = function() {
+    var permissions = $("#userOrGroup").val();  
+    var permissionsLabel = $("#txtUserOrGroup").val();  
+    var arrPermissions = permissions.split(",");
+    var arrPermissionsLabel = permissionsLabel.split(",");
+    var tbody = $("#UIViewPermissionContainer").find("tbody:first");
+    if(arrPermissions.length > 0) {
+      $(tbody).empty();
+    }
+    for(var i=0; i < arrPermissions.length; i++) {
+      var tr = $('<tr/>', {});
+      //td for permission
+      var tdPermission = $('<td/>', {
+        "class":"center"
+      });
+      var divPermission = $('<div/>', {
+        "data-placement":"bottom",
+	"rel":"tooltip",
+        "permission":arrPermissions[i],
+	"data-original-title":arrPermissionsLabel[i],
+	"text":arrPermissionsLabel[i],
+        "class":"Text"
+      });
+      $(tdPermission).append(divPermission); 
+      $(tr).append(tdPermission); 
+      //td for switcher icon
+      var tdIcon = $('<td/>', {
+        "class":"center"
+      });
+      var divIcon = $('<div/>', {        
+        "class":"spaceRole"
+      });
+      var inputIcon = $('<input/>', { 
+        "type":"checkbox",
+        "id":"enableVideoCalls",
+        "name":"enableVideoCalls",
+        "value":"true",
+        "data-yes":"YES",
+	"data-no":"NO",
+        "checked":"checked",
+        "style":"visibility: hidden;",       
+        "class":"yesno"
+      });
+      $(divIcon).append(inputIcon); 
+      $(tdIcon).append(divIcon);
+      $(tr).append(tdIcon); 
+      // td for action
+      var tdAction = $('<td/>', {
+        "class":"center"
+      });
+      var aAction = $('<a/>', {
+        "data-original-title":"Delete",
+	"data-placement":"bottom",
+	"rel":"tooltip",
+	"onclick":"eXo.ecm.VideoCallsUtils.removePermission(this);",
+        "class":"actionIcon"
+      });
+      var iconDelete = $('<i/>', {
+        "class":"uiIconDelete"
+      });
+      $(aAction).append(iconDelete); 
+      $(tdAction).append(aAction);
+      $(tr).append(tdAction); 
+      
+      $(tbody).append(tr);
+      
+    }   
+    eXo.ecm.VideoCallsUtils.reloadSwithcherButton();
+  }
+
+  //////////////////////////////////////////////////////////
+  Utils.prototype.reloadSwithcherButton = function() {
+    
+    $("div.spaceRole").click(function()
+    {
+        var input = $(this).find("#rememberme");
+        var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
+        input.attr("value", remembermeOpt);
+    });
+    var yeslabel;
+    var nolabel;
+    $("div.spaceRole").children('input:checkbox').each(function () {
+        yeslabel = $(this).data("yes");
+        nolabel = $(this).data("no");
+        $(this).iphoneStyle({
+                checkedLabel:yeslabel,
+                uncheckedLabel:nolabel});
+
+        $(this).change(function()
+        {
+            $(this).closest("div.spaceRole").trigger("click");
+        });
+    });
+
+  }
+  ///////////////////////////////////////////////////////////
+
 
   Utils.prototype.capitaliseFirstLetter = function(string)
   {
@@ -510,6 +625,7 @@ $( document ).ready(function() {
     }
   });
 
+  eXo.ecm.VideoCallsUtils.displaySuccessAlert();
 
 });
 

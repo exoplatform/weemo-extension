@@ -1,3 +1,4 @@
+<script type="text/javascript" src="/platform-extension/javascript/iphone-style-checkboxes.js"></script> 
 <div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" style="padding: 50px 40px; background: white;">
    
    
@@ -6,12 +7,12 @@
    </div>
    
    
-  <h4 style="
+  <h3 style="
     text-align: left;
     text-shadow: 0 3px 4px #fff;
     margin:-7px 0 0px; color: #2F5E92;">    
   	&{exoplatform.videocall.administration.title}
-  </h4> 
+  </h3> 
  
   
 
@@ -47,7 +48,7 @@
 				  <thead>
 				    <tr>
 				          <th>&{exoplatform.videocall.owner}</th>
-				          <th>&{exoplatform.videocall.1_1profile}</th>				        
+				          <th class="span3 center">&{exoplatform.videocall.1_1profile}</th>				        
 				          <th class="span2 center">&{exoplatform.videocall.action}</th>
 				    </tr>
 				  </thead>
@@ -61,20 +62,19 @@
 				      </td>
 				    </tr>  
 					
-					<tr>
+					<!--<tr>
 						<td>
 							<div data-placement="bottom" rel="tooltip" class="Text" data-original-title="Owner">All users</div>
 						</td>
-						<td>
+						<td class="center">
 							<div class="spaceRole">
-								<input type="checkbox" tabindex="3" class="yesno" checked="checked" style="visibility: hidden;" id="rememberme" name="rememberme" value="true" data-yes="" data-no=""/>
-								<label class="rememberTxt" for="rememberme">Remember use and pass</label>
-							</div>
+								<input type="checkbox" tabindex="3" class="yesno" checked="checked" style="visibility: hidden;" id="enableVideoCalls" name="enableVideoCalls" value="true" data-yes="&{exoplatform.videocall.turnoff.yes}" data-no="&{exoplatform.videocall.turnoff.no}"/>
+							</div>		                
 						</td>
 						<td class="center">         
 							<a data-original-title="Delete" data-placement="bottom" rel="tooltip" onclick="" class="actionIcon"><i class="uiIconDelete"></i></a>
 						</td>
-					</tr>
+					</tr>-->
 				  
 				  </tbody>
 				</table> 
@@ -97,7 +97,7 @@
 									<a class="actionIcon" link="@{VideoCallAdministration.openGroupPermission()}" href="javascript:void(0);" onClick="eXo.ecm.VideoCallsUtils.openGroupPermission(this, 'groupSelector');"  rel="tooltip" data-placement="bottom" data-original-title="Select Membership"><i class="uiIconSelectMember uiIconLightGray"></i></a>
 								
 							
-							     <button type="button" class="btn">&{exoplatform.videocall.action.add} permission</button>
+							     <button type="button" onClick="eXo.ecm.VideoCallsUtils.addPermissions();" class="btn">&{exoplatform.videocall.action.add}</button>
 						 
 						 	</div>
 						 	
@@ -321,6 +321,26 @@
   </div><!-- /.modal-dialog -->
 </div>
 
-<script type="text/javascript">    
-    eXo.ecm.VideoCallsUtils.displaySuccessAlert();
+
+<script type="text/javascript">
+    $("div.spaceRole").click(function()
+    {
+        var input = $(this).find("#rememberme");
+        var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
+        input.attr("value", remembermeOpt);
+    });
+    var yeslabel;
+    var nolabel;
+    $("div.spaceRole").children('input:checkbox').each(function () {
+        yeslabel = $(this).data("yes");
+        nolabel = $(this).data("no");
+        $(this).iphoneStyle({
+                checkedLabel:yeslabel,
+                uncheckedLabel:nolabel});
+
+        $(this).change(function()
+        {
+            $(this).closest("div.spaceRole").trigger("click");
+        });
+    });
 </script>
