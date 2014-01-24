@@ -29,13 +29,30 @@
     <name>VideoCallAdministration</name>
     <module>      
       <depends>
+        <module>videoCallsAdmin</module>
+      </depends>     
+    </module>
+  </portlet>
+  
+   <module>
+    <name>videoCallsAdmin</name>
+    <script>
+      <path>/js/Utils.js</path>
+    </script>
+    <depends>
+      <module>jquery</module>
+      <as>gj</as>
+    </depends>
+    <depends>
         <module>bts_alert</module>
       </depends>   
       <depends>
         <module>bts_modal</module>
-      </depends>   
-    </module>
-  </portlet>
+    </depends>  
+    <depends>
+      <module>bts_popover</module>
+    </depends>
+  </module>
   
  
 </gatein-resources>

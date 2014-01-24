@@ -1,6 +1,11 @@
-var Map = {};
 
-function Utils() {
+(function(gj, bts_alert, bts_modal, bts_popover) {
+
+  var Map = {};
+
+  function Utils() {} ;
+
+
 
   Utils.prototype.displaySuccessAlert = function() {
     var displaySuccessMsg = $("#videocalls-alert").attr("displaySuccessMsg");
@@ -235,7 +240,7 @@ function Utils() {
           var a = $('<a/>', {
 	    'class':'uiIconNode collapseIcon',
             'href':'javascript:void(0);',
-            'onClick':'utils.selectGroupPermision(this);',
+            'onClick':'eXo.ecm.VideoCallsUtils.selectGroupPermision(this);',
             'groupId':obj.group,
             'ajaxLink':ajaxLink,
             'title':obj.label
@@ -254,7 +259,7 @@ function Utils() {
         //Build link for up level icon
         var upLevelElement = $("#UIGroupMemberSelector .treeContainer:first").find("a:first"); 
         $(upLevelElement).attr('href','javascript:void(0);');
-        $(upLevelElement).attr('onClick','utils.selectGroupPermision(this);');
+        $(upLevelElement).attr('onClick','eXo.ecm.VideoCallsUtils.selectGroupPermision(this);');
         $(upLevelElement).attr('ajaxLink',ajaxLink);
       },
       error: function(){
@@ -328,7 +333,7 @@ function Utils() {
                 var aChild = $('<a/>', {
 		  'class':'uiIconNode collapseIcon',
 		  'href':'javascript:void(0);',
-		  'onClick':'utils.selectGroupPermision(this);',
+		  'onClick':'eXo.ecm.VideoCallsUtils.selectGroupPermision(this);',
 		  'groupId':child.group,
 		  'ajaxLink':ajaxLink,
 		  'title':child.label
@@ -350,7 +355,7 @@ function Utils() {
           var a = $('<a/>', {
 	    'class':aCSSClass,
             'href':'javascript:void(0);',
-            'onClick':'utils.selectGroupPermision(this);',
+            'onClick':'eXo.ecm.VideoCallsUtils.selectGroupPermision(this);',
             'groupId':obj.group,
             'ajaxLink':ajaxLink,
             'title':obj.label
@@ -369,7 +374,7 @@ function Utils() {
         //Build link for up level icon
         var upLevelElement = $("#UIGroupMemberSelector .treeContainer:first").find("a:first"); 
         $(upLevelElement).attr('href','javascript:void(0);');
-        $(upLevelElement).attr('onClick','utils.selectGroupPermision(this);');
+        $(upLevelElement).attr('onClick','eXo.ecm.VideoCallsUtils.selectGroupPermision(this);');
         $(upLevelElement).attr('ajaxLink',ajaxLink);
         if(parentId && parentId.length > 0) {
           $(upLevelElement).attr('groupId',parentId);
@@ -392,11 +397,11 @@ function Utils() {
             var a = $('<a/>', {
 	      'class':'ItemIcon',
               'href':'javascript:void(0);',
-              'onClick':'utils.selectGroupPermision(this);',
+              'onClick':'eXo.ecm.VideoCallsUtils.selectGroupPermision(this);',
               'rel':'tooltip',
               'data-placement':'bottom',
-              'text':utils.capitaliseFirstLetter(arrMemberships[i]),
-              'title':utils.capitaliseFirstLetter(arrMemberships[i])
+              'text':eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i]),
+              'title':eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i])
 	    });
             $(li).append(span);
 	    $(li).append(a);
@@ -416,7 +421,7 @@ function Utils() {
 	  'class':'uiIconTree uiIconLightGray'
 	});
         $(li).append(item);
-        $(ulTree).append(li);
+        $(ulTree).append(li).append(" ");
 
         for(var i=1; i<arrGroups.length; i++) {
 	  //Group label
@@ -453,11 +458,23 @@ function Utils() {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-};
+  Utils.prototype.showPopover = function (element) {
+    gj(element).popover({template: '<div class="popover"><div class="arrow"></div><div class="inner"><h3 class="popover-title" style="display:none;"></h3><div class="popover-content"><p></p></div></div></div>'});
+    gj(element).popover('show');       		
+  };
 
-var utils = new Utils();
+  Utils.prototype.hidePopover = function (element) {
+    gj(element).popover('hide');
+  };
 
 
+  eXo.ecm.VideoCallsUtils = new Utils();
+  return {
+    VideoCallsUtils : eXo.ecm.VideoCallsUtils
+  };
+  
+
+})(gj, bts_alert, bts_modal, bts_popover);
 
 
 $( document ).ready(function() {
@@ -487,7 +504,7 @@ $( document ).ready(function() {
     if(e.keyCode == 13) { 
       if ($("#keyword").val().trim() != "") {
         var searchLinkElem = $("#searchLink");          
-        utils.searchUserPermission(searchLinkElem); 
+        eXo.ecm.VideoCallsUtils.searchUserPermission(searchLinkElem); 
       }
       e.preventDefault(); 
     }
@@ -495,5 +512,6 @@ $( document ).ready(function() {
 
 
 });
+
 
 
