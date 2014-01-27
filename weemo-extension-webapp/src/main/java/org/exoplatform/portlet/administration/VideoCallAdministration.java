@@ -255,68 +255,40 @@ public class VideoCallAdministration {
         childrenGroups = childrenGroups.concat("]");
         objGroup.put("children", childrenGroups);
       }          
-    }     
-    
-    
-    /*List<String> visitedNodes = new ArrayList<String>();
-    Map<String, String> maps = new HashedMap();
-    Stack stack = new Stack();
-    stack.push(groupName);
-    visitedNodes.add(groupName);
-    System.out.println(" == " + groupName);
-    objGroup.put("group", groupName);
-    objGroup.put("label", groupLabel);
-    while(!stack.isEmpty()) {
-      String groupId = (String) stack.peek();
-      if(maps.get(groupId) != null) {
-        groupId = maps.get(groupId) + "/" + groupId;
-      }
-      Group group = organizationService_.getGroupHandler().findGroupById("/" + groupId);
-      if(group != null) {
-        Collection<?> collection = organizationService_.getGroupHandler().findGroups(group);
-        String unvisittedGroup = null;
-        for(Object obj : collection) {          
-          if(!visitedNodes.contains(((ExtGroup)obj).getGroupName())) {
-            unvisittedGroup = ((ExtGroup)obj).getGroupName();
-            maps.put(unvisittedGroup, groupId);
-            break;          
-          }
-        }
-        if(!StringUtils.isEmpty(unvisittedGroup)) {
-          visitedNodes.add(unvisittedGroup);
-          System.out.println("  ==== " + unvisittedGroup);
-          objGroup.put("group", groupId);
-          objGroup.put("label", groupLabel);
-          stack.push(unvisittedGroup);
-        } else {
-          stack.pop();
-        }
-      } else stack.pop();
-    }*/
+    }
     return objGroup.toString();
   }
   
-  public List<VideoCallPermission> getListOfPermissions(String videoPermissions) throws Exception {
-    List<VideoCallPermission> permissions = new ArrayList<VideoCallPermission>();
+  public String getListOfPermissions(String videoPermissions) throws Exception {
+    String result = "";
+    StringBuffer sb = new StringBuffer();
     if(videoPermissions != null && videoPermissions.length() > 0) {
       String[] arrPermissions = videoPermissions.split(",");
       for (String string : arrPermissions) {
-        VideoCallPermission model = new VideoCallPermission();
         String permissionId = string.split("#")[0];
-        model.setPermissionId(permissionId);
-        model.setEnable(Boolean.parseBoolean(string.split("#")[1]));
+        String enableVideoCalls = string.split("#")[1];
+        sb.append("#").append(permissionId).append(",").append(enableVideoCalls);
         if(permissionId.indexOf(":") > 0) {
           String membership = permissionId.split(":")[0];
           String groupId = permissionId.split(":")[1];
           Group group = organizationService_.getGroupHandler().findGroupById(groupId);
-          model.setPermissionLabel(membership + " in " + group.getLabel());
+          sb.append(",").append(capitalize(membership) + " in " + group.getLabel());
         } else {
           User user = organizationService_.getUserHandler().findUserByName(permissionId);
-          model.setPermissionLabel(user.getDisplayName());
+          if(StringUtils.isEmpty(user.getDisplayName())) {
+            user.setDisplayName(user.getFirstName() + " " + user.getLastName());
+          }         
+          sb.append(",").append(user.getDisplayName());
         }
       }
-    } else return null;
-    return permissions;
+      result = sb.substring(1);      
+    }
+    return result;
+  }
+  
+  public static String capitalize(String s) {
+    if (s.length() == 0) return s;
+    return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
   }
   
 }

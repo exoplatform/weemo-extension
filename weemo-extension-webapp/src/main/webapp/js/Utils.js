@@ -589,7 +589,7 @@
   Utils.prototype.reloadSwitcherButton = function() {
     $("div.spaceRole").click(function()
     {
-        var input = $(this).find("#rememberme");
+        var input = $(this).find("#enableVideoCalls");
         var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
         input.attr("value", remembermeOpt);
     });

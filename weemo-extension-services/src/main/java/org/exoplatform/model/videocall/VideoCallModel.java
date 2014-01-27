@@ -16,8 +16,6 @@
  */
 package org.exoplatform.model.videocall;
 
-import java.util.HashMap;
-
 import juzu.Mapped;
 
 @Mapped
