@@ -17,6 +17,8 @@ import juzu.impl.common.JSON;
 import juzu.plugin.ajax.Ajax;
 import juzu.request.RenderContext;
 import juzu.template.Template;
+import juzu.template.TemplateExecutionException;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.portlet.PortletPreferences;
@@ -26,6 +28,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.model.videocall.VideoCallPermission;
 import org.exoplatform.portal.webui.page.PageIterator;
 import org.exoplatform.services.jcr.ext.organization.GroupImpl;
 import org.exoplatform.services.organization.MembershipType;
@@ -80,26 +83,29 @@ public class VideoCallAdministration {
 
 
   @View
-  public void index(RenderContext renderContext) throws IOException
-  {   
-    String weemoKey = videoCallService_.getWeemoKey();
-    boolean turnOffVideoCall = videoCallService_.isDisableVideoCall();
+  public void index(RenderContext renderContext) throws Exception
+  {  
+    VideoCallModel videoModel = videoCallService_.getVideoCallProfile();
+    String weemoKey = videoModel.getWeemoKey();
+    boolean turnOffVideoCall = Boolean.parseBoolean(videoModel.getDisableVideoCall());
+    String videoPermissions = videoModel.getVideoCallPermissions();
     index.with().set("turnOffVideoCall", turnOffVideoCall)
               .set("weemoKey", weemoKey)
+              .set("videoCallPermissions", getListOfPermissions(videoPermissions))
               .render();
     videoCalls.setDisplaySuccessMsg(false);
   }  
   
-  @Action
-  @Route("/save")
-  public Response save(VideoCallModel videoCallModel) {
+  @Ajax
+  @Resource
+  public Response.Content save(VideoCallModel videoCallModel) {
      if(videoCallModel.getDisableVideoCall() == null) {
        videoCallModel.setDisableVideoCall("false");
      }
      VideoCallService videoCallService = new VideoCallService();
      videoCallService.saveVideoCallProfile(videoCallModel);
      videoCalls.setDisplaySuccessMsg(true);    
-     return VideoCallAdministration_.index();
+     return Response.ok("OK").withMimeType("text/html; charset=UTF-8").withHeader("Cache-Control", "no-cache");
   }
   
   @Ajax
@@ -288,6 +294,29 @@ public class VideoCallAdministration {
       } else stack.pop();
     }*/
     return objGroup.toString();
+  }
+  
+  public List<VideoCallPermission> getListOfPermissions(String videoPermissions) throws Exception {
+    List<VideoCallPermission> permissions = new ArrayList<VideoCallPermission>();
+    if(videoPermissions != null && videoPermissions.length() > 0) {
+      String[] arrPermissions = videoPermissions.split(",");
+      for (String string : arrPermissions) {
+        VideoCallPermission model = new VideoCallPermission();
+        String permissionId = string.split("#")[0];
+        model.setPermissionId(permissionId);
+        model.setEnable(Boolean.parseBoolean(string.split("#")[1]));
+        if(permissionId.indexOf(":") > 0) {
+          String membership = permissionId.split(":")[0];
+          String groupId = permissionId.split(":")[1];
+          Group group = organizationService_.getGroupHandler().findGroupById(groupId);
+          model.setPermissionLabel(membership + " in " + group.getLabel());
+        } else {
+          User user = organizationService_.getUserHandler().findUserByName(permissionId);
+          model.setPermissionLabel(user.getDisplayName());
+        }
+      }
+    } else return null;
+    return permissions;
   }
   
 }

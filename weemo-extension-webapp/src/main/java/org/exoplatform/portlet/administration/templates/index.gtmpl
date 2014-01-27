@@ -1,4 +1,5 @@
-<script type="text/javascript" src="/platform-extension/javascript/iphone-style-checkboxes.js"></script> 
+<script type="text/javascript" src="/platform-extension/javascript/iphone-style-checkboxes.js"></script>
+<div><%=videoCallPermissions.size()%> AAAAAA</div> 
 <div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" style="padding: 50px 40px; background: white;">
    
    
@@ -16,7 +17,7 @@
  
   
 
-		  	<form action="@{VideoCallAdministration.save()}" method="post" class="form-horizontal">
+		  	<form id="videoCallsPermissionForm" action="@{VideoCallAdministration.save()}" method="post" class="form-horizontal">
 			  <div class="control-group">
 			    <label class="checkbox">
 			      <input id="chkTurnOff" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">
@@ -35,7 +36,7 @@
 			  <div class="control-group">
 			    <label style="text-align: left; width: auto;" class="control-label" for="weemoKey">&{exoplatform.videocall.weemokey}: </label>
 			    <div class="controls" style="margin-left: 85px;">
-			      <input class="span2" type="text" id="weemoKey" name="weemoKey" value="" >
+			      <input class="span2" type="text" id="weemoKey" name="weemoKey" value="<%=weemoKey%>" placeholder="&{exoplatform.videocall.weemokey}">
 			    </div>
 			  </div>		  
 			  
@@ -53,7 +54,39 @@
 				    </tr>
 				  </thead>
 				  <tbody>
-				  
+				  <!--
+				  <%if(videoCallPermissions != null && videoCallPermissions.length() > 0) {
+				    String[] arrPermissions = videoCallPermissions.split(",");
+				    for(int i=0; i<arrPermissions.length; i++) {
+				  %>
+				    <tr>
+				      <td class="left">
+				        <div data-placement="bottom" rel="tooltip" permission="test" data-original-title="ha quang tan" class="Text">ha quang tan</div>
+				      </td>
+				      <td class="center">
+				        <div class="spaceRole">
+				          <div class="iPhoneCheckContainer" style="width: 60px;">
+				            <input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="false" data-yes="YES" data-no="NO" checked="checked" style="visibility: hidden;" class="yesno">
+				            <label class="iPhoneCheckLabelOff" style="width: 51px;">
+                              <span style="margin-right: -41px;">NO</span>
+                            </label>
+                            <label class="iPhoneCheckLabelOn" style="width: 50px;">
+                              <span>YES</span>
+                            </label>
+                            <div class="iPhoneCheckHandle" style="left: 41px;">
+                              <div class="iPhoneCheckHandleRight">
+                                <div class="iPhoneCheckHandleCenter"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="center"><a data-original-title="Delete" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.removePermission(this);" class="actionIcon"><i class="uiIconDelete"></i></a></td>
+                    </tr>
+				  <%
+				    }
+				  } else {
+				  %>
 				    <tr>
 				      <td class="empty center" colspan="3">
 				      	<div class="actionContainer">
@@ -61,20 +94,11 @@
 					    </div>
 				      </td>
 				    </tr>  
+				  <%
+				  }%>-->
+				    
 					
-					<!--<tr>
-						<td>
-							<div data-placement="bottom" rel="tooltip" class="Text" data-original-title="Owner">All users</div>
-						</td>
-						<td class="center">
-							<div class="spaceRole">
-								<input type="checkbox" tabindex="3" class="yesno" checked="checked" style="visibility: hidden;" id="enableVideoCalls" name="enableVideoCalls" value="true" data-yes="&{exoplatform.videocall.turnoff.yes}" data-no="&{exoplatform.videocall.turnoff.no}"/>
-							</div>		                
-						</td>
-						<td class="center">         
-							<a data-original-title="Delete" data-placement="bottom" rel="tooltip" onclick="" class="actionIcon"><i class="uiIconDelete"></i></a>
-						</td>
-					</tr>-->
+					
 				  
 				  </tbody>
 				</table> 
@@ -113,8 +137,8 @@
 			  
 			  
 			  <div class="uiAction">				
-			    <button type="submit" class="btn">&{exoplatform.videocall.action.save}</button>
-				<button type="submit" class="btn">Cancel</button>				 
+			    <button type="button" onClick="eXo.ecm.VideoCallsUtils.saveVideoCallsPermission();" class="btn">&{exoplatform.videocall.action.save}</button>
+				<button type="button" class="btn">Cancel</button>				 
   			  </div>
 		  </form>
 
@@ -343,4 +367,51 @@
             $(this).closest("div.spaceRole").trigger("click");
         });
     });
+    
+    
+    
+    $( document ).ready(function() {
+	  $("#chkTurnOff").change(function() {
+	    if ($("#chkTurnOff").is(':checked')) {
+	      $("#disableVideoCall").val("true");
+	    } else {
+	      $("#disableVideoCall").val("false");	      
+	    }
+	  });
+	
+	  $('#selectAllUsers').click (function () {
+	     var checkedStatus = this.checked;
+	     $('#UIListUsers tbody tr').find('td:first :checkbox').each(function () {
+	        $(this).prop('checked', checkedStatus);
+	     });
+	  });  
+	
+	  $( '#UIListUsers' ).on( 'change', 'input[type="checkbox"]', function() {
+	    if (!$(this).is(':checked')) {
+	      $('#selectAllUsers').attr('checked',false);
+	    }
+	  });
+	
+	  
+	  $("#keyword").bind('keypress keydown keyup', function(e){
+	    if(e.keyCode == 13) { 
+	      if ($("#keyword").val().trim() != "") {
+	        var searchLinkElem = $("#searchLink");          
+	        eXo.ecm.VideoCallsUtils.searchUserPermission(searchLinkElem); 
+	      }
+	      e.preventDefault(); 
+	    }
+	  });
+	  
+	  //Display alert message
+	  /*var displaySuccessMsg = $("#videocalls-alert").attr("displaySuccessMsg");
+	  var successMsg = $("#videocalls-alert").attr("successMsg");
+	  if(displaySuccessMsg === "true") {
+	    $("#videocalls-alert").append(successMsg);
+	    $("#videocalls-alert").show();
+	  }*/
+	  
+	});
+    
+    
 </script>

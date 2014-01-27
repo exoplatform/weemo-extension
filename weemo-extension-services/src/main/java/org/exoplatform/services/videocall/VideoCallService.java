@@ -61,20 +61,7 @@ public class VideoCallService {
   public void saveVideoCallProfile(VideoCallModel videoCallModel) {
     String disbaleVideoCall = videoCallModel.getDisableVideoCall();
     String weemoKey = videoCallModel.getWeemoKey();
-    StringBuffer sb = new StringBuffer();
-    String permissions = null;
-    HashMap<String, Boolean> videoCallPermissions = videoCallModel.getVideoCallPermissions();
-    if(videoCallPermissions != null && videoCallPermissions.size() > 0) {
-      Iterator<String> keys = videoCallPermissions.keySet().iterator();
-      Iterator<Boolean> values = videoCallPermissions.values().iterator();
-      
-      while(keys.hasNext() && values.hasNext()) {
-        sb.append(keys.next() + ":" + values.next() + ",");
-      }
-      permissions = sb.toString();
-      permissions = permissions.substring(0, permissions.length()-1);
-    }  
-    
+    String videoCallPermissions = videoCallModel.getVideoCallPermissions();   
     SessionProvider sessionProvider = null;
     try {
       sessionProvider = SessionProvider.createSystemProvider();
@@ -93,7 +80,7 @@ public class VideoCallService {
       videoCallNode.setProperty(DISABLEVIDEOCALL_PROP, Boolean.valueOf(disbaleVideoCall));
       videoCallNode.setProperty(WEEMOKEY_PROP, weemoKey);
       videoCallNode.setProperty(VIDEO_TOKEN_KEY, videoCallModel.getTokenKey());
-      videoCallNode.setProperty(VIDEO_PERMISSIONS_PROP, permissions);
+      videoCallNode.setProperty(VIDEO_PERMISSIONS_PROP, videoCallPermissions);
       ExtendedNode node = (ExtendedNode) videoCallNode;
       if (node.canAddMixin("exo:privilegeable")) { 
         node.addMixin("exo:privilegeable");

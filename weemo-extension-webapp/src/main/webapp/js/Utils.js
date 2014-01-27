@@ -5,15 +5,53 @@
 
   function Utils() {} ;
 
-
+  Utils.prototype.saveVideoCallsPermission = function() {
+    var ajaxLink = $("#videoCallsPermissionForm").attr("action");
+    var disableVideoCall = $("#disableVideoCall").val();
+    var weemoKey = $("#weemoKey").val();
+    var permissionData = "";
+    //Get list of permissions
+    var uiViewPermissionList = $("#UIViewPermissionList");
+    if($(uiViewPermissionList).find(".empty").length>0) {
+      permissionData = null;
+    } else {
+      var tbody = $(uiViewPermissionList).find("tbody:first");
+      if($(tbody).find("tr").length>0) {
+        $(tbody).find("tr").each(function(i) {
+          if($(this).find("td").length>0) {
+            var tdPermission = $(this).find("td")[0];
+	    var tdOnOff = $(this).find("td")[1];
+            var value = $(tdOnOff).find("input:first").val();
+            permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value;
+          }
+        });
+      }
+      permissionData = permissionData.substring(1);
+    }
+    $.ajax({
+      url: ajaxLink,
+      dataType: "text",
+      data: {
+      "disableVideoCall": disableVideoCall,
+      "weemoKey": weemoKey,
+      "videoCallPermissions":permissionData
+      },
+      success: function(data){
+        eXo.ecm.VideoCallsUtils.displaySuccessAlert();
+      },
+      error: function(){
+      }
+    });  
+    
+  };
 
   Utils.prototype.displaySuccessAlert = function() {
-    var displaySuccessMsg = $("#videocalls-alert").attr("displaySuccessMsg");
     var successMsg = $("#videocalls-alert").attr("successMsg");
-    if(displaySuccessMsg === "true") {
-      $("#videocalls-alert").append(successMsg);
-      $("#videocalls-alert").show();
-    }
+    $("#videocalls-alert").text(successMsg);
+    $("#videocalls-alert").show();
+    setTimeout(function() {
+      $("#videocalls-alert").hide();
+   }, 3000);
   };
 
   Utils.prototype.openUserPermission = function(elem, modalId) {
@@ -407,7 +445,7 @@
               'rel':'tooltip',
               'data-placement':'bottom',
               'membership':arrMemberships[i] + ":" +groupId,
-              'membershipLabel':membershipLabel + "in " + eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(groupId.substring(1)),
+              'membershipLabel':membershipLabel + "in " + eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(groupId.substring(groupId.lastIndexOf("/")+1)),
               'text':eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i]),
               'title':eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i])
 	    });
@@ -472,18 +510,19 @@
 
   Utils.prototype.addPermissions = function() {
     var permissions = $("#userOrGroup").val();  
+    if(!permissions || permissions.length==0) return;
     var permissionsLabel = $("#txtUserOrGroup").val();  
     var arrPermissions = permissions.split(",");
     var arrPermissionsLabel = permissionsLabel.split(",");
     var tbody = $("#UIViewPermissionContainer").find("tbody:first");
     if(arrPermissions.length > 0) {
-      $(tbody).empty();
+      $(tbody).find(".empty").remove();
     }
     for(var i=0; i < arrPermissions.length; i++) {
       var tr = $('<tr/>', {});
       //td for permission
       var tdPermission = $('<td/>', {
-        "class":"center"
+        "class":"left"
       });
       var divPermission = $('<div/>', {
         "data-placement":"bottom",
@@ -532,17 +571,22 @@
       });
       $(aAction).append(iconDelete); 
       $(tdAction).append(aAction);
-      $(tr).append(tdAction); 
-      
-      $(tbody).append(tr);
-      
-    }   
-    eXo.ecm.VideoCallsUtils.reloadSwithcherButton();
+      $(tr).append(tdAction);       
+      $(tbody).append(tr);      
+    }
+    
+    eXo.ecm.VideoCallsUtils.reloadSwitcherButton();
+    
+    $("#userOrGroup").val("");
+    $("#txtUserOrGroup").val("");  
   }
 
-  //////////////////////////////////////////////////////////
-  Utils.prototype.reloadSwithcherButton = function() {
-    
+  Utils.prototype.removePermission = function(elem) {
+    var tbody = $(elem).closest('tbody');
+    $(elem).closest('tr').remove();
+  }
+
+  Utils.prototype.reloadSwitcherButton = function() {
     $("div.spaceRole").click(function()
     {
         var input = $(this).find("#rememberme");
@@ -563,13 +607,9 @@
             $(this).closest("div.spaceRole").trigger("click");
         });
     });
-
   }
-  ///////////////////////////////////////////////////////////
 
-
-  Utils.prototype.capitaliseFirstLetter = function(string)
-  {
+  Utils.prototype.capitaliseFirstLetter = function(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
@@ -590,44 +630,3 @@
   
 
 })(gj, bts_alert, bts_modal, bts_popover);
-
-
-$( document ).ready(function() {
-  $("#chkTurnOff").change(function() {
-    if ($("#chkTurnOff").is(':checked')) {
-      $("#disableVideoCall").val("true");
-    } else {
-      $("#disableVideoCall").val("false");	      
-    }
-  });
-
-  $('#selectAllUsers').click (function () {
-     var checkedStatus = this.checked;
-     $('#UIListUsers tbody tr').find('td:first :checkbox').each(function () {
-        $(this).prop('checked', checkedStatus);
-     });
-  });  
-
-  $( '#UIListUsers' ).on( 'change', 'input[type="checkbox"]', function() {
-    if (!$(this).is(':checked')) {
-      $('#selectAllUsers').attr('checked',false);
-    }
-  });
-
-  
-  $("#keyword").bind('keypress keydown keyup', function(e){
-    if(e.keyCode == 13) { 
-      if ($("#keyword").val().trim() != "") {
-        var searchLinkElem = $("#searchLink");          
-        eXo.ecm.VideoCallsUtils.searchUserPermission(searchLinkElem); 
-      }
-      e.preventDefault(); 
-    }
-  });
-
-  eXo.ecm.VideoCallsUtils.displaySuccessAlert();
-
-});
-
-
-
