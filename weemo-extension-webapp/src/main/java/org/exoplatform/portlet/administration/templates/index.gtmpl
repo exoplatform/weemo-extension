@@ -3,7 +3,6 @@
    
    
    <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" displaySuccessMsg="${videoCalls.isDisplaySuccessMsg()}" style="left: 50%; position: absolute; top: 39px; display:none;" class="alert alert-success videoCallsAlertSuccess">
-     <i class="uiIconSuccess"></i>
    </div>
    
    
@@ -17,20 +16,17 @@
   
 
 		  	<form id="videoCallsPermissionForm" action="@{VideoCallAdministration.save()}" method="post" class="form-horizontal">
-			  <div class="control-group">
-			    <label class="checkbox">
-			      <input id="chkTurnOff" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">
-			      <input type="hidden" id="disableVideoCall" name="disableVideoCall" value="false">
-				  &{exoplatform.videocall.turnoff} 
+			  <div class="control-group">			    
+				<span class="uiCheckbox">
+				  <input id="chkTurnOff" class="checkbox" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">				  
+				  <span>&{exoplatform.videocall.turnoff}</span>
 				  <div style="display:inline-block;" onmouseover="(function(elm) {eXo.ecm.VideoCallsUtils.showPopover(elm);})(this)"
 					onmouseout="(function(elm) {eXo.ecm.VideoCallsUtils.hidePopover(elm);})(this)" data-toggle="popover" data-placement="right" data-content="&{exoplatform.videocall.turnoff.help}">
 					  <i class="uiIconQuestion uiIconLightGray"></i>			
 				  </div>
-				  
-				  
-				  
-				  
-				</label>	    
+				  <input type="hidden" id="disableVideoCall" name="disableVideoCall" value="false">
+				</span>
+				    
 			  </div>
 			  <div class="control-group">
 			    <label style="text-align: left; width: auto;" class="control-label" for="weemoKey">&{exoplatform.videocall.weemokey}: </label>
@@ -191,7 +187,9 @@
 							<tr>
 								
 								<th class="center">
-								  <input type="checkbox" class="checkbox" id="selectAllUsers" name="selectall">
+								  <span class="uiCheckbox">
+							        <input type="checkbox" class="checkbox" id="selectAllUsers" name="selectall"><span></span>
+						          </span>
 								</th>
 								
 								<th>

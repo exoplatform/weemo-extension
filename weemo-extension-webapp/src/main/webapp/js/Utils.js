@@ -45,13 +45,20 @@
     
   };
 
-  Utils.prototype.displaySuccessAlert = function() {
-    var successMsg = $("#videocalls-alert").attr("successMsg");
-    $("#videocalls-alert").text(successMsg);
+  Utils.prototype.displaySuccessAlert = function() {    
+    var alertElem = $("#videocalls-alert");
+    var successMsg = $(alertElem).attr("successMsg");
+    var icon = $('<i/>', {
+      'class':'uiIconSuccess'
+    });
+    $(alertElem).empty();
+    $(alertElem).append(icon);
+  
+    $(alertElem).append(successMsg);
     $("#videocalls-alert").show();
     setTimeout(function() {
       $("#videocalls-alert").hide();
-   }, 3000);
+    }, 3000);
   };
 
   Utils.prototype.openUserPermission = function(elem, modalId) {
@@ -82,14 +89,22 @@
 	    'class':'center'
 	  });
 	  $(tr).append(td);
-	   var input = $('<input/>', {
+          var span = $('<span/>', {
+	    'class':'uiCheckbox'	   
+	  });	
+          $(td).append(span);
+	  var input = $('<input/>', {
 	    'class':'checkbox',
 	    'type':'checkbox',
             'name':userName,
             'value':displayName,
             'id':userName
 	  });	
-	  $(td).append(input);
+          var spanLabel = $('<span/>', {
+	    	   
+	  });	
+	  $(span).append(input);
+          $(span).append(spanLabel);
 
  	  var td2 = $('<td/>');
 	  var span2 = $('<span/>', {
