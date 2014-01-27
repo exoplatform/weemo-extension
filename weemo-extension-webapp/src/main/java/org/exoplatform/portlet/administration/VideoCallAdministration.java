@@ -274,7 +274,7 @@ public class VideoCallAdministration {
           Group group = organizationService_.getGroupHandler().findGroupById(groupId);
           sb.append(",").append(capitalize(membership) + " in " + group.getLabel());
         } else {
-          User user = organizationService_.getUserHandler().findUserByName(permissionId);
+          User user = organizationService_.getUserHandler().findUserByName(permissionId.trim());
           if(StringUtils.isEmpty(user.getDisplayName())) {
             user.setDisplayName(user.getFirstName() + " " + user.getLastName());
           }         

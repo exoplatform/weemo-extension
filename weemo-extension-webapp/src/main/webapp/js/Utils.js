@@ -140,8 +140,9 @@
 	  $(tr).append(td5);
 
         });
-
-	$('#userSelector').appendTo("body");	
+        
+	$('#userSelector').appendTo("body");
+        $('#selectAllUsers').attr('checked', false);
 	$('#userSelector').modal('show');
 
       },
@@ -159,7 +160,7 @@
         isSelected = true;
         var tdElem = $(this).parent().next();
         var spanElem = $(tdElem).find('span:first');
-        permissions = permissions.concat($(spanElem).text().concat(", "));   
+        permissions = permissions.concat($(this).attr("name").concat(", "));   
         permissionsLabel = permissionsLabel.concat($(this).val().concat(", "));     
       }
     });
@@ -533,7 +534,30 @@
     if(arrPermissions.length > 0) {
       $(tbody).find(".empty").remove();
     }
+
+    
+    //Get list of permissions
+    var permissionsMap = {};
+    var uiViewPermissionList = $("#UIViewPermissionList");
+    if($(uiViewPermissionList).find(".empty").length>0) {
+      permissionData = null;
+    } else {
+      var tbody = $(uiViewPermissionList).find("tbody:first");
+      if($(tbody).find("tr").length>0) {
+        $(tbody).find("tr").each(function(i) {
+          if($(this).find("td").length>0) {
+            var tdPermission = $(this).find("td")[0];
+	    var tdOnOff = $(this).find("td")[1];
+            var value = $(tdOnOff).find("input:first").val();
+            permissionsMap[$(tdPermission).find("div:first").attr("permission").trim()] = value;
+          }
+        });
+      }
+    }
+    
+    
     for(var i=0; i < arrPermissions.length; i++) {
+      if(permissionsMap[arrPermissions[i]]) continue;
       var tr = $('<tr/>', {});
       //td for permission
       var tdPermission = $('<td/>', {
