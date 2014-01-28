@@ -144,6 +144,7 @@
 	$('#userSelector').appendTo("body");
         $('#selectAllUsers').attr('checked', false);
 	$('#userSelector').modal('show');
+        $(".modal-backdrop").remove();
 
       },
       error: function(){
@@ -276,6 +277,7 @@
       success: function(data){	
         $('#groupSelector').appendTo("body");	
 	$('#groupSelector').modal('show');
+        $(".modal-backdrop").remove();
 	var memberships = data.memberships;
         var groups = data.groups;        
         var groupSelector = $("#UIGroupMemberSelector");
@@ -347,6 +349,7 @@
       success: function(data) {	
         $('#groupSelector').appendTo("body");	
 	$('#groupSelector').modal('show');
+        $(".modal-backdrop").remove();
 	var memberships = data.memberships;
         var groups = data.groups;        
         var groupSelector = $("#UIGroupMemberSelector");
@@ -628,11 +631,13 @@
       $('#deleteCofirmation').modal('hide');
     });
     $('#deleteCofirmation').modal('show');
+    $(".modal-backdrop").remove();
   }
 
   Utils.prototype.removePermission = function(elem) {
     $('#deleteCofirmation').appendTo("body");
     $('#deleteCofirmation').modal('show');
+    $(".modal-backdrop").remove();
   }
 
   Utils.prototype.reloadSwitcherButton = function() {
