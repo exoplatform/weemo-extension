@@ -2,7 +2,12 @@
   background-image: url('/weemo-extension/img/uiIconWeemoDarkGray.png');
 }
 
-[class^="uiIconWeemo"]:hover, .uiIconWeemoBlue, .connectAction > a:hover > i
+.nav-pills > .active > a > [class^="uiIconWeemo"],
+.nav-list > .active > a > [class^="uiIconWeemo"],
+.navbar-inverse .nav > .active > a > [class^="uiIconWeemo"],
+.btn:hover [class^="uiIconWeemo"], a:hover [class^="uiIconWeemo"],
+.actionIcon.active [class^="uiIconWeemo"],.nodeSelected:hover [class^="uiIconWeemo"],
+[class^="uiIconWeemo"]:hover, .uiActionBar [class^="uiIconWeemo"]:hover, .uiIconWeemoBlue
  {
   background-image: url('../img/uiIconWeemoBlue.png');
 }
@@ -18,4 +23,13 @@
 
 .uiIconWeemoVideoCalls {
   background-position: 0px 0px;
+}
+
+.uiVideoCallAdminPortlet .PemissionInputset{
+	margin-right:4px;
+}
+
+button.close{
+	background-image: url("/eXoResources/skin/images/Icons/uiIconsLightGray.png");
+	background-position: -160px -100px;
 }

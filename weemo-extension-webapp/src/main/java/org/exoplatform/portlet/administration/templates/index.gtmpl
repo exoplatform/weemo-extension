@@ -1,5 +1,5 @@
 <script type="text/javascript" src="/weemo-extension/js/iphone-style-checkboxes-weemo.js"></script>
-<div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" style="padding: 50px 40px; background: white;">
+<div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" style="padding: 50px 40px;">
    
    
    <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" displaySuccessMsg="${videoCalls.isDisplaySuccessMsg()}" style="left: 50%; position: absolute; top: 39px; display:none;" class="alert alert-success videoCallsAlertSuccess">
@@ -127,15 +127,15 @@
 
 
 <!--User Selector Modal -->
-<div id="userSelector" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div id="userSelector" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
 
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title" id="userModalTitle">User Selector</h4>
+      <div class="popupHeader clearfix modal-header">
+		<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
+		<span id="userModalTitle" class="PopupTitle popupTitle modal-title">User Selector</span>
       </div>
-      <div class="modal-body">
+      <div class="PopupContent popupContent modal-body">
         <div class="alert alert-warning alert-dismissable" style="display:none; left: 30%; position: absolute; top: 27px;">
           <button style="right: -9px; top: 0px;" type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
           <i class="uiIconWarning"></i> &{exoplatform.videocall.permissions.empty.alertMessage}
@@ -199,74 +199,68 @@
 
 		</div>
 		</form>
-        
+        <div class="uiAction uiActionBorder">
+			<button type="button" class="btn" onClick="eXo.ecm.VideoCallsUtils.addUserPermission(this)" emptyMsg="&{exoplatform.videocall.permissions.empty.alertMessage}" >Add</button>
+			<button type="button" class="btn" data-dismiss="modal">Close</button>
+		</div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" onClick="eXo.ecm.VideoCallsUtils.addUserPermission(this)" emptyMsg="&{exoplatform.videocall.permissions.empty.alertMessage}" class="btn btn-primary">Add</button>
-      </div>
-
+	  
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div>
 
 <!--Group Selector Modal -->
-<div id="groupSelector" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div id="groupSelector" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
-
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title" id="groupModalTitle">Group Selector</h4>
+	  <div class="popupHeader clearfix modal-header">
+		<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
+		<span id="groupModalTitle" class="PopupTitle popupTitle modal-title">Group Selector</span>
       </div>
-      <div class="modal-body">
-       <div class="uiGroupSelector uiGroupMembershipSelector uiMemberSelector resizable" id="UIGroupMemberSelector" style="max-height: 305px;">
+
+      <div class="PopupContent popupContent modal-body">        
+       <div class="uiGroupSelector uiGroupMembershipSelector uiMemberSelector resizable" id="UIGroupMemberSelector" style="max-height: 405px;">
 			<div class="uiGrayLightBox uiBox noRounded ">
 			
-			<ul class="breadcrumb">
-				<li>
-					<i class="uiIconTree uiIconLightGray"></i>
-				</li>
-				
-					
-			</ul></div>
-				
-				<div class="row-fluid">
-					<div class="span6">
-						<div class="uiBox selectGroup noRounded">
-							<h6 class="title">Select Group</h6>
-							
-			<div class="uiTrees scrollArea">
-				<div class="treeContainer jsContainer">					
-						<div class="homeNode clearfix">
-							<a class="actionIcon pull-left" href="#" rel="tooltip" style="display: block;" data-original-title="Up Level"><i class="uiIconUpLevel uiIconLightGray"></i></a>
-						</div>					
-				</div>	
+				<ul class="breadcrumb">
+					<li>
+						<i class="uiIconTree uiIconLightGray"></i>
+					</li>
+				</ul>
 			</div>
+			<div class="row-fluid">
+				<div class="span6">
+					<div class="uiBox selectGroup noRounded">
+						<h6 class="title">Select Group</h6>
+						<div class="uiTrees scrollArea">
+							<div class="treeContainer jsContainer">					
+								<div class="homeNode clearfix">
+									<a class="actionIcon pull-left" href="#" rel="tooltip" style="display: block;" data-original-title="Up Level"><i class="uiIconUpLevel uiIconLightGray"></i></a>
+								</div>					
+							</div>	
 						</div>
 					</div>
-					<div class="span6">
-						<div class="uiBox noRounded childGoup">
-							<h6 class="title">
-								
-							  Select Membership
-							</h6>
-							
-							<div class="uiContentBox">
-							  <ul>
-							  
-							  </ul>
-							</div>
-						</div>
-					</div>
-					
 				</div>
+				<div class="span6">
+					<div class="uiBox noRounded childGoup">
+						<h6 class="title">
+							Select Membership
+						</h6>
+						<div class="uiContentBox">
+							<ul>
+							  
+							</ul>
+						</div>
+					</div>
+				</div>
+					
 			</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<div class="uiAction uiActionBorder">
+			<button type="button" class="btn" data-dismiss="modal">Close</button>
+		</div>
       </div>
 
+		
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div>
@@ -274,23 +268,24 @@
 
 
 <!--Delete Confirmation Modal -->
-<div id="deleteCofirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div id="deleteCofirmation" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
+		<div class="popupHeader clearfix modal-header">
+			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
+			<span id="groupModalTitle" class="PopupTitle popupTitle modal-title">Delete Confirmation</span>
+		</div>
 
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title" id="groupModalTitle">Delete Confirmation</h4>
+		<div class="PopupContent popupContent modal-body">    
+			<span>Are you sure you want to delete permissions for</span>
+			<div class="uiAction uiActionBorder">
+				<button type="button" class="btn btn-primary" >Delete</button>
+				<button type="button" class="btn" data-dismiss="modal">Cancel</button>
+			</div>
+		</div>
+		
       </div>
-      <div class="modal-body">    
-        <span>Are you sure you want to delete permissions for</span>
-      
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary">Delete</button>
-      </div>
-
+		
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div>
