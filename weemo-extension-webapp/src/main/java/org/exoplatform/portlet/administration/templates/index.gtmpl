@@ -62,7 +62,7 @@
 				      <td class="center">				        
                         <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="YES" data-no="NO" checked="checked" style="visibility: hidden;" class="yesno"></div>
                       </td>
-                      <td class="center"><a data-original-title="Delete" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.removePermission(this);" class="actionIcon"><i class="uiIconDelete"></i></a></td>
+                      <td class="center"><a data-original-title="Delete" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete"></i></a></td>
                     </tr>
 				  <%
 				    }
@@ -220,16 +220,6 @@
         <h4 class="modal-title" id="groupModalTitle">Group Selector</h4>
       </div>
       <div class="modal-body">
-      
-      
-      
-      
-      
-      
-      
-      
-      
-        
        <div class="uiGroupSelector uiGroupMembershipSelector uiMemberSelector resizable" id="UIGroupMemberSelector" style="max-height: 305px;">
 			<div class="uiGrayLightBox uiBox noRounded ">
 			
@@ -272,25 +262,33 @@
 					
 				</div>
 			</div>
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-      
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+
+
+<!--Delete Confirmation Modal -->
+<div id="deleteCofirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="groupModalTitle">Delete Confirmation</h4>
+      </div>
+      <div class="modal-body">    
+        <span>Are you sure you want to delete permissions for</span>
+      
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Delete</button>
       </div>
 
     </div><!-- /.modal-content -->

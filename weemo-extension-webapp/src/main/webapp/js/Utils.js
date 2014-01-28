@@ -620,9 +620,19 @@
     $("#txtUserOrGroup").val("");  
   }
 
+  Utils.prototype.showDeleteConfirm = function(elem) {    
+    $('#deleteCofirmation').appendTo("body");
+    var deleteButton = $('#deleteCofirmation').find(".btn-primary:first");
+    $(deleteButton).click(function() {
+      $(elem).closest('tr').remove();
+      $('#deleteCofirmation').modal('hide');
+    });
+    $('#deleteCofirmation').modal('show');
+  }
+
   Utils.prototype.removePermission = function(elem) {
-    var tbody = $(elem).closest('tbody');
-    $(elem).closest('tr').remove();
+    $('#deleteCofirmation').appendTo("body");
+    $('#deleteCofirmation').modal('show');
   }
 
   Utils.prototype.reloadSwitcherButton = function() {
