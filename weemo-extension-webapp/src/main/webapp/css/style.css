@@ -33,3 +33,19 @@ button.close{
 	background-image: url("/eXoResources/skin/images/Icons/uiIconsLightGray.png");
 	background-position: -160px -100px;
 }
+
+.weemo-alert{
+	 position: absolute; 
+	 top: 32px; 
+	 width: 100%; 
+	 text-align:center; 
+	 border: none; 
+	 box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+	 font-size: 14px;
+}
+
+.weemo-community{
+	font-size: 14px;
+    font-weight: bold;
+    opacity: 0.1;
+}
