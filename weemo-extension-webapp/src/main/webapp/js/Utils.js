@@ -605,7 +605,7 @@
         "data-original-title":"Delete",
 	"data-placement":"bottom",
 	"rel":"tooltip",
-	"onclick":"eXo.ecm.VideoCallsUtils.removePermission(this);",
+	"onclick":"eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);",
         "class":"actionIcon"
       });
       var iconDelete = $('<i/>', {
@@ -630,15 +630,20 @@
       $(elem).closest('tr').remove();
       $('#deleteCofirmation').modal('hide');
     });
+    var tr = $(elem).closest('tr');
+    var td = $(tr).find("td:first");
+    var div = $(td).find("div:first");
+    var owner = $(div).text();
+    var span = $('#deleteCofirmation').find(".modal-body:first").find("span:first")
+    var msg = $(span).attr("msg");    
+    msg = msg + " <strong>" + owner + "</strong> ?";
+    $(span).empty();
+    $(span).append(msg);    
     $('#deleteCofirmation').modal('show');
     $(".modal-backdrop").remove();
   }
 
-  Utils.prototype.removePermission = function(elem) {
-    $('#deleteCofirmation').appendTo("body");
-    $('#deleteCofirmation').modal('show');
-    $(".modal-backdrop").remove();
-  }
+  
 
   Utils.prototype.reloadSwitcherButton = function() {
     $("div.spaceRole").click(function()

@@ -277,7 +277,7 @@
 		</div>
 
 		<div class="PopupContent popupContent modal-body">    
-			<span>Are you sure you want to delete permissions for</span>
+			<span msg="&{exoplatform.videocall.administration.deleteConfirm}"></span>
 			<div class="uiAction uiActionBorder">
 				<button type="button" class="btn btn-primary" >Delete</button>
 				<button type="button" class="btn" data-dismiss="modal">Cancel</button>
