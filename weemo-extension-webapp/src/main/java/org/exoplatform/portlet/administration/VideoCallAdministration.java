@@ -269,7 +269,7 @@ public class VideoCallAdministration {
         String enableVideoCalls = string.split("#")[1];
         sb.append("#").append(permissionId).append(",").append(enableVideoCalls);
         if(permissionId.indexOf(":") > 0) {
-          String membership = permissionId.split(":")[0];
+          String membership = permissionId.split(":")[0].trim();
           String memebershipLabel = membership;
           if(memebershipLabel.equalsIgnoreCase("*")) memebershipLabel = "any";
           String groupId = permissionId.split(":")[1];
