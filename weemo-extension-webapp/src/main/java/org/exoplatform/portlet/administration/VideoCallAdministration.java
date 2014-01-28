@@ -270,9 +270,11 @@ public class VideoCallAdministration {
         sb.append("#").append(permissionId).append(",").append(enableVideoCalls);
         if(permissionId.indexOf(":") > 0) {
           String membership = permissionId.split(":")[0];
+          String memebershipLabel = membership;
+          if(memebershipLabel.equalsIgnoreCase("*")) memebershipLabel = "any";
           String groupId = permissionId.split(":")[1];
           Group group = organizationService_.getGroupHandler().findGroupById(groupId);
-          sb.append(",").append(capitalize(membership) + " in " + group.getLabel());
+          sb.append(",").append(capitalize(memebershipLabel) + " in " + group.getLabel());
         } else {
           User user = organizationService_.getUserHandler().findUserByName(permissionId.trim());
           if(StringUtils.isEmpty(user.getDisplayName())) {

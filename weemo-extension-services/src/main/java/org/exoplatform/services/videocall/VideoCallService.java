@@ -17,8 +17,12 @@
 package org.exoplatform.services.videocall;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
@@ -26,6 +30,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.ExoCache;
 import org.exoplatform.services.jcr.RepositoryService;
@@ -34,8 +39,16 @@ import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.Membership;
+import org.exoplatform.services.organization.MembershipType;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.services.organization.idm.ExtGroup;
+
+import com.sun.xml.internal.xsom.impl.scd.Iterators.Map;
 
 
 
@@ -236,8 +249,8 @@ public class VideoCallService {
     return isExist;
   }
   ////////////////////////////////////////////////////////
-  public boolean isTurnOffVideoCall() {
-    boolean isTurnOff = false;
+  public boolean isTurnOffVideoCall() throws Exception {
+    boolean isTurnOff = true;
     VideoCallModel videoCallModel = null;
     if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
       videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);      
@@ -245,8 +258,40 @@ public class VideoCallService {
       videoCallModel = getVideoCallProfile();
     }
     String weemoKey = videoCallModel.getWeemoKey();
-    String str = videoCallModel.getDisableVideoCall();
-    if(Boolean.valueOf(str) || StringUtils.isEmpty(weemoKey)) return true; 
+    String str = videoCallModel.getDisableVideoCall();    
+    if(Boolean.valueOf(str) || StringUtils.isEmpty(weemoKey)) {
+      return true; 
+    } else {
+      String videoCallsPermissions = videoCallModel.getVideoCallPermissions();
+      if(StringUtils.isEmpty(videoCallsPermissions)) return true;
+      
+      String userId = ConversationState.getCurrent().getIdentity().getUserId();
+      //Put list of permission into a map
+      HashMap<String, String> permissionsMap = new HashMap<String, String>();
+      String[] arrs = videoCallsPermissions.split(",");
+      ArrayList<String> memberships = new ArrayList();
+      for (String string : arrs) {
+        String permission = string.split("#")[0];
+        String value = string.split("#")[1];    
+        permissionsMap.put(permission, value);
+        if(permission.contains(":")) {
+          memberships.add(permission);
+        }
+      }
+      if(permissionsMap.get(userId) != null) {
+        //Check permisson for user
+        return !Boolean.valueOf(permissionsMap.get(userId));
+      } else {
+        //Check permission for membership
+        UserACL userACL = WCMCoreUtils.getService(UserACL.class);
+        for (String string : memberships) {
+          if(userACL.hasPermission(string)) {
+            boolean value = Boolean.valueOf(permissionsMap.get(string));
+            if(value) return !value;
+          }
+        }       
+      }
+    }    
     return isTurnOff;
   }
 

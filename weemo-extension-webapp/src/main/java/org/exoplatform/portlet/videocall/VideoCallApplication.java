@@ -57,7 +57,7 @@ public class VideoCallApplication {
 
 
   @View
-  public void index(RenderContext renderContext) throws IOException, JSONException
+  public void index(RenderContext renderContext) throws Exception
   {
     remoteUser_ = renderContext.getSecurityContext().getRemoteUser();
     String chatIntervalNotif = PropertyManager.getProperty(PropertyManager.PROPERTY_INTERVAL_NOTIF);

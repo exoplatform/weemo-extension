@@ -102,6 +102,8 @@ public class PropertyManager {
         } else {
           videoCallModel.setWeemoKey(properties().getProperty(PROPERTY_WEEMO_KEY));
         }
+        //Set default permission
+        videoCallModel.setVideoCallPermissions("*:/platform/users#true");
         videoCallService.saveVideoCallProfile(videoCallModel);
       }
     }
