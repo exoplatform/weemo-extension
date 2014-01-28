@@ -472,11 +472,12 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
 
     var $uiActionWeemo = jqchat(".weemoCallOverlay", this).first();
     if ($uiActionWeemo !== undefined && $uiActionWeemo.html() == undefined && weemoExtension.isSupport) {
-      var html = jqchat(this).html();
-      html += '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' pull-right disabled" id="weemoCall-'+username.replace('.', '-')+'" title="Make a Video Call"';
+      var nextElem = jqchat(this).next();
+      var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' pull-right disabled" id="weemoCall-'+username.replace('.', '-')+'" title="Make a Video Call"';
       html += ' data-username="'+username+'" data-fullname="'+fullname+'"';
       html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> Call</a>';
-      jqchat(this).html(html);
+      html += jqchat(nextElem).html();
+      jqchat(nextElem).html(html);
 
       weemoExtension.getStatus(username, cbGetConnectionStatus);
     }

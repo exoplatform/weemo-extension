@@ -7,8 +7,7 @@
   <nodeType name="exo:videoCallProfile" isMixin="false" hasOrderableChildNodes="false" primaryItemName="">
     <supertypes>
       <supertype>nt:base</supertype>
-    </supertypes>
-    
+    </supertypes>    
     <propertyDefinitions>
       <propertyDefinition name="exo:disableVideoCall" requiredType="Boolean" autoCreated="false" mandatory="false"
         onParentVersion="COPY" protected="false" multiple="false">
@@ -26,8 +25,27 @@
         onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
       </propertyDefinition>
-    </propertyDefinitions>
-     
+    </propertyDefinitions>     
+  </nodeType>
+  
+  <nodeType name="exo:userState" isMixin="false" hasOrderableChildNodes="false" primaryItemName="">
+    <supertypes>
+      <supertype>nt:base</supertype>
+    </supertypes>    
+    <propertyDefinitions>
+      <propertyDefinition name="exo:userId" requiredType="String" autoCreated="false" mandatory="false"
+        onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+      <propertyDefinition name="exo:lastActivity" requiredType="Date" autoCreated="false" mandatory="false"
+        onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+      <propertyDefinition name="exo:status" requiredType="String" autoCreated="false" mandatory="false"
+        onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>    
+    </propertyDefinitions>     
   </nodeType>
 
 </nodeTypes>
