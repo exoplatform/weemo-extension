@@ -42,10 +42,6 @@ button.close{
 	 border: none; 
 	 box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 	 font-size: 14px;
+         opacity: 0.9;
 }
 
-.weemo-community{
-	font-size: 14px;
-    font-weight: bold;
-    opacity: 0.1;
-}
