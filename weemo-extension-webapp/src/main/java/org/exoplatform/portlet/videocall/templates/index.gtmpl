@@ -8,8 +8,8 @@
 </div>
 
 <div id="weemo-alert" class="alert weemo-alert" style="display:none;">
-    <a href="#" style="margin-right: 20px; margin-top: 3px;" title="&{exoplatform.videocall.installer.close}" data-dismiss="alert" class="uiIconClose pull-right"></a>
+    <a href="#" style="margin-right: 6px; margin-top: 3px;" title="&{exoplatform.videocall.installer.close}" data-dismiss="alert" class="uiIconClose pull-right"></a>
 	<strong>&{exoplatform.videocall.installer.message}</strong> 
-        <a id="weemo-alert-download" href="javascript:void(0);"><strong>&{exoplatform.videocall.installer.download}</strong></a> | 
-        <a id="weemo-alert-dismiss" href="javascript:void(0);">&{exoplatform.videocall.installer.dismiss}</a>
+	<a id="weemo-alert-download" href="javascript:void(0);"><strong>&{exoplatform.videocall.installer.download}</strong></a> | 
+	<a id="weemo-alert-dismiss" href="javascript:void(0);">&{exoplatform.videocall.installer.dismiss}</a>
 </div>
