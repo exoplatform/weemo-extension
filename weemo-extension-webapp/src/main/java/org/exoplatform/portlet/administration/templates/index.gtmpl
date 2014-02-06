@@ -119,7 +119,6 @@
 			  
 			  <div class="uiAction">				
 			    <button type="button" onClick="eXo.ecm.VideoCallsUtils.saveVideoCallsPermission();" class="btn">&{exoplatform.videocall.action.save}</button>
-				<button type="button" class="btn">Cancel</button>				 
   			  </div>
 		  </form>
 
