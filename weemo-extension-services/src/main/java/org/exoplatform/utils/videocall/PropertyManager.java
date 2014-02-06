@@ -75,8 +75,7 @@ public class PropertyManager {
       catch (Exception e)
       {
       }     
-      overridePropertyIfNotSet(PROPERTY_INTERVAL_NOTIF, "3000");      
-      //overridePropertyIfNotSet(PROPERTY_WEEMO_KEY, "");
+      overridePropertyIfNotSet(PROPERTY_INTERVAL_NOTIF, "15000");      
       overridePropertyIfNotSet(PROPERTY_APP_ID, "1033a56f0e68");
       overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "exo_domain");
       overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "XnyexbUF");

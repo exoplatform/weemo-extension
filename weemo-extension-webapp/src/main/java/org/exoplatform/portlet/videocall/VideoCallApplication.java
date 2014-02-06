@@ -60,7 +60,10 @@ public class VideoCallApplication {
   public void index(RenderContext renderContext) throws Exception
   {
     remoteUser_ = renderContext.getSecurityContext().getRemoteUser();
-    String chatIntervalNotif = PropertyManager.getProperty(PropertyManager.PROPERTY_INTERVAL_NOTIF);
+    int frequency = 15;
+    if(System.getProperty("user.status.ping.frequency") != null ) {
+      frequency = Integer.parseInt(System.getProperty("user.status.ping.frequency"));
+    }
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
     String weemoKey = videoCallModel.getWeemoKey();
     String tokenKey = videoCallModel.getTokenKey();
@@ -86,7 +89,7 @@ public class VideoCallApplication {
     }
     
     index.with().set("user", remoteUser_)
-            .set("chatIntervalNotif", chatIntervalNotif)
+            .set("chatIntervalNotif", frequency)
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
             .set("turnOffVideoCall", turnOffVideoCall)

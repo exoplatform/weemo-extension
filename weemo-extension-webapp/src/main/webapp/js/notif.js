@@ -540,7 +540,7 @@ var weemoExtension = new WeemoExtension();
     
     
     // WEEMO NOTIFICATION INIT
-    weemoExtension.initOptions({
+    weemoExtension.initOptions({      
       "username": $notificationApplication.attr("data-username"),
       "urlNotification": "/rest/state/ping/",
       "urlGetState": "/rest/state/status/",
@@ -548,7 +548,7 @@ var weemoExtension = new WeemoExtension();
     });
 
     weemoExtension.notifEventInt = window.clearInterval(weemoExtension.notifEventInt);
-    weemoExtension.notifEventInt = setInterval(jqchat.proxy(weemoExtension.refreshNotif, weemoExtension), 	    		    weemoExtension.weemoIntervalNotif);
+    weemoExtension.notifEventInt = setInterval(jqchat.proxy(weemoExtension.refreshNotif, weemoExtension), 	    		    weemoExtension.weemoIntervalNotif*1000);
     weemoExtension.refreshNotif();
 
     var isTurnOff = $notificationApplication.attr("data-weemo-turnoff");
@@ -557,7 +557,6 @@ var weemoExtension = new WeemoExtension();
     if(isNotInstallWeemoDriver) {
 	weemoExtension.showWeemoInstaller();
     }
-
     // WEEMO : GETTING AND SETTING KEY
     var weemoKey = $notificationApplication.attr("data-weemo-key");
     weemoExtension.setKey(weemoKey);
