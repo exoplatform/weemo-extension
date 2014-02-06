@@ -37,7 +37,7 @@
         onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
       </propertyDefinition>
-      <propertyDefinition name="exo:lastActivity" requiredType="Date" autoCreated="false" mandatory="false"
+      <propertyDefinition name="exo:lastActivity" requiredType="Long" autoCreated="false" mandatory="false"
         onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
       </propertyDefinition>

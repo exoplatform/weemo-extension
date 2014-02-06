@@ -56,7 +56,7 @@ public class VideoCallService {
   private static ExoCache<Serializable, VideoCallModel> videoProfileCache;
   private static String VIDEO_PROFILE_KEY = "videoCallsProfile" + CommonsUtils.getRepository().getConfiguration().getName();
   public static String BASE_PATH = "exo:applications";
-  public static String VIDEOCALL_BASE_PATH = "VideoCall";
+  public static String VIDEOCALL_BASE_PATH = "VideoCallsProfile";
   public static String VIDEOCALL_NODETYPE = "exo:videoCallProfile";
   public static String DISABLEVIDEOCALL_PROP ="exo:disableVideoCall";
   public static String WEEMOKEY_PROP = "exo:weemoKey";
