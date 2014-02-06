@@ -623,12 +623,16 @@
     $("#txtUserOrGroup").val("");  
   }
 
-  Utils.prototype.showDeleteConfirm = function(elem) {    
+  Utils.prototype.showDeleteConfirm = function(elem) {
     $('#deleteCofirmation').appendTo("body");
     var deleteButton = $('#deleteCofirmation').find(".btn-primary:first");
     $(deleteButton).click(function() {
       $(elem).closest('tr').remove();
       $('#deleteCofirmation').modal('hide');
+    });
+
+    $('#deleteCofirmation').on('hidden', function () {
+      $(deleteButton).unbind( "click" );
     });
     var tr = $(elem).closest('tr');
     var td = $(tr).find("td:first");
@@ -641,6 +645,7 @@
     $(span).append(msg);    
     $('#deleteCofirmation').modal('show');
     $(".modal-backdrop").remove();
+    
   }
 
   
