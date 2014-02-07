@@ -44,7 +44,6 @@ function WeemoExtension() {
       switch(message) {
         case 'connectedWeemoDriver':          
           weemoExtension.connectedWeemoDriver = true;
-	  weemoExtension.showWeemoInstaller();
           this.authenticate();
           break;       
         case 'loggedasotheruser':
@@ -53,7 +52,6 @@ function WeemoExtension() {
           break;
         case 'unsupportedOS':
           weemoExtension.isSupport = false;
-          weemoExtension.showWeemoInstaller();
         case 'sipOk':
           weemoExtension.isConnected = true;
           jqchat(".btn-weemo").removeClass('disabled');
