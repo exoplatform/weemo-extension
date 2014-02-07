@@ -651,26 +651,32 @@
   
 
   Utils.prototype.reloadSwitcherButton = function() {
-    $("div.spaceRole").click(function()
-    {
-        var input = $(this).find("#enableVideoCalls");
-        var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
-        input.attr("value", remembermeOpt);
-    });
-    var yeslabel;
-    var nolabel;
-    $("div.spaceRole").children('input:checkbox').each(function () {
+
+    $("div.spaceRole").each(function() {
+      $(this).click(function()
+      {
+	var input = $(this).find("#enableVideoCalls");
+	var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
+	input.attr("value", remembermeOpt);
+      });
+      var yeslabel;
+      var nolabel;
+     
+      $(this).children('input:checkbox').each(function () {
         yeslabel = $(this).data("yes");
         nolabel = $(this).data("no");
         $(this).iphoneStyle({
-                checkedLabel:yeslabel,
-                uncheckedLabel:nolabel});
-
+          checkedLabel:yeslabel,
+          uncheckedLabel:nolabel
+        });
         $(this).change(function()
         {
-            $(this).closest("div.spaceRole").trigger("click");
+          $(this).closest("div.spaceRole").trigger("click");
         });
+      });     
+     
     });
+    
   }
 
   Utils.prototype.capitaliseFirstLetter = function(string) {

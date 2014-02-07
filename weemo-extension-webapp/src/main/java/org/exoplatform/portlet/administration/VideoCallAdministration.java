@@ -1,49 +1,34 @@
 package org.exoplatform.portlet.administration;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Stack;
 import java.util.logging.Logger;
 
 import juzu.*;
-import juzu.Response.Render;
-import juzu.impl.common.JSON;
 import juzu.plugin.ajax.Ajax;
 import juzu.request.RenderContext;
 import juzu.template.Template;
-import juzu.template.TemplateExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.portlet.PortletPreferences;
 import org.exoplatform.services.organization.Group;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.model.videocall.VideoCallModel;
-import org.exoplatform.model.videocall.VideoCallPermission;
-import org.exoplatform.portal.webui.page.PageIterator;
-import org.exoplatform.services.jcr.ext.organization.GroupImpl;
 import org.exoplatform.services.organization.MembershipType;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.Query;
 import org.exoplatform.services.organization.User;
-import org.exoplatform.services.organization.hibernate.GroupDAOImpl;
 import org.exoplatform.services.organization.idm.ExtGroup;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.webui.core.UIPageIterator;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.internal.runners.model.EachTestNotifier;
 
 public class VideoCallAdministration {
 
