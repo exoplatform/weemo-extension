@@ -1,4 +1,8 @@
+<script type="text/javascript" src="../../../eXoResources/javascript/jquery-1.7.1.js"></script>
 <script type="text/javascript" src="/weemo-extension/js/iphone-style-checkboxes-weemo.js"></script>
+
+
+
 <div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" style="padding: 50px 40px;">
    
    
@@ -302,21 +306,21 @@
 	      $("#disableVideoCall").val("false");	      
 	    }
 	  });
-	
+
 	  $('#selectAllUsers').click (function () {
 	     var checkedStatus = this.checked;
 	     $('#UIListUsers tbody tr').find('td:first :checkbox').each(function () {
 	        $(this).prop('checked', checkedStatus);
 	     });
 	  });  
-	
+
 	  $( '#UIListUsers' ).on( 'change', 'input[type="checkbox"]', function() {
 	    if (!$(this).is(':checked')) {
 	      $('#selectAllUsers').attr('checked',false);
 	    }
 	  });
-	
-	  
+
+
 	  $("#keyword").bind('keypress keydown keyup', function(e){
 	    if(e.keyCode == 13) { 
 	      if ($("#keyword").val().trim() != "") {
@@ -326,9 +330,9 @@
 	      e.preventDefault(); 
 	    }
 	  });
-	  
+
 	  $("div.spaceRole").each(function() {	 
-	  
+
 	     $(this).click(function()
 		 {
 		   var input = $(this).find("#enableVideoCalls");
@@ -337,23 +341,23 @@
 		 });
 		 var yeslabel;
 	     var nolabel;
-	     
+
 	     $(this).children('input:checkbox').each(function () {
 	        yeslabel = $(this).data("yes");
 	        nolabel = $(this).data("no");
 	        $(this).iphoneStyle({
 	                checkedLabel:yeslabel,
 	                uncheckedLabel:nolabel});
-	
+
 	        $(this).change(function()
 	        {
 	            $(this).closest("div.spaceRole").trigger("click");
 	        });
 	     });
-	     
-	     
+
+
 	  });   
-	  
+
 	});
     
     

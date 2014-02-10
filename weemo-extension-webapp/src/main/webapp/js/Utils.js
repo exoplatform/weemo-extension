@@ -140,10 +140,9 @@
 	  $(tr).append(td5);
 
         });
-        
 	$('#userSelector').appendTo("body");
         $('#selectAllUsers').attr('checked', false);
-	$('#userSelector').modal('show');
+	gj('#userSelector').modal('show');
         $(".modal-backdrop").remove();
 
       },
@@ -174,7 +173,7 @@
       permissionsLabel = permissionsLabel.substring(0, permissionsLabel.length-1);
       $("#userOrGroup").val(permissions);
       $("#txtUserOrGroup").val(permissionsLabel);
-      $('#userSelector').modal('hide');
+      gj('#userSelector').modal('hide');
     }
   };
 
@@ -276,7 +275,7 @@
       context: this,
       success: function(data){	
         $('#groupSelector').appendTo("body");	
-	$('#groupSelector').modal('show');
+	gj('#groupSelector').modal('show');
         $(".modal-backdrop").remove();
 	var memberships = data.memberships;
         var groups = data.groups;        
@@ -348,7 +347,7 @@
       context: this,
       success: function(data) {	
         $('#groupSelector').appendTo("body");	
-	$('#groupSelector').modal('show');
+	gj('#groupSelector').modal('show');
         $(".modal-backdrop").remove();
 	var memberships = data.memberships;
         var groups = data.groups;        
@@ -524,7 +523,7 @@
     var membershipLabel = $(elem).attr("membershipLabel");    
     $("#userOrGroup").val(membership);
     $("#txtUserOrGroup").val(membershipLabel);
-    $('#groupSelector').modal('hide');
+    gj('#groupSelector').modal('hide');
   }
 
   Utils.prototype.addPermissions = function() {
@@ -628,7 +627,7 @@
     var deleteButton = $('#deleteCofirmation').find(".btn-primary:first");
     $(deleteButton).click(function() {
       $(elem).closest('tr').remove();
-      $('#deleteCofirmation').modal('hide');
+      gj('#deleteCofirmation').modal('hide');
     });
 
     $('#deleteCofirmation').on('hidden', function () {
@@ -643,7 +642,7 @@
     msg = msg + " <strong>" + owner + "</strong> ?";
     $(span).empty();
     $(span).append(msg);    
-    $('#deleteCofirmation').modal('show');
+    gj('#deleteCofirmation').modal('show');
     $(".modal-backdrop").remove();
     
   }

@@ -259,7 +259,7 @@ public class VideoCallService {
     }
     String weemoKey = videoCallModel.getWeemoKey();
     String str = videoCallModel.getDisableVideoCall();    
-    if(Boolean.valueOf(str) || StringUtils.isEmpty(weemoKey)) {
+    if(Boolean.valueOf(str)) {
       return true; 
     } else {
       String videoCallsPermissions = videoCallModel.getVideoCallPermissions();

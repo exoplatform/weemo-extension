@@ -209,6 +209,10 @@ WeemoExtension.prototype.showWeemoInstaller = function() {
         weemoExtension.setCookie("isDismiss", "true", 365);
         jqchat("#weemo-alert").hide();
       });
+      var closeElem = jqchat("#weemo-alert").find(".uiIconClose:first");
+      jqchat(closeElem).click(function() {
+        jqchat("#weemo-alert").hide();
+      });
     }
   }
 }
