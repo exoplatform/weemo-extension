@@ -25,14 +25,7 @@ function WeemoExtension() {
   this.connectedWeemoDriver = false;
   try {
     this.weemo = new Weemo("", "", "internal", "ppr/");
-  } catch (err) {
-    console.log("WEEMO NOT AVAILABLE YET");
-    this.weemo = undefined;
-    jqchat(".btn-weemo-conf").css('display', 'none');
-    jqchat(".btn-weemo").addClass('disabled');
-  }
-  
-     /**
+    /**
      * Weemo Driver On Connection Javascript Handler
      *
      * @param message
@@ -142,6 +135,15 @@ function WeemoExtension() {
         
       }
     }
+
+  } catch (err) {
+    console.log("WEEMO NOT AVAILABLE YET");
+    this.weemo = undefined;
+    jqchat(".btn-weemo-conf").css('display', 'none');
+    jqchat(".btn-weemo").addClass('disabled');
+  }
+  
+     
   this.callObj;
 
   this.callOwner = jzGetParam("callOwner", false);
@@ -577,7 +579,7 @@ var weemoExtension = new WeemoExtension();
 (function($) {
 
   $(document).ready(function() {
-    
+
     //GETTING DOM CONTEXT
     var $notificationApplication = $("#weemo-status");
     
