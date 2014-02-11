@@ -1,701 +1,626 @@
+/**
+ ##################                           ##################
+ ##################                           ##################
+ ##################   WEEMO EXTENSION         ##################
+ ##################                           ##################
+ ##################                           ##################
+ */
 
-(function(gj, bts_alert, bts_modal, bts_popover) {
 
-  var Map = {};
-
-  function Utils() {} ;
-
-  Utils.prototype.saveVideoCallsPermission = function() {
-    var ajaxLink = $("#videoCallsPermissionForm").attr("action");
-    var disableVideoCall = $("#disableVideoCall").val();
-    var weemoKey = $("#weemoKey").val();
-    var permissionData = "";
-    //Get list of permissions
-    var uiViewPermissionList = $("#UIViewPermissionList");
-    if($(uiViewPermissionList).find(".empty").length>0) {
-      permissionData = null;
-    } else {
-      var tbody = $(uiViewPermissionList).find("tbody:first");
-      if($(tbody).find("tr").length>0) {
-        $(tbody).find("tr").each(function(i) {
-          if($(this).find("td").length>0) {
-            var tdPermission = $(this).find("td")[0];
-	    var tdOnOff = $(this).find("td")[1];
-            var value = $(tdOnOff).find("input:first").val();
-            permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value;
-          }
-        });
-      }
-      permissionData = permissionData.substring(1);
-    }
-    $.ajax({
-      url: ajaxLink,
-      dataType: "text",
-      data: {
-      "disableVideoCall": disableVideoCall,
-      "weemoKey": weemoKey,
-      "videoCallPermissions":permissionData
-      },
-      success: function(data){
-        eXo.ecm.VideoCallsUtils.displaySuccessAlert();
-      },
-      error: function(){
-      }
-    });  
-    
-  };
-
-  Utils.prototype.displaySuccessAlert = function() {    
-    var alertElem = $("#videocalls-alert");
-    var successMsg = $(alertElem).attr("successMsg");
-    var icon = $('<i/>', {
-      'class':'uiIconSuccess'
-    });
-    $(alertElem).empty();
-    $(alertElem).append(icon);
+/**
+ * WeemoExtension Class
+ * @constructor
+ */
+function WeemoExtension() {
+  this.username = "";
+  this.jzNotification = "";
+  this.jzGetState = "";
+  this.notifEventURL = "";
+  this.getStateURL = "";
+  this.weemoIntervalNotif = "";
+  this.notifEventInt = "";
+  this.isSupport = true;
+  this.tokenKey = "";
+  this.weemoKey = "";
+  this.connectedWeemoDriver = false;
+  try {
+    this.weemo = new Weemo("", "", "internal", "ppr/");
+  } catch (err) {
+    console.log("WEEMO NOT AVAILABLE YET");
+    this.weemo = undefined;
+    jqchat(".btn-weemo-conf").css('display', 'none');
+    jqchat(".btn-weemo").addClass('disabled');
+  }
   
-    $(alertElem).append(successMsg);
-    $("#videocalls-alert").show();
-    setTimeout(function() {
-      $("#videocalls-alert").hide();
-    }, 3000);
-  };
-
-  Utils.prototype.openUserPermission = function(elem, modalId) {
-    var $videoAdminApplication = $('#videocalls-alert');
-    var url = $(elem).attr("link");
-
-    $.ajax({
-      url: url,
-      dataType: "json",
-      context: this,
-      success: function(data){
-        
-        var listUsers = $("#UIListUsers");
-        $("#UIListUsers").children('tbody').remove();
-        var tbody = $('<tbody/>');
-        $(listUsers).append(tbody);
-
-        $.each(data, function (index, value) {
-	  var obj = jQuery.parseJSON(value);
-          var userName = obj.userName;
-          var firstName = obj.firstName;
-          var lastName = obj.lastName;
-          var displayName = obj.displayName;
-          var email = obj.email;
-          var tr = $('<tr/>');
-          $(tbody).append(tr);
-	  var td = $('<td/>', {
-	    'class':'center'
-	  });
-	  $(tr).append(td);
-          var span = $('<span/>', {
-	    'class':'uiCheckbox'	   
-	  });	
-          $(td).append(span);
-	  var input = $('<input/>', {
-	    'class':'checkbox',
-	    'type':'checkbox',
-            'name':userName,
-            'value':displayName,
-            'id':userName
-	  });	
-          var spanLabel = $('<span/>', {
-	    	   
-	  });	
-	  $(span).append(input);
-          $(span).append(spanLabel);
-
- 	  var td2 = $('<td/>');
-	  var span2 = $('<span/>', {
-	    'class':'text',
-            'text':userName
-	  });
-	  $(td2).append(span2);
-	  $(tr).append(td2);
-
-	  var td3 = $('<td/>');
-	  var span3 = $('<span/>', {
-	    'class':'text',
-            'text':firstName
-	  });
-	  $(td3).append(span3);
-	  $(tr).append(td3);
-
-	  var td4 = $('<td/>');
-	  var span4 = $('<span/>', {
-	    'class':'text',
-            'text':lastName
-	  });
-	  $(td4).append(span4);
-	  $(tr).append(td4);
-
-	  var td5 = $('<td/>');
-	  var a5 = $('<a/>', {
-	    'class':'text',
-            'href':'javascript:void(0);',
-            'text':email
-	  });
-	  $(td5).append(a5);
-	  $(tr).append(td5);
-
-        });
-	$('#userSelector').appendTo("body");
-        $('#selectAllUsers').attr('checked', false);
-	gj('#userSelector').modal('show');
-        $(".modal-backdrop").remove();
-
-      },
-      error: function(){
-      }
-    });   
-  };
-
-  Utils.prototype.addUserPermission = function(elem) {
-    var isSelected = false;
-    var permissions = "";
-    var permissionsLabel = "";
-    $('#UIListUsers tbody tr').find('td:first :checkbox').each(function () {
-      if ($(this).is(':checked')) {
-        isSelected = true;
-        var tdElem = $(this).parent().next();
-        var spanElem = $(tdElem).find('span:first');
-        permissions = permissions.concat($(this).attr("name").concat(", "));   
-        permissionsLabel = permissionsLabel.concat($(this).val().concat(", "));     
-      }
-    });
-    if(!isSelected) {
-      $(".alert").show(permissions);
-    } else {
-      permissions = permissions.trim();
-      permissions = permissions.substring(0, permissions.length-1);
-      permissionsLabel = permissionsLabel.trim();
-      permissionsLabel = permissionsLabel.substring(0, permissionsLabel.length-1);
-      $("#userOrGroup").val(permissions);
-      $("#txtUserOrGroup").val(permissionsLabel);
-      gj('#userSelector').modal('hide');
-    }
-  };
-
-  Utils.prototype.searchUserPermission = function(elem) {
-    var ajaxLink = $(elem).attr("ajaxLink");
-    var keyword = $("#keyword").val();
-    var filter = $("#filter").val();
-    $.ajax({
-      url: ajaxLink,
-      dataType: "json",
-      data: {
-      "keyword": keyword,
-      "filter": filter
-      },
-      context: this,
-      success: function(data){
-        if($.isEmptyObject(data)) {
-          var listUsers = $("#UIListUsers");
-          $("#UIListUsers").children('tbody').remove();
-          return;
-        }
-        var listUsers = $("#UIListUsers");
-        $("#UIListUsers").children('tbody').remove();
-        var tbody = $('<tbody/>');
-        $(listUsers).append(tbody);
-
-        $.each(data, function (index, value) {
-	  var obj = jQuery.parseJSON(value);
-          var userName = obj.userName;
-          var firstName = obj.firstName;
-          var lastName = obj.lastName;
-          var displayName = obj.displayName;
-          var email = obj.email;
-          var tr = $('<tr/>');
-          $(tbody).append(tr);
-	  var td = $('<td/>', {
-	    'class':'center'
-	  });
-	  $(tr).append(td);
-	   var input = $('<input/>', {
-	    'class':'checkbox',
-	    'type':'checkbox',
-            'name':userName,
-            'value':displayName,
-            'id':userName
-	  });	
-	  $(td).append(input);
-
- 	  var td2 = $('<td/>');
-	  var span2 = $('<span/>', {
-	    'class':'text',
-            'text':userName
-	  });
-	  $(td2).append(span2);
-	  $(tr).append(td2);
-
-	  var td3 = $('<td/>');
-	  var span3 = $('<span/>', {
-	    'class':'text',
-            'text':firstName
-	  });
-	  $(td3).append(span3);
-	  $(tr).append(td3);
-
-	  var td4 = $('<td/>');
-	  var span4 = $('<span/>', {
-	    'class':'text',
-            'text':lastName
-	  });
-	  $(td4).append(span4);
-	  $(tr).append(td4);
-
-	  var td5 = $('<td/>');
-	  var a5 = $('<a/>', {
-	    'class':'text',
-            'href':'javascript:void(0);',
-            'text':email
-	  });
-	  $(td5).append(a5);
-	  $(tr).append(td5);
-
-        });
-
-	$('#userSelector').appendTo("body");
-      },
-      error: function(){
-      }
-    }); 
-    return false; 
-  }
-
-  Utils.prototype.openGroupPermission = function(elem, modalId) {
-    var $videoAdminApplication = $('#videocalls-alert');
-    var ajaxLink = $(elem).attr("link");
-    
-    $.ajax({
-      url: ajaxLink,
-      dataType: "json",
-      context: this,
-      success: function(data){	
-        $('#groupSelector').appendTo("body");	
-	gj('#groupSelector').modal('show');
-        $(".modal-backdrop").remove();
-	var memberships = data.memberships;
-        var groups = data.groups;        
-        var groupSelector = $("#UIGroupMemberSelector");
-        $("#UIGroupMemberSelector .nodeGroup").remove();
-        var treeContainer = $("#UIGroupMemberSelector .treeContainer");
-        var nodeGroup = $('<ul/>', {
-	    'class':'nodeGroup'
-	});
-        $(treeContainer).append(nodeGroup);
-        $.each(groups, function(index, obj){
-          var node = $('<li/>', {
-	    'class':'node'
-	  });
-          $(nodeGroup).append(node);
-          Map[obj.group.substring(obj.group.lastIndexOf("/")+1)] = obj.label;
-          var a = $('<a/>', {
-	    'class':'uiIconNode collapseIcon',
-            'href':'javascript:void(0);',
-            'onClick':'eXo.ecm.VideoCallsUtils.selectGroupPermision(this);',
-            'groupId':obj.group,
-            'ajaxLink':ajaxLink,
-            'title':obj.label
-	  });
-          var span = $('<span/>', {
-	    'text':obj.label
-	  });
-          $(node).append(a);
-          var item = $('<i/>', {
-	    'class':'uiIconGroup uiIconLightGray'
-	  });
-          $(a).append(item);    
-	  $(a).append(span);   
-          
-        })
-        //Build link for up level icon
-        var upLevelElement = $("#UIGroupMemberSelector .treeContainer:first").find("a:first"); 
-        $(upLevelElement).attr('href','javascript:void(0);');
-        $(upLevelElement).attr('onClick','eXo.ecm.VideoCallsUtils.selectGroupPermision(this);');
-        $(upLevelElement).attr('ajaxLink',ajaxLink);
-      },
-      error: function(){
-
-      }
-    }); 
-  };
-
-  Utils.prototype.selectGroupPermision = function(elem)
-  {
-    var ajaxLink = $(elem).attr("ajaxLink");
-    var groupId = $(elem).attr("groupId");
-    var parentId = "";
-    var arrGroups = "";
-    if(groupId && groupId.length > 0) {
-      arrGroups = groupId.split("/");
-      if(arrGroups.length > 2) {
-	for (var i = 1; i < arrGroups.length-1; i++) {
-	  parentId = parentId.concat("/").concat(arrGroups[i]);
-        }
-      }
-    }
-    
-    $.ajax({
-      url: ajaxLink,
-      dataType: "json",
-      data: {
-      "groupId": groupId      
-      },
-      context: this,
-      success: function(data) {	
-        $('#groupSelector').appendTo("body");	
-	gj('#groupSelector').modal('show');
-        $(".modal-backdrop").remove();
-	var memberships = data.memberships;
-        var groups = data.groups;        
-        var groupSelector = $("#UIGroupMemberSelector");
-        var treeContainer = $("#UIGroupMemberSelector .treeContainer");
-        $("#UIGroupMemberSelector .nodeGroup").remove();
-        var nodeGroup = $('<ul/>', {
-	    'class':'nodeGroup'
-	});
-        $(treeContainer).append(nodeGroup);
-        $.each(groups, function(index, obj){
-          var node = $('<li/>', {
-	    'class':'node'
-	  });
-          $(nodeGroup).append(node);
-          var aCSSClass = "uiIconNode";
-          var nodeChildGroup = null;
-          // Check the current selected group
-          if(groupId && obj.group.toUpperCase() === groupId.toUpperCase()) {
-            var currentIcon = $(elem).attr("class");
-            if(currentIcon.indexOf("collapseIcon")>=0) {
-              aCSSClass = aCSSClass + " expandIcon";
-	    } else {
-	      aCSSClass = aCSSClass + " collapseIcon";
-	    }
-            aCSSClass = aCSSClass + " nodeSelected";
-            var children = $.parseJSON(obj.children);
-            nodeChildGroup = $('<ul/>', {
-              'class':'nodeGroup'
-	    });
-            // Check if current selected have chidren or not
-            if(children && currentIcon.indexOf("collapseIcon")>=0) {
-              $.each(children, function(index, child){
-		var childNode = $('<li/>', {
-		  'class':'node'
-		});
-		$(nodeChildGroup).append(childNode);
-                Map[child.group.substring(child.group.lastIndexOf("/")+1)] = child.label;
-                var aChild = $('<a/>', {
-		  'class':'uiIconNode collapseIcon',
-		  'href':'javascript:void(0);',
-		  'onClick':'eXo.ecm.VideoCallsUtils.selectGroupPermision(this);',
-		  'groupId':child.group,
-		  'ajaxLink':ajaxLink,
-		  'title':child.label
-		});
-		var spanChild = $('<span/>', {
-		  'text':child.label
-		});
-		$(childNode).append(aChild);
-		var itemChild = $('<i/>', {
-		  'class':'uiIconGroup uiIconLightGray'
-		});
-		$(aChild).append(itemChild);    
-		$(aChild).append(spanChild);                
-              });              
-            }
-          } else {
-            aCSSClass = "uiIconNode collapseIcon";
+     /**
+     * Weemo Driver On Connection Javascript Handler
+     *
+     * @param message
+     * @param code
+     */
+    this.weemo.onConnectionHandler = function(message, code) {
+      if(window.console)
+        console.log(" =========== Connection Handler : " + message + ' ' + code);
+      switch(message) {
+        case 'connectedWeemoDriver':          
+          weemoExtension.connectedWeemoDriver = true;
+          this.authenticate();
+          break;       
+        case 'loggedasotheruser':
+          // force weemo to kick previous user and replace it with current one
+          this.authenticate(1);
+          break;
+        case 'unsupportedOS':
+          weemoExtension.isSupport = false;
+        case 'sipOk':
+          weemoExtension.isConnected = true;
+          weemoExtension.connectedWeemoDriver = true;
+          jqchat("#weemo-alert").hide();
+          weemoExtension.removeCookie("isNotInstallWeemoDriver");	 
+          jqchat(".btn-weemo").removeClass('disabled');
+          jqchat(".weemoCallOverlay").removeClass('disabled');
+          var fn = jqchat(".label-user").text();
+          var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
+          if (fullname!=="") {
+            this.setDisplayName(fullname); // Configure the display name
+          } else if (fn!=="") {
+            this.setDisplayName(fn); // Configure the display name
           }
-          var a = $('<a/>', {
-	    'class':aCSSClass,
-            'href':'javascript:void(0);',
-            'onClick':'eXo.ecm.VideoCallsUtils.selectGroupPermision(this);',
-            'groupId':obj.group,
-            'ajaxLink':ajaxLink,
-            'title':obj.label
-	  });
-          var span = $('<span/>', {
-	    'text':obj.label
-	  });
-          $(node).append(a);
-          $(node).append(nodeChildGroup);
-          var item = $('<i/>', {
-	    'class':'uiIconGroup uiIconLightGray'
-	  });
-          $(a).append(item);    
-	  $(a).append(span);    
-        })
-        //Build link for up level icon
-        var upLevelElement = $("#UIGroupMemberSelector .treeContainer:first").find("a:first"); 
-        $(upLevelElement).attr('href','javascript:void(0);');
-        $(upLevelElement).attr('onClick','eXo.ecm.VideoCallsUtils.selectGroupPermision(this);');
-        $(upLevelElement).attr('ajaxLink',ajaxLink);
-        if(parentId && parentId.length > 0) {
-          $(upLevelElement).attr('groupId',parentId);
-        } else {
-          $(upLevelElement).removeAttr('groupId');
-        }
-        //Build memberships
-        $("#UIGroupMemberSelector .uiContentBox").find("ul").remove();
-        var contentBox = $("#UIGroupMemberSelector .uiContentBox:first");
-    
-        var arrMemberships = memberships.split(",");
-        if(arrMemberships.length > 0) {          
-          var ulElem = $('<ul/>', {});
-          $(contentBox).append(ulElem);    
-          for(var i=0; i < arrMemberships.length; i++) {
-            var membershipLabel = "";
-            if(arrMemberships[i] === "*") {
-	      membershipLabel = "Any ";
-	    } else {
-	      membershipLabel = eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i] + " ");
-	    }
-            var li = $('<li/>', {});
-            var span = $('<span/>', {
-	    'class':'uiIconMiniArrowRight'
-	    });
-            var a = $('<a/>', {
-	      'class':'ItemIcon',
-              'href':'javascript:void(0);',
-              'onClick':'eXo.ecm.VideoCallsUtils.selectMembership(this);',
-              'rel':'tooltip',
-              'data-placement':'bottom',
-              'membership':arrMemberships[i] + ":" +groupId,
-              'membershipLabel':membershipLabel + "in " + eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(groupId.substring(groupId.lastIndexOf("/")+1)),
-              'text':eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i]),
-              'title':eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i])
-	    });
-            $(li).append(span);
-	    $(li).append(a);
-	    $(ulElem).append(li);
-          }
-        }
-        //Build breadcumb
-        $("#UIGroupMemberSelector .breadcrumb").remove();
-        var uiBreadCumb = $("#UIGroupMemberSelector .uiGrayLightBox:first");
-        var ulTree = $('<ul/>', {
-	    'class':'breadcrumb'
-	});
-        $(uiBreadCumb).append(ulTree);
-        //Icon
-        var li = $('<li/>', {});
-        var item = $('<i/>', {
-	  'class':'uiIconTree uiIconLightGray'
-	});
-        $(li).append(item);
-        $(ulTree).append(li).append(" ");
-
-        for(var i=1; i<arrGroups.length; i++) {
-	  //Group label
-          var liGroup;
-          if(groupId && arrGroups[i].toUpperCase() === groupId.substring(groupId.lastIndexOf("/")+1, groupId.length).toUpperCase())   {            
-            liGroup = $('<li/>', {
-              "class":"active"
-            });
-          } else {
-            liGroup = $('<li/>', {});
-          }
-          var a = $('<a/>', {
-	    'text':Map[arrGroups[i]]
-	  });
-          $(liGroup).append(a);         
-          if(i<arrGroups.length-1) {
-            var itemGroup = $('<i/>', {
-	      'class':'uiIconArrowRightMini uiIconLightGray'
-	    });
-            $(liGroup).append(itemGroup); 
-          } 
-          $(ulTree).append(liGroup); 
-        }
-        
-      },
-      error: function(){
-      }
-
-    });
-  }
-
-  Utils.prototype.selectMembership = function(elem)
-  {
-    var membership = $(elem).attr("membership");   
-    var membershipLabel = $(elem).attr("membershipLabel");    
-    $("#userOrGroup").val(membership);
-    $("#txtUserOrGroup").val(membershipLabel);
-    gj('#groupSelector').modal('hide');
-  }
-
-  Utils.prototype.addPermissions = function() {
-    var permissions = $("#userOrGroup").val();  
-    if(!permissions || permissions.length==0) return;
-    var permissionsLabel = $("#txtUserOrGroup").val();  
-    var arrPermissions = permissions.split(",");
-    var arrPermissionsLabel = permissionsLabel.split(",");
-    var tbody = $("#UIViewPermissionContainer").find("tbody:first");
-    if(arrPermissions.length > 0) {
-      $(tbody).find(".empty").remove();
-    }
-
-    
-    //Get list of permissions
-    var permissionsMap = {};
-    var uiViewPermissionList = $("#UIViewPermissionList");
-    if($(uiViewPermissionList).find(".empty").length>0) {
-      permissionData = null;
-    } else {
-      var tbody = $(uiViewPermissionList).find("tbody:first");
-      if($(tbody).find("tr").length>0) {
-        $(tbody).find("tr").each(function(i) {
-          if($(this).find("td").length>0) {
-            var tdPermission = $(this).find("td")[0];
-	    var tdOnOff = $(this).find("td")[1];
-            var value = $(tdOnOff).find("input:first").val();
-            permissionsMap[$(tdPermission).find("div:first").attr("permission").trim()] = value;
-          }
-        });
+          break;
       }
     }
-    
-    
-    for(var i=0; i < arrPermissions.length; i++) {
-      if(permissionsMap[arrPermissions[i]]) continue;
-      var tr = $('<tr/>', {});
-      //td for permission
-      var tdPermission = $('<td/>', {
-        "class":"left"
-      });
-      var divPermission = $('<div/>', {
-        "data-placement":"bottom",
-	"rel":"tooltip",
-        "permission":arrPermissions[i],
-	"data-original-title":arrPermissionsLabel[i],
-	"text":arrPermissionsLabel[i],
-        "class":"Text"
-      });
-      $(tdPermission).append(divPermission); 
-      $(tr).append(tdPermission); 
-      //td for switcher icon
-      var tdIcon = $('<td/>', {
-        "class":"center"
-      });
-      var divIcon = $('<div/>', {        
-        "class":"spaceRole"
-      });
-      var inputIcon = $('<input/>', { 
-        "type":"checkbox",
-        "id":"enableVideoCalls",
-        "name":"enableVideoCalls",
-        "value":"true",
-        "data-yes":"YES",
-	"data-no":"NO",
-        "checked":"checked",
-        "style":"visibility: hidden;",       
-        "class":"yesno"
-      });
-      $(divIcon).append(inputIcon); 
-      $(tdIcon).append(divIcon);
-      $(tr).append(tdIcon); 
-      // td for action
-      var tdAction = $('<td/>', {
-        "class":"center"
-      });
-      var aAction = $('<a/>', {
-        "data-original-title":"Delete",
-	"data-placement":"bottom",
-	"rel":"tooltip",
-	"onclick":"eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);",
-        "class":"actionIcon"
-      });
-      var iconDelete = $('<i/>', {
-        "class":"uiIconDelete"
-      });
-      $(aAction).append(iconDelete); 
-      $(tdAction).append(aAction);
-      $(tr).append(tdAction);       
-      $(tbody).append(tr);      
-    }
-    
-    eXo.ecm.VideoCallsUtils.reloadSwitcherButton();
-    
-    $("#userOrGroup").val("");
-    $("#txtUserOrGroup").val("");  
-  }
 
-  Utils.prototype.showDeleteConfirm = function(elem) {
-    $('#deleteCofirmation').appendTo("body");
-    var deleteButton = $('#deleteCofirmation').find(".btn-primary:first");
-    $(deleteButton).click(function() {
-      $(elem).closest('tr').remove();
-      gj('#deleteCofirmation').modal('hide');
-    });
+    /**
+     * Weemo Driver On Driver Started Javascript Handler
+     *
+     * @param downloadUrl
+     */
+    this.weemo.onWeemoDriverNotStarted = function(downloadUrl) {
+      var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");      
+      if(!isNotInstallWeemoDriver || 0 === isNotInstallWeemoDriver.length) {
+        weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
+	weemoExtension.setCookie("downloadUrl", downloadUrl, 365);
+      }    
+      weemoExtension.showWeemoInstaller();
+      if (navigator.platform !== "Linux") {        
+        jqchat("#weemo-alert-download").attr("href", downloadUrl);
+      }
+    };
 
-    $('#deleteCofirmation').on('hidden', function () {
-      $(deleteButton).unbind( "click" );
-    });
-    var tr = $(elem).closest('tr');
-    var td = $(tr).find("td:first");
-    var div = $(td).find("div:first");
-    var owner = $(div).text();
-    var span = $('#deleteCofirmation').find(".modal-body:first").find("span:first")
-    var msg = $(span).attr("msg");    
-    msg = msg + " <strong>" + owner + "</strong> ?";
-    $(span).empty();
-    $(span).append(msg);    
-    gj('#deleteCofirmation').modal('show');
-    $(".modal-backdrop").remove();
-    
-  }
 
-  
-
-  Utils.prototype.reloadSwitcherButton = function() {
-
-    $("div.spaceRole").each(function() {
-      $(this).click(function()
+    /**
+     * Weemo Driver On Call Javascript Handler
+     *
+     * @param type
+     * @param status
+     */
+    this.weemo.onCallHandler = function(callObj, args)
+    {
+      weemoExtension.callObj = callObj;
+      var type = args.type;
+      var status = args.status;
+      console.log("WEEMO:onCallHandler  ::"+type+":"+status+":"+weemoExtension.callType+":"+weemoExtension.callOwner+":"+weemoExtension.hasChatMessage());
+      var messageWeemo = "";
+      var optionsWeemo = {};
+      if(type==="call" && ( status==="active" || status==="terminated" ))
       {
-	var input = $(this).find("#enableVideoCalls");
-	var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
-	input.attr("value", remembermeOpt);
+        console.log("Call Handler : " + type + ": " + status);
+        ts = Math.round(new Date().getTime() / 1000);
+
+        if (status === "terminated") weemoExtension.setCallOwner(false);
+
+        if (weemoExtension.callType==="internal" || status==="terminated") {
+          messageWeemo = "Call "+status;
+          optionsWeemo.timestamp = ts;
+        } else if (weemoExtension.callType==="host") {
+          messageWeemo = "Call "+status;
+          optionsWeemo.timestamp = ts;
+          optionsWeemo.uidToCall = weemoExtension.uidToCall;
+          optionsWeemo.displaynameToCall = weemoExtension.displaynameToCall;
+        }
+
+
+        if (status==="active" && weemoExtension.callActive) return; //Call already active, no need to push a new message
+        if (status==="terminated" && (!weemoExtension.callActive || weemoExtension.callType==="attendee")) return; //Terminate a non started call or a joined call, no message needed
+
+
+        if (weemoExtension.callType==="attendee" && status==="active") {
+          weemoExtension.setCallActive(true);
+          optionsWeemo.type = "call-join";
+          optionsWeemo.username = weemoExtension.chatMessage.user;
+          optionsWeemo.fullname = weemoExtension.chatMessage.fullname;
+
+        }
+        else if (status==="active") {
+          weemoExtension.setCallActive(true);
+          optionsWeemo.type = "call-on";
+        }
+        else if (status==="terminated") {
+          weemoExtension.setCallActive(false);
+          optionsWeemo.type = "call-off";
+        }
+        
+      }
+    }
+  this.callObj;
+
+  this.callOwner = jzGetParam("callOwner", false);
+  this.callActive = jzGetParam("callActive", false);
+  this.callType = jzGetParam("callType", "");
+
+  this.uidToCall = jzGetParam("uidToCall", "");
+  this.displaynameToCall = jzGetParam("displaynameToCall", "");
+
+  this.chatMessage = JSON.parse( jzGetParam("chatMessage", '{}') );
+
+  this.isConnected = false;
+}
+
+WeemoExtension.prototype.initOptions = function(options) {
+  this.username = options.username;
+  this.jzNotification = options.urlNotification;
+  this.jzGetState = options.urlGetState;
+  this.weemoIntervalNotif = options.notificationInterval;
+  this.notifEventURL = this.jzNotification;
+  this.getStateURL = this.jzGetState;
+};
+
+WeemoExtension.prototype.log = function() {
+  console.log("callOwner         :: "+this.callOwner);
+  console.log("callActive        :: "+this.callActive);
+  console.log("callType          :: "+this.callType);
+  console.log("uidToCall         :: "+this.uidToCall);
+  console.log("displayNameToCall :: "+this.displaynameToCall);
+  console.log("chatMessage       :: "+this.chatMessage);
+}  
+
+WeemoExtension.prototype.setCookie = function(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime()+(exdays*24*60*60*1000));
+    var expires = "expires="+d.toGMTString();
+    document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/";
+}  
+WeemoExtension.prototype.removeCookie = function(cname) {
+    document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+} 
+WeemoExtension.prototype.getCookie = function(cname)
+{
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) 
+    {
+      var c = ca[i].trim();
+      if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+
+WeemoExtension.prototype.showWeemoInstaller = function() {
+  if(!weemoExtension.isSupport || weemoExtension.connectedWeemoDriver) {
+    jqchat("#weemo-alert").hide();
+    return;
+  }
+  var isDismiss = weemoExtension.getCookie('isDismiss');
+  if(!weemoExtension.isConnected) {
+    console.log(document.cookie.split(';'));
+    if ((typeof(isDismiss) == "undefined" && isDismiss == null) || !isDismiss ) {
+      var uiToolbarContainer = jqchat("#UIToolbarContainer");
+      var height = uiToolbarContainer.outerHeight() - jqchat(".alert").css("marginTop").replace('px', '');
+
+      jqchat("#weemo-alert").css({ top: height+'px' });
+      jqchat("#weemo-alert").show();   
+      var downloadUrl = weemoExtension.getCookie("downloadUrl");
+      jqchat("#weemo-alert-download").attr("href", downloadUrl);    
+      jqchat("#weemo-alert-dismiss").click(function() {
+        weemoExtension.setCookie("isDismiss", "true", 365);
+        jqchat("#weemo-alert").hide();
       });
-      var yeslabel;
-      var nolabel;
-     
-      $(this).children('input:checkbox').each(function () {
-        yeslabel = $(this).data("yes");
-        nolabel = $(this).data("no");
-        $(this).iphoneStyle({
-          checkedLabel:yeslabel,
-          uncheckedLabel:nolabel
-        });
-        $(this).change(function()
-        {
-          $(this).closest("div.spaceRole").trigger("click");
-        });
-      });     
-     
-    });
-    
+      var closeElem = jqchat("#weemo-alert").find(".uiIconClose:first");
+      jqchat(closeElem).click(function() {
+        jqchat("#weemo-alert").hide();
+      });
+    }
+  }
+}
+
+WeemoExtension.prototype.setKey = function(weemoKey) {
+  this.weemoKey = weemoKey;
+  jzStoreParam("weemoKey", weemoKey, 14400); // timeout = 60 sec * 60 min * 4 hours = 14400 sec
+};
+
+WeemoExtension.prototype.setTokenKey = function(tokenKey) {
+  this.tokenKey = tokenKey;
+  jzStoreParam("tokenKey", tokenKey, 14400); // timeout = 60 sec * 60 min * 4 hours = 14400 sec
+};
+
+
+WeemoExtension.prototype.setCallOwner = function(callOwner) {
+  this.callOwner = callOwner;
+  jzStoreParam("callOwner", callOwner, 14400);
+};
+
+WeemoExtension.prototype.setCallType = function(callType) {
+  this.callType = callType;
+  jzStoreParam("callType", callType, 14400);
+};
+
+WeemoExtension.prototype.setCallActive = function(callActive) {
+  this.callActive = callActive;
+  jzStoreParam("callActive", callActive, 14400);
+};
+
+WeemoExtension.prototype.setUidToCall = function(uidToCall) {
+  this.uidToCall = uidToCall;
+  jzStoreParam("uidToCall", uidToCall, 14400);
+};
+
+WeemoExtension.prototype.setDisplaynameToCall = function(displaynameToCall) {
+  this.displaynameToCall = displaynameToCall;
+  jzStoreParam("displaynameToCall", displaynameToCall, 14400);
+};
+/**
+ * A JSON Object like :
+ * { "url" : url,
+ *   "user" : user,
+ *   "targetUser" : targetUser,
+ *   "room" : room,
+ *   "token" : token
+ * }
+ * @param chatMessage
+ */
+WeemoExtension.prototype.setChatMessage = function(chatMessage) {
+  this.chatMessage = chatMessage;
+  jzStoreParam("chatMessage", JSON.stringify(chatMessage), 14400);
+};
+
+WeemoExtension.prototype.hasChatMessage = function() {
+  return (this.chatMessage.url !== undefined);
+};
+
+WeemoExtension.prototype.initChatMessage = function() {
+  this.setChatMessage({});
+};
+
+WeemoExtension.prototype.hangup = function() {
+  if (this.callObj !== undefined) {
+    this.callObj.hangup();
+  }
+};
+
+/**
+ * Init Weemo Call
+ * @param $uid
+ * @param $name
+ */
+WeemoExtension.prototype.initCall = function($uid, $name) {
+  if (this.weemoKey!=="" && this.weemo !== undefined) {
+    jqchat(".btn-weemo-conf").css('display', 'none');
+
+    this.weemo.setDebugLevel(1); // Activate debug in JavaScript console
+    this.weemo.setWebAppId(this.weemoKey);
+    this.weemo.setToken(this.tokenKey); 
+    this.weemo.initialize(); 
+
+  } else {
+    jqchat(".btn-weemo").css('display', 'none');
+  }
+};
+
+/**
+ *
+ */
+WeemoExtension.prototype.createWeemoCall = function(targetUser, targetFullname, chatMessage) {
+  if (this.weemoKey!=="") {
+
+    if (chatMessage !== undefined) {
+      this.setChatMessage(chatMessage);
+    }
+
+    if (targetUser.indexOf("space-")===-1 && targetUser.indexOf("team-")===-1) {
+      this.setUidToCall("weemo_"+targetUser);
+      this.setDisplaynameToCall(targetFullname);
+      this.setCallType("internal");
+    } else {
+      this.setUidToCall(this.weemo.getToken());
+      this.setDisplaynameToCall(this.weemo.getDisplayName());
+      this.setCallType("host");
+    }
+    this.setCallOwner(true);
+    this.setCallActive(false);
+    this.weemo.createCall(this.uidToCall, this.callType, this.displaynameToCall);
+
   }
 
-  Utils.prototype.capitaliseFirstLetter = function(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+/**
+ *
+ */
+WeemoExtension.prototype.joinWeemoCall = function(chatMessage) {
+  if (this.weemoKey!=="") {
+    if (chatMessage !== undefined) {
+      this.setChatMessage(chatMessage);
+    }
+    this.setCallType("attendee");
+    this.setCallOwner(false);
+    this.setCallActive(false);
+    this.weemo.createCall(this.uidToCall, this.callType, this.displaynameToCall);
+
   }
 
-  Utils.prototype.showPopover = function (element) {
-    gj(element).popover({template: '<div class="popover"><div class="arrow"></div><div class="inner"><h3 class="popover-title" style="display:none;"></h3><div class="popover-content"><p></p></div></div></div>'});
-    gj(element).popover('show');       		
-  };
+};
 
-  Utils.prototype.hidePopover = function (element) {
-    gj(element).popover('hide');
-  };
+/**
+ * Update state
+ */
+WeemoExtension.prototype.refreshNotif = function() {
+  jqchat.ajax({
+    url: this.notifEventURL,
+    dataType: "json",
+    context: this,
+    success: function(data){
+
+    },
+    error: function(){
+     
+    }
+  });
+
+};
 
 
-  eXo.ecm.VideoCallsUtils = new Utils();
-  return {
-    VideoCallsUtils : eXo.ecm.VideoCallsUtils
-  };
+/**
+ * Gets target user status
+ * @param targetUser
+ */
+WeemoExtension.prototype.getStatus = function(targetUser, callback) {
+
+  var refreshURL = this.getStateURL + targetUser + "/";
+  jqchat.ajax({
+    url: refreshURL, 
+    dataType: "text",   
+    context: this,
+    success: function(data){
+      if (typeof callback === "function") {
+        var obj = jQuery.parseJSON(data);
+        var acticity = obj.activity;
+        callback(targetUser, acticity);
+      }
+    },
+    error: function(){
+      if (typeof callback === "function") {
+        callback(targetUser, "offline");
+      }
+    }
+  });
+};
+
+
+
+WeemoExtension.prototype.attachWeemoToPopups = function() {
+  var checkTiptip = jqchat('#tiptip_content').html();
+  if (checkTiptip === undefined) {
+    setTimeout(jqchat.proxy(this.attachWeemoToPopups, this), 250);
+    return;
+  }
+  jqchat('#tiptip_content').bind('DOMNodeInserted', function() {
+    var username = "";
+    var fullname = "";
+    var addStyle = "";
+    var $uiElement;
+
+    var $uiAction = jqchat(".uiAction", this).first();
+    if ($uiAction !== undefined && $uiAction.html() !== undefined) {
+      var $uiFullname = jqchat('#tiptip_content').children('#tipName').children("tbody").children("tr").children("td").children("a");
+      $uiFullname.each(function() {
+        var html = jqchat(this).html();
+        if (html.indexOf("/rest/")==-1) {
+          fullname = html;
+        }
+        var href = jqchat(this).attr("href");
+        if (href.indexOf("/portal/intranet/activities/")>-1) {
+          username = href.substr(28);
+        }
+      });
+      $uiElement = $uiAction;
+    }
+    if (username !== "" && $uiElement.has(".weemoCallOverlay").size()===0 && weemoExtension.isSupport) {
+      var out = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' disabled" title="Make a Video Call"';
+      out += ' data-fullname="'+fullname+'"';
+      out += ' data-username="'+username+'" style="margin-left:5px;'+addStyle+'">';
+      out += '<i class="uiIconWeemoVideoCalls uiIconLightGray"></i> Call</a>';
+
+      $uiElement.append(out);
+      jqchat(".weemoCallOverlay").on("click", function() {
+        if (!jqchat(this).hasClass("disabled")) {
+          var targetUser = jqchat(this).attr("data-username");
+          var targetFullname = jqchat(this).attr("data-fullname");
+          weemoExtension.createWeemoCall(targetUser, targetFullname);
+        }
+      });
+
+      function cbGetStatus(targetUser, activity) {
+	if (activity !== "offline") {
+          jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
+        }
+      }      
+      weemoExtension.getStatus(username, cbGetStatus);
+
+    }
+
+  });
+
+};
+
+WeemoExtension.prototype.attachWeemoToProfile = function() {
+  if (window.location.href.indexOf("/portal/intranet/profile")==-1) return;
   
+  var headerSecion = jqchat("#UIHeaderSection");
+  if(headerSecion.html() === undefined) {
+    setTimeout(jqchat.proxy(this.attachWeemoToProfile, this), 250);
+    return;
+  }
+  
+  var infoSection = jqchat("UIBasicInfoSection");
+  var h3Elem = jqchat(headerSecion).find("h3:first");
+  var buttonInvite = jqchat(headerSecion).find("button:first");
+  var fullName = jqchat(h3Elem).html();
+  fullName = fullName.substring(0, fullName.indexOf("<"));
+  var userName = window.location.href;
+  userName = userName.substring(userName.lastIndexOf("/")+1, userName.length);
+  
+  var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+userName.replace('.', '-')+' disabled"   id="weemoCall-'+userName.replace('.', '-')+'" title="Make a Video Call"';
+  html += ' data-username="'+userName+'" data-fullname="'+fullName+'"';
+  html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> Call</a>';
 
-})(gj, bts_alert, bts_modal, bts_popover);
+  jqchat(h3Elem).append(html);
+
+  function cbGetProfileStatus(targetUser, activity) {
+    if (activity !== "offline") {
+      jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
+    }
+  }
+
+  jqchat(".weemoCallOverlay").on("click", function() {
+    if (!jqchat(this).hasClass("disabled")) {
+      var targetUser = jqchat(this).attr("data-username");
+      var targetFullname = jqchat(this).attr("data-fullname");
+      weemoExtension.createWeemoCall(targetUser, targetFullname);
+    }
+  });
+
+
+};
+
+WeemoExtension.prototype.attachWeemoToConnections = function() {
+  if (window.location.href.indexOf("/portal/intranet/connexions")==-1) return;
+
+  var $uiPeople = jqchat('.uiTabInPage').first();
+  if ($uiPeople.html() === undefined) {
+    setTimeout(jqchat.proxy(this.attachWeemoToConnections, this), 250);
+    return;
+  }
+
+  function cbGetConnectionStatus(targetUser, activity) {
+    if (activity !== "offline") {
+      jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
+    }
+  }
+
+  jqchat(".contentBox", ".uiTabInPage").each(function() {
+    var $uiUsername = jqchat(this).children(".spaceTitle").children("a").first();
+    var username = $uiUsername.attr("href");
+    username = username.substring(username.lastIndexOf("/")+1);
+    var fullname = $uiUsername.html();
+
+    var $uiActionWeemo = jqchat(".weemoCallOverlay", this).first();
+    if ($uiActionWeemo !== undefined && $uiActionWeemo.html() == undefined && weemoExtension.isSupport) {
+      var nextElem = jqchat(this).next();
+      var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' pull-right disabled" id="weemoCall-'+username.replace('.', '-')+'" title="Make a Video Call"';
+      html += ' data-username="'+username+'" data-fullname="'+fullname+'"';
+      html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> Call</a>';
+      html += jqchat(nextElem).html();
+      jqchat(nextElem).html(html);
+
+      weemoExtension.getStatus(username, cbGetConnectionStatus);
+    }
+
+  });
+
+
+  jqchat(".weemoCallOverlay").on("click", function() {
+    if (!jqchat(this).hasClass("disabled")) {
+      var targetUser = jqchat(this).attr("data-username");
+      var targetFullname = jqchat(this).attr("data-fullname");
+      weemoExtension.createWeemoCall(targetUser, targetFullname);
+    }
+  });
+
+
+};
+
+/**
+ ##################                           ##################
+ ##################                           ##################
+ ##################   HACK                    ##################
+ ##################                           ##################
+ ##################                           ##################
+ */
+
+
+
+/**
+ * Hack to ignore console on for Internet Explorer (without testing its existence
+ * @type {*|{log: Function, warn: Function, error: Function}}
+ */
+var console = console || {
+  log:function(){},
+  warn:function(){},
+  error:function(){}
+};
+
+
+
+/**
+ ##################                           ##################
+ ##################                           ##################
+ ##################   GLOBAL                  ##################
+ ##################                           ##################
+ ##################                           ##################
+ */
+
+// GLOBAL VARIABLES
+
+var weemoExtension = new WeemoExtension();
+
+
+(function($) {
+
+  $(document).ready(function() {
+    
+    //GETTING DOM CONTEXT
+    var $notificationApplication = $("#weemo-status");
+    
+    
+    // WEEMO NOTIFICATION INIT
+    weemoExtension.initOptions({      
+      "username": $notificationApplication.attr("data-username"),
+      "urlNotification": "/rest/state/ping/",
+      "urlGetState": "/rest/state/status/",
+      "notificationInterval": $notificationApplication.attr("data-weemo-interval-notif")      
+    });
+
+    weemoExtension.notifEventInt = window.clearInterval(weemoExtension.notifEventInt);
+    weemoExtension.notifEventInt = setInterval(jqchat.proxy(weemoExtension.refreshNotif, weemoExtension), 	    		    weemoExtension.weemoIntervalNotif*1000);
+    weemoExtension.refreshNotif();
+
+    var isTurnOff = $notificationApplication.attr("data-weemo-turnoff");
+    if(isTurnOff == "true") return;
+    var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
+    if(isNotInstallWeemoDriver) {
+	weemoExtension.showWeemoInstaller();
+    }
+    // WEEMO : GETTING AND SETTING KEY
+    var weemoKey = $notificationApplication.attr("data-weemo-key");
+    weemoExtension.setKey(weemoKey);
+
+    var tokenKey = $notificationApplication.attr("data-token-key");
+    weemoExtension.setTokenKey(tokenKey);
+    
+    
+    var username = $notificationApplication.attr("data-username");
+    weemoExtension.initCall(username, username);
+    weemoExtension.attachWeemoToPopups();
+    weemoExtension.attachWeemoToConnections();
+    weemoExtension.attachWeemoToProfile();
+
+
+    
+
+    
+  });
+
+})(jqchat);
+
+
+
