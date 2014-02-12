@@ -137,10 +137,24 @@ function WeemoExtension() {
     }
 
   } catch (err) {
-    console.log("WEEMO NOT AVAILABLE YET");
+    console.log("WEEMO NOT AVAILABLE YET " + err);
     this.weemo = undefined;
     jqchat(".btn-weemo-conf").css('display', 'none');
     jqchat(".btn-weemo").addClass('disabled');
+    //This block code for fix the issue PLF-5688
+    var platform = navigator.platform;
+    if (platform.indexOf("Linux") < 0) {
+      var wsUri = "wss://localhost:34679";
+      var protocol = "weemodriver-protocol";
+      if(typeof MozWebSocket == 'function') WebSocket = MozWebSocket;
+      var websock = new WebSocket(wsUri, protocol);
+      websock.onclose = function(evt) { 	      
+        weemoExtension.setNotInstallWeemoDriver();
+      };
+      websock.onerror = function(evt) {
+        weemoExtension.setNotInstallWeemoDriver();
+      };
+    }
   }
   
      
@@ -156,6 +170,15 @@ function WeemoExtension() {
   this.chatMessage = JSON.parse( jzGetParam("chatMessage", '{}') );
 
   this.isConnected = false;
+}
+
+WeemoExtension.prototype.setNotInstallWeemoDriver = function() {
+  var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");      
+  if(!isNotInstallWeemoDriver || 0 === isNotInstallWeemoDriver.length) {
+    weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
+    weemoExtension.setCookie("downloadUrl", "https://download.weemo.com/file/release/3", 365);
+    weemoExtension.showWeemoInstaller();
+  }
 }
 
 WeemoExtension.prototype.initOptions = function(options) {
