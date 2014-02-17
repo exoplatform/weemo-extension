@@ -34,6 +34,15 @@
     </module>
   </portlet>
   
+  <portlet>
+    <name>VideoCallApplication</name>
+    <module>      
+      <depends>
+        <module>videoCalls</module>
+      </depends>     
+    </module>
+  </portlet>
+  
    <module>
     <name>videoCallsAdmin</name>
     <script>
@@ -48,6 +57,23 @@
       </depends>   
       <depends>
         <module>bts_modal</module>
+    </depends>  
+    <depends>
+      <module>bts_popover</module>
+    </depends>
+  </module>
+  
+  <module>
+    <name>videoCalls</name>  
+    <script>
+      <path>/js/VideoCalls.js</path>
+    </script>
+    <depends>
+      <module>jquery</module>
+      <as>gj</as>
+    </depends>   
+    <depends>
+      <module>bts_modal</module>
     </depends>  
     <depends>
       <module>bts_popover</module>
