@@ -124,19 +124,22 @@ public class AuthService {
         }
         String relPath = sb.toString();
         
-        InputStream p12InputStream = new URL(relPath + p12File).openStream();
-        local_p12_file = convertInputStreamToFile(p12InputStream, p12File.substring(p12File.lastIndexOf("/")+1, p12File.length()));
-        
-        
-        
         Authenticator.setDefault(new MyAuthenticator(PropertyManager.getProperty(PropertyManager.PROPERTY_USER_ID_AUTH), passphrase)); 
-        
-        URL urlCA = new URL(relPath + caFile);
         String userPassword = "eXoCloud" + ":" + passphrase;
         String encoding = URLEncoder.encode(userPassword, "UTF-8");
-        URLConnection uc = urlCA.openConnection();
-        uc.setRequestProperty("Authorization", "UTF-8" + encoding);        
-        InputStream pemInputStream = (InputStream) uc.getInputStream();        
+        
+        //InputStream p12InputStream = new URL(relPath + p12File).openStream();
+        //local_p12_file = convertInputStreamToFile(p12InputStream, p12File.substring(p12File.lastIndexOf("/")+1, p12File.length()));
+        URL urlP12 = new URL(relPath + p12File);
+        URLConnection ucP12 = urlP12.openConnection();
+        ucP12.setRequestProperty("Authorization", "UTF-8" + encoding);   
+        InputStream p12InputStream = (InputStream) ucP12.getInputStream();
+        local_p12_file = convertInputStreamToFile(p12InputStream, p12File.substring(p12File.lastIndexOf("/")+1, p12File.length())); 
+        
+        URL urlCA = new URL(relPath + caFile);       
+        URLConnection ucCA = urlCA.openConnection();
+        ucCA.setRequestProperty("Authorization", "UTF-8" + encoding);        
+        InputStream pemInputStream = (InputStream) ucCA.getInputStream();        
         local_ca_file = convertInputStreamToFile(pemInputStream, caFile.substring(caFile.lastIndexOf("/")+1, caFile.length())); 
       }     
       
