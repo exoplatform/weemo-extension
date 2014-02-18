@@ -65,6 +65,7 @@ public class VideoCallApplication {
       frequency = Integer.parseInt(System.getProperty("user.status.ping.frequency"));
     }
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
+    if(videoCallModel == null) videoCallModel = new VideoCallModel();
     String weemoKey = videoCallModel.getWeemoKey();
     String tokenKey = videoCallModel.getTokenKey();
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
