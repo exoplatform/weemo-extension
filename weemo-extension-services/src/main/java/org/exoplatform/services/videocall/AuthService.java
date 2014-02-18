@@ -55,7 +55,6 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.utils.videocall.PropertyManager;
 
-import com.sun.star.ucb.CookiePolicy;
 
 
 
@@ -128,23 +127,18 @@ public class AuthService {
         }
         String relPath = sb.toString();
         
-        Authenticator.setDefault(new MyAuthenticator(PropertyManager.getProperty(PropertyManager.PROPERTY_USER_ID_AUTH), passphrase)); 
         String userPassword = "eXoCloud" + ":" + passphrase;
         String encoding = URLEncoder.encode(userPassword, "UTF-8");
         CookieHandler.setDefault(new CookieManager(null, java.net.CookiePolicy.ACCEPT_ALL));
-        
-        //InputStream p12InputStream = new URL(relPath + p12File).openStream();
-        //local_p12_file = convertInputStreamToFile(p12InputStream, p12File.substring(p12File.lastIndexOf("/")+1, p12File.length()));
-        URL urlP12 = new URL(relPath + p12File);
-        URLConnection ucP12 = urlP12.openConnection();
-        ucP12.setRequestProperty("Authorization", "UTF-8" + encoding);   
-        InputStream p12InputStream = (InputStream) ucP12.getInputStream();
+               
+        InputStream p12InputStream = this.getClass().getResourceAsStream("/certificate/client.p12");
         local_p12_file = convertInputStreamToFile(p12InputStream, p12File.substring(p12File.lastIndexOf("/")+1, p12File.length())); 
         
+        Authenticator.setDefault(new MyAuthenticator(PropertyManager.getProperty(PropertyManager.PROPERTY_USER_ID_AUTH), passphrase));        
         URL urlCA = new URL(relPath + caFile);       
         URLConnection ucCA = urlCA.openConnection();
         ucCA.setRequestProperty("Authorization", "UTF-8" + encoding);        
-        InputStream pemInputStream = (InputStream) ucCA.getInputStream();        
+        InputStream pemInputStream = this.getClass().getResourceAsStream("/certificate/weemo-ca.pem");
         local_ca_file = convertInputStreamToFile(pemInputStream, caFile.substring(caFile.lastIndexOf("/")+1, caFile.length())); 
       }     
       
@@ -342,6 +336,7 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
     try {
       SSLContext ctx = SSLContext.getInstance("SSL"); 
       URL url ;  
+      Authenticator.setDefault(new MyAuthenticator("tan_haquang", "20061985"));
       String urlStr = "https://oauths-ppr.weemo.com/auth/" + "?client_id=33cc7f1e82763049a4944a702c880d&client_secret=3569996f0d03b2cd3880223747c617";
       String post = "uid=" + URLEncoder.encode("1033a56f0e68", "UTF-8")
           + "&identifier_client=" + URLEncoder.encode("exo_domain", "UTF-8")
@@ -349,10 +344,14 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
       url = new URL(urlStr);      
       HttpsURLConnection connection = (HttpsURLConnection) url.openConnection(); 
       
-      InputStream p12InputStream = new URL("http://localhost:8080/weemo-extension/resources/client.p12").openStream();
+      //InputStream p12InputStream = new URL("http://localhost:8080/weemo-extension/resources/client.p12").openStream();
+      //InputStream p12InputStream = new URL("http://plfent-4.1.x-pkgpriv-weemo-addon-snapshot.acceptance4.exoplatform.org/weemo-extension/resources/client.p12").openStream();
+      InputStream p12InputStream = AuthService.class.getResourceAsStream("/certificate/client.p12");
       File p12File = convertInputStreamToFile(p12InputStream, "client.p12");
       
-      InputStream pemInputStream = new URL("http://localhost:8080/weemo-extension/resources/weemo-ca.pem").openStream();
+      //InputStream pemInputStream = new URL("http://localhost:8080/weemo-extension/resources/weemo-ca.pem").openStream();
+      //InputStream pemInputStream = new URL("http://plfent-4.1.x-pkgpriv-weemo-addon-snapshot.acceptance4.exoplatform.org/weemo-extension/resources/weemo-ca.pem").openStream();
+      InputStream pemInputStream = AuthService.class.getResourceAsStream("/certificate/weemo-ca.pem");
       File pemFile = convertInputStreamToFile(pemInputStream, "weemo-ca.pem");
       
       //KeyManager[] keyManagers = getKeyManagers("PKCS12", new FileInputStream(new File("/home/tanhq/java/eXoProjects/weemo-extension/weemo-extension-webapp/src/main/webapp/resources/client.p12")), "XnyexbUF");      
