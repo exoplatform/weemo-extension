@@ -60,6 +60,7 @@ import org.exoplatform.utils.videocall.PropertyManager;
 
 public class AuthService {
   
+  private String profile_id = null;
   private String authUrl;  
   private String clientId = null;
   private String clientSecret = null;
@@ -74,7 +75,8 @@ public class AuthService {
   
   private static final Log LOG = ExoLogger.getLogger(AuthService.class.getName());
   
-  public AuthService(String app_id, String domain_id, String authUrl, String caFile, String p12File, String passphrase, String clientId, String clientSecret) {
+  public AuthService(String profile_id, String app_id, String domain_id, String authUrl, String caFile, String p12File, String passphrase, String clientId, String clientSecret) {
+    this.profile_id = profile_id;
     this.app_id = app_id;
     this.domain_id = domain_id;
     this.authUrl = authUrl;
@@ -127,18 +129,18 @@ public class AuthService {
         }
         String relPath = sb.toString();
         
-        String userPassword = "eXoCloud" + ":" + passphrase;
+        String userPassword = profile_id + ":" + passphrase;
         String encoding = URLEncoder.encode(userPassword, "UTF-8");
         CookieHandler.setDefault(new CookieManager(null, java.net.CookiePolicy.ACCEPT_ALL));
                
-        InputStream p12InputStream = this.getClass().getResourceAsStream("/certificate/client.p12");
+        InputStream p12InputStream = this.getClass().getResourceAsStream(p12File);
         local_p12_file = convertInputStreamToFile(p12InputStream, p12File.substring(p12File.lastIndexOf("/")+1, p12File.length())); 
         
         Authenticator.setDefault(new MyAuthenticator(PropertyManager.getProperty(PropertyManager.PROPERTY_USER_ID_AUTH), passphrase));        
         URL urlCA = new URL(relPath + caFile);       
         URLConnection ucCA = urlCA.openConnection();
         ucCA.setRequestProperty("Authorization", "UTF-8" + encoding);        
-        InputStream pemInputStream = this.getClass().getResourceAsStream("/certificate/weemo-ca.pem");
+        InputStream pemInputStream = this.getClass().getResourceAsStream(caFile);
         local_ca_file = convertInputStreamToFile(pemInputStream, caFile.substring(caFile.lastIndexOf("/")+1, caFile.length())); 
       }     
       

@@ -80,8 +80,8 @@ public class PropertyManager {
       overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "exo_domain");
       overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "XnyexbUF");
       overridePropertyIfNotSet(PROPERTY_AUTH_URL, "https://oauths-ppr.weemo.com/auth/");
-      overridePropertyIfNotSet(PROPERTY_CA_FILE, "/weemo-extension/resources/weemo-ca.pem");
-      overridePropertyIfNotSet(PROPERTY_P12_FILE, "/weemo-extension/resources/client.p12");
+      overridePropertyIfNotSet(PROPERTY_CA_FILE, "/certificate/weemo-ca.pem");
+      overridePropertyIfNotSet(PROPERTY_P12_FILE, "/certificate/client.p12");
       overridePropertyIfNotSet(PROPERTY_USER_ID_AUTH, "eXoCloud");
       overridePropertyIfNotSet(PROPERTY_PASS_AUTH, "bc2e05cf11");
       overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_AUTH, "33cc7f1e82763049a4944a702c880d");

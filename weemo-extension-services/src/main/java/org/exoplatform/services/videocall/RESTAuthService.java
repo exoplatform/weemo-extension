@@ -24,17 +24,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.utils.videocall.PropertyManager;
 
 @Path("/weemo/")
 public class RESTAuthService implements ResourceContainer{
-  private static final Log LOG = ExoLogger.getLogger(RESTAuthService.class);
   private final AuthService authService;
   
   public RESTAuthService() {
+    String profile_id = PropertyManager.getProperty(PropertyManager.PROPERTY_USER_ID_AUTH);
     String app_id = PropertyManager.getProperty(PropertyManager.PROPERTY_APP_ID);
     String domain_id = PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID);
     String authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);
@@ -43,7 +41,7 @@ public class RESTAuthService implements ResourceContainer{
     String caFile = PropertyManager.getProperty(PropertyManager.PROPERTY_CA_FILE);
     String p12File = PropertyManager.getProperty(PropertyManager.PROPERTY_P12_FILE);
     String passphrase = PropertyManager.getProperty(PropertyManager.PROPERTY_PASSPHRASE);
-    authService = new AuthService(app_id, domain_id, authUrl, caFile, p12File, passphrase, client_id, clientSecret);
+    authService = new AuthService(profile_id, app_id, domain_id, authUrl, caFile, p12File, passphrase, client_id, clientSecret);
   }
   
   @GET
