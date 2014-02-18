@@ -37,6 +37,11 @@ function WeemoExtension() {
       switch(message) {
         case 'connectedWeemoDriver':          
           weemoExtension.connectedWeemoDriver = true;
+          var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver"); 
+          if(isNotInstallWeemoDriver == 'true') {
+            jqchat("#weemo-alert").hide();
+            weemoExtension.setCookie("isNotInstallWeemoDriver", "false", 365);
+          }
           this.authenticate();
           break;       
         case 'loggedasotheruser':
@@ -46,10 +51,7 @@ function WeemoExtension() {
         case 'unsupportedOS':
           weemoExtension.isSupport = false;
         case 'sipOk':
-          weemoExtension.isConnected = true;
-          weemoExtension.connectedWeemoDriver = true;
-          jqchat("#weemo-alert").hide();
-          weemoExtension.removeCookie("isNotInstallWeemoDriver");	 
+          weemoExtension.isConnected = true;         	 
           jqchat(".btn-weemo").removeClass('disabled');
           jqchat(".weemoCallOverlay").removeClass('disabled');
           var fn = jqchat(".label-user").text();
@@ -69,11 +71,8 @@ function WeemoExtension() {
      * @param downloadUrl
      */
     this.weemo.onWeemoDriverNotStarted = function(downloadUrl) {
-      var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");      
-      if(!isNotInstallWeemoDriver || 0 === isNotInstallWeemoDriver.length) {
-        weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
-	weemoExtension.setCookie("downloadUrl", downloadUrl, 365);
-      }    
+      weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
+      weemoExtension.setCookie("downloadUrl", downloadUrl, 365);
       weemoExtension.showWeemoInstaller();
       if (navigator.platform !== "Linux") {        
         jqchat("#weemo-alert-download").attr("href", downloadUrl);
@@ -622,7 +621,7 @@ var weemoExtension = new WeemoExtension();
     var isTurnOff = $notificationApplication.attr("data-weemo-turnoff");
     if(isTurnOff == "true") return;
     var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
-    if(isNotInstallWeemoDriver) {
+    if(isNotInstallWeemoDriver == 'true') {
 	weemoExtension.showWeemoInstaller();
     }
     // WEEMO : GETTING AND SETTING KEY
