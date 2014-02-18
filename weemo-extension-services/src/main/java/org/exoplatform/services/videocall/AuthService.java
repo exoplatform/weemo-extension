@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Authenticator;
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -52,6 +54,8 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.utils.videocall.PropertyManager;
+
+import com.sun.star.ucb.CookiePolicy;
 
 
 
@@ -127,6 +131,7 @@ public class AuthService {
         Authenticator.setDefault(new MyAuthenticator(PropertyManager.getProperty(PropertyManager.PROPERTY_USER_ID_AUTH), passphrase)); 
         String userPassword = "eXoCloud" + ":" + passphrase;
         String encoding = URLEncoder.encode(userPassword, "UTF-8");
+        CookieHandler.setDefault(new CookieManager(null, java.net.CookiePolicy.ACCEPT_ALL));
         
         //InputStream p12InputStream = new URL(relPath + p12File).openStream();
         //local_p12_file = convertInputStreamToFile(p12InputStream, p12File.substring(p12File.lastIndexOf("/")+1, p12File.length()));

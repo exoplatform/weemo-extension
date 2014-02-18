@@ -167,7 +167,9 @@ public class VideoCallService {
     } else {
       videoCallModel = getVideoCallProfile();      
     }
-    weemoKey = videoCallModel.getWeemoKey();
+    if(videoCallModel != null) {
+      weemoKey = videoCallModel.getWeemoKey();
+    }
     return weemoKey;
   }
   ///////////////////////////////////////////////////////////////////////////////////////////  
