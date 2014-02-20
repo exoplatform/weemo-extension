@@ -13,9 +13,7 @@
  */
 function WeemoExtension() {
   this.username = "";
-  this.jzNotification = "";
   this.jzGetState = "";
-  this.notifEventURL = "";
   this.getStateURL = "";
   this.weemoIntervalNotif = "";
   this.notifEventInt = "";
@@ -182,10 +180,8 @@ WeemoExtension.prototype.setNotInstallWeemoDriver = function() {
 
 WeemoExtension.prototype.initOptions = function(options) {
   this.username = options.username;
-  this.jzNotification = options.urlNotification;
   this.jzGetState = options.urlGetState;
   this.weemoIntervalNotif = options.notificationInterval;
-  this.notifEventURL = this.jzNotification;
   this.getStateURL = this.jzGetState;
 };
 
@@ -373,25 +369,6 @@ WeemoExtension.prototype.joinWeemoCall = function(chatMessage) {
   }
 
 };
-
-/**
- * Update state
- */
-WeemoExtension.prototype.refreshNotif = function() {
-  jqchat.ajax({
-    url: this.notifEventURL,
-    dataType: "json",
-    context: this,
-    success: function(data){
-
-    },
-    error: function(){
-     
-    }
-  });
-
-};
-
 
 /**
  * Gets target user status
@@ -612,11 +589,7 @@ var weemoExtension = new WeemoExtension();
       "urlNotification": "/rest/state/ping/",
       "urlGetState": "/rest/state/status/",
       "notificationInterval": $notificationApplication.attr("data-weemo-interval-notif")      
-    });
-
-    weemoExtension.notifEventInt = window.clearInterval(weemoExtension.notifEventInt);
-    weemoExtension.notifEventInt = setInterval(jqchat.proxy(weemoExtension.refreshNotif, weemoExtension), 	    		    weemoExtension.weemoIntervalNotif*1000);
-    weemoExtension.refreshNotif();
+    });   
 
     var isTurnOff = $notificationApplication.attr("data-weemo-turnoff");
     if(isTurnOff == "true") return;
@@ -637,11 +610,6 @@ var weemoExtension = new WeemoExtension();
     weemoExtension.attachWeemoToPopups();
     weemoExtension.attachWeemoToConnections();
     weemoExtension.attachWeemoToProfile();
-
-
-    
-
-    
   });
 
 })(jqchat);
