@@ -29,15 +29,47 @@
 					  <i class="uiIconQuestion uiIconLightGray"></i>			
 				  </div>
 				  <input type="hidden" id="disableVideoCall" name="disableVideoCall" value="false">
-				</span>
-				    
+				</span>				    
 			  </div>
-			  <div class="control-group">
-			    <label style="text-align: left; width: auto;" class="control-label" for="weemoKey">&{exoplatform.videocall.weemokey}: </label>
-			    <div class="controls" style="margin-left: 85px;">
-			      <input class="span2" type="text" id="weemoKey" name="weemoKey" value="<%=weemoKey%>" placeholder="&{exoplatform.videocall.weemokey}">
-			    </div>
-			  </div>		  
+			  
+			  <div class="row">
+			  	<div class="span6">
+				  	<div class="control-group">
+					    <label style="text-align: left; width: auto;" class="control-label" for="weemoKey">&{exoplatform.videocall.weemokey}: </label>
+					    <div class="controls" style="margin-left: 85px;">
+					      <input class="span3" type="text" id="weemoKey" name="weemoKey" value="<%=weemoKey%>">
+					    </div>
+					</div>
+			  	</div>
+			  	<div class="span6">
+			  	    <div class="control-group">
+					    <label style="text-align: left; width: auto;" class="control-label" for="passPhrase">&{exoplatform.videocall.passPhrase}: </label>
+					    <div class="controls" style="margin-left: 85px;">
+					      <input class="span3" type="password" id="customerCertificatePassphrase" name="customerCertificatePassphrase" value="<%=customerCertificatePassphrase%>">
+					    </div>
+					</div>
+			  	</div>
+			  </div>
+			  
+			  <div class="row">
+			  	<div class="span6">
+				  	<div class="control-group">
+					    <label style="text-align: left; width: auto;" class="control-label" for="authId">&{exoplatform.videocall.authId}: </label>
+					    <div class="controls" style="margin-left: 85px;">
+					      <input class="span3" type="text" id="authId" name="authId" value="<%=authId%>" >
+					    </div>
+					</div>
+			  	</div>
+			  	<div class="span6">
+			  	    <div class="control-group">
+					    <label style="text-align: left; width: auto;" class="control-label" for="authSecret">&{exoplatform.videocall.authSecret}: </label>
+					    <div class="controls" style="margin-left: 85px;">
+					      <input class="span3" type="password" id="authSecret" name="authSecret" value="<%=authSecret%>" >
+					    </div>
+					</div>
+			  	</div>
+			  </div>
+			  		  
 			  
 			  
 			<div class="UIViewPermissionContainer" id="UIViewPermissionContainer" style="padding-bottom: 20px;">

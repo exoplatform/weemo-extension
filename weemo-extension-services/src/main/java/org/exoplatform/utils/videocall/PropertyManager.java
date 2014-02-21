@@ -31,21 +31,20 @@ public class PropertyManager {
 
   private static final String PROPERTIES_PATH = System.getProperty("catalina.base")+"/conf/weemo.properties";
   public static final String PROPERTY_SYSTEM_PREFIX = "weemo.";
-  public static final String PROPERTY_INTERVAL_NOTIF = "weemoIntervalNotif";
-  public static final String PROPERTY_WEEMO_KEY = "weemoKey";
+  
+  public static final String PROPERTY_WEEMO_KEY = "weemo.webappId";
+  public static final String PROPERTY_CLIENT_KEY_AUTH = "weemo.authClientId";
+  public static final String PROPERTY_CLIENT_SECRET_AUTH = "weemo.authSecretId";
+  public static final String PROPERTY_PASSPHRASE = "weemo.customerCertificatePassphrase";
+  public static final String PROPERTY_AUTH_URL = "weemo.authURL";
+  public static final String PROPERTY_USER_ID_AUTH = "user_id_auth";
   
   public static final String PROPERTY_APP_ID = "app_id";
-  public static final String PROPERTY_DOMAIN_ID = "domain_id";
-  public static final String PROPERTY_PASSPHRASE = "passphrase";
-  public static final String PROPERTY_AUTH_URL = "auth_url";
+  public static final String PROPERTY_DOMAIN_ID = "domain_id";  
+  
   public static final String PROPERTY_CA_FILE = "ca_file";
-  public static final String PROPERTY_P12_FILE = "p12_file";
-  
-  public static final String PROPERTY_USER_ID_AUTH = "user_id_auth";
-  public static final String PROPERTY_PASS_AUTH = "pass_auth";
-  public static final String PROPERTY_CLIENT_KEY_AUTH = "client_key_auth";
-  public static final String PROPERTY_CLIENT_SECRET_AUTH = "client_secret_auth";
-  
+  public static final String PROPERTY_P12_FILE = "p12_file";  
+  public static final String PROPERTY_PASS_AUTH = "pass_auth";  
   public static final String PROPERTY_USER_ID_ALLOW = "user_id_allow";
   public static final String PROPERTY_PASS_ALLOW = "pass_allow";
   public static final String PROPERTY_CLIENT_KEY_ALLOW = "client_key_allow";
@@ -75,8 +74,7 @@ public class PropertyManager {
       catch (Exception e)
       {
       }     
-      overridePropertyIfNotSet(PROPERTY_INTERVAL_NOTIF, "15000");      
-      overridePropertyIfNotSet(PROPERTY_APP_ID, "1033a56f0e68");
+      /*overridePropertyIfNotSet(PROPERTY_APP_ID, "1033a56f0e68");
       overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "exo_domain");
       overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "XnyexbUF");
       overridePropertyIfNotSet(PROPERTY_AUTH_URL, "https://oauths-ppr.weemo.com/auth/");
@@ -90,6 +88,17 @@ public class PropertyManager {
       overridePropertyIfNotSet(PROPERTY_PASS_ALLOW, "7625b9b08d");
       overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_ALLOW, "33cc7f1e82763049a4944a702c880d");
       overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_ALLOW, "3569996f0d03b2cd3880223747c617");
+      overridePropertyIfNotSet(PROPERTY_VIDEO_PROFILE, "basic");*/
+      
+      overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "exo_domain");
+      overridePropertyIfNotSet(PROPERTY_APP_ID, "1033a56f0e68");
+      overridePropertyIfNotSet(PROPERTY_CA_FILE, "/certificate/weemo-ca.pem");
+      overridePropertyIfNotSet(PROPERTY_P12_FILE, "/certificate/client.p12");
+      overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "XnyexbUF");
+      overridePropertyIfNotSet(PROPERTY_AUTH_URL, "https://oauths-ppr.weemo.com/auth/");
+      overridePropertyIfNotSet(PROPERTY_USER_ID_AUTH, "eXoCloud");
+      overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_AUTH, "33cc7f1e82763049a4944a702c880d");
+      overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_AUTH, "3569996f0d03b2cd3880223747c617");
       overridePropertyIfNotSet(PROPERTY_VIDEO_PROFILE, "basic");
       
       videoCallService = new VideoCallService();
@@ -101,8 +110,17 @@ public class PropertyManager {
         } else {
           videoCallModel.setWeemoKey(properties().getProperty(PROPERTY_WEEMO_KEY));
         }
+        String authId = (properties().getProperty(PROPERTY_CLIENT_KEY_AUTH)==null) ? "" : 
+          properties().getProperty(PROPERTY_CLIENT_KEY_AUTH);
+        String authSecret = (properties().getProperty(PROPERTY_CLIENT_SECRET_AUTH)==null) ? "" : 
+          properties().getProperty(PROPERTY_CLIENT_SECRET_AUTH);
+        String passPhrase = (properties().getProperty(PROPERTY_PASSPHRASE)==null) ? "" : 
+          properties().getProperty(PROPERTY_PASSPHRASE);
         //Set default permission
         videoCallModel.setVideoCallPermissions("*:/platform/users#true");
+        videoCallModel.setCustomerCertificatePassphrase(passPhrase);
+        videoCallModel.setAuthId(authId);
+        videoCallModel.setAuthSecret(authSecret);
         videoCallService.saveVideoCallProfile(videoCallModel);
       }
     }

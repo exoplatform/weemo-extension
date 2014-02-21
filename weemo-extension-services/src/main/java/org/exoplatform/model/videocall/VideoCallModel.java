@@ -23,7 +23,10 @@ public class VideoCallModel {
   
   private String disableVideoCall = null;
   private String weemoKey = "";
-  private String tokenKey = "";
+  private String tokenKey = "";  
+  private String customerCertificatePassphrase = "";
+  private String authId = "";
+  private String authSecret = "";
   private String videoCallPermissions = "";
   
 
@@ -42,6 +45,30 @@ public class VideoCallModel {
   
   public void setWeemoKey(String weemoKey) {
     this.weemoKey = weemoKey;
+  }
+  
+  public String getCustomerCertificatePassphrase() {
+    return customerCertificatePassphrase;
+  }
+  
+  public void setCustomerCertificatePassphrase(String passPhrase) {
+    this.customerCertificatePassphrase = passPhrase;
+  }
+  
+  public String getAuthId() {
+    return authId;
+  }
+  
+  public void setAuthId(String authId) {
+    this.authId = authId;
+  }
+  
+  public String getAuthSecret() {
+    return authSecret;
+  }
+  
+  public void setAuthSecret(String authSecret) {
+    this.authSecret = authSecret;
   }
   
   public String getTokenKey() {

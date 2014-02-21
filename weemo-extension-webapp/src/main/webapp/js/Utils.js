@@ -9,6 +9,9 @@
     var ajaxLink = $("#videoCallsPermissionForm").attr("action");
     var disableVideoCall = $("#disableVideoCall").val();
     var weemoKey = $("#weemoKey").val();
+    var authId = $("#authId").val();
+    var authSecret = $("#authSecret").val();
+    var passPhrase = $("#customerCertificatePassphrase").val();
     var permissionData = "";
     //Get list of permissions
     var uiViewPermissionList = $("#UIViewPermissionList");
@@ -34,6 +37,9 @@
       data: {
       "disableVideoCall": disableVideoCall,
       "weemoKey": weemoKey,
+      "authId":authId,
+      "authSecret":authSecret,
+      "customerCertificatePassphrase":passPhrase,
       "videoCallPermissions":permissionData
       },
       success: function(data){

@@ -72,10 +72,16 @@ public class VideoCallAdministration {
   {  
     VideoCallModel videoModel = videoCallService_.getVideoCallProfile();
     String weemoKey = videoModel.getWeemoKey();
+    String passPhrase = videoModel.getCustomerCertificatePassphrase();
+    String authId = videoModel.getAuthId();
+    String authSecret = videoModel.getAuthSecret();
     boolean turnOffVideoCall = Boolean.parseBoolean(videoModel.getDisableVideoCall());
     String videoPermissions = videoModel.getVideoCallPermissions();
     index.with().set("turnOffVideoCall", turnOffVideoCall)
               .set("weemoKey", weemoKey)
+              .set("customerCertificatePassphrase", passPhrase)
+              .set("authId", authId)
+              .set("authSecret", authSecret)
               .set("videoCallPermissions", getListOfPermissions(videoPermissions))
               .render();
     videoCalls.setDisplaySuccessMsg(false);

@@ -62,6 +62,9 @@ public class VideoCallService {
   public static String WEEMOKEY_PROP = "exo:weemoKey";
   public static String VIDEO_PERMISSIONS_PROP = "exo:videoCallPermissions";
   public static String VIDEO_TOKEN_KEY = "exo:tokenKey";
+  public static String VIDEO_PASSPHARSE = "exo:passPhrase";
+  public static String VIDEO_AUTH_ID = "exo:authId";
+  public static String VIDEO_AUTH_SECRET = "exo:authSecret";
   
   private static final Log LOG = ExoLogger.getLogger(VideoCallService.class.getName());
   
@@ -74,7 +77,10 @@ public class VideoCallService {
   public void saveVideoCallProfile(VideoCallModel videoCallModel) {
     String disbaleVideoCall = videoCallModel.getDisableVideoCall();
     String weemoKey = videoCallModel.getWeemoKey();
-    String videoCallPermissions = videoCallModel.getVideoCallPermissions();   
+    String videoCallPermissions = videoCallModel.getVideoCallPermissions(); 
+    String passPharse = videoCallModel.getCustomerCertificatePassphrase();
+    String authId = videoCallModel.getAuthId();
+    String authSecret = videoCallModel.getAuthSecret();
     SessionProvider sessionProvider = null;
     try {
       sessionProvider = SessionProvider.createSystemProvider();
@@ -87,13 +93,15 @@ public class VideoCallService {
       if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
         videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);
       } else {
-        videoCallNode = baseNode.addNode(VIDEOCALL_BASE_PATH, VIDEOCALL_NODETYPE);       
+        videoCallNode = baseNode.addNode(VIDEOCALL_BASE_PATH, VIDEOCALL_NODETYPE);        
       }
-      session.save();
       videoCallNode.setProperty(DISABLEVIDEOCALL_PROP, Boolean.valueOf(disbaleVideoCall));
       videoCallNode.setProperty(WEEMOKEY_PROP, weemoKey);
       videoCallNode.setProperty(VIDEO_TOKEN_KEY, videoCallModel.getTokenKey());
       videoCallNode.setProperty(VIDEO_PERMISSIONS_PROP, videoCallPermissions);
+      videoCallNode.setProperty(VIDEO_PASSPHARSE, passPharse);
+      videoCallNode.setProperty(VIDEO_AUTH_ID, authId);
+      videoCallNode.setProperty(VIDEO_AUTH_SECRET, authSecret);
       ExtendedNode node = (ExtendedNode) videoCallNode;
       if (node.canAddMixin("exo:privilegeable")) { 
         node.addMixin("exo:privilegeable");
@@ -140,6 +148,9 @@ public class VideoCallService {
           videoCallModel.setDisableVideoCall(videoCallNode.getProperty(DISABLEVIDEOCALL_PROP).getString());
           videoCallModel.setTokenKey(videoCallNode.getProperty(VIDEO_TOKEN_KEY).getString());
           videoCallModel.setVideoCallPermissions(videoCallNode.getProperty(VIDEO_PERMISSIONS_PROP).getString());
+          videoCallModel.setCustomerCertificatePassphrase(videoCallNode.getProperty(VIDEO_PASSPHARSE).getString());
+          videoCallModel.setAuthId(videoCallNode.getProperty(VIDEO_AUTH_ID).getString());
+          videoCallModel.setAuthId(videoCallNode.getProperty(VIDEO_AUTH_SECRET).getString());
           videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
         }
       } catch (LoginException e) {
@@ -259,6 +270,7 @@ public class VideoCallService {
     } else {
       videoCallModel = getVideoCallProfile();
     }
+    if(videoCallModel == null) return true;
     String weemoKey = videoCallModel.getWeemoKey();
     String str = videoCallModel.getDisableVideoCall();    
     if(Boolean.valueOf(str)) {
