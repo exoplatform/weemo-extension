@@ -26,12 +26,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Authenticator;
-import java.net.CookieHandler;
-import java.net.CookieManager;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -50,17 +47,17 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.utils.videocall.PropertyManager;
 
 
 
 
 public class AuthService {
   
-  private String profile_id = null;
   private String authUrl;  
   private String clientId = null;
   private String clientSecret = null;
@@ -75,8 +72,7 @@ public class AuthService {
   
   private static final Log LOG = ExoLogger.getLogger(AuthService.class.getName());
   
-  public AuthService(String profile_id, String app_id, String domain_id, String authUrl, String caFile, String p12File, String passphrase, String clientId, String clientSecret) {
-    this.profile_id = profile_id;
+  public AuthService(String app_id, String domain_id, String authUrl, String caFile, String p12File, String passphrase, String clientId, String clientSecret) {
     this.app_id = app_id;
     this.domain_id = domain_id;
     this.authUrl = authUrl;
@@ -90,7 +86,8 @@ public class AuthService {
   
   
   public String authenticate(HttpServletRequest servletRequest, String profile_id) {
-    String responseContent = null;    
+    String responseContent = null;
+    if(StringUtils.isEmpty(passphrase)) return null;
     try {
       String userId = ConversationState.getCurrent().getIdentity().getUserId();     
       SSLContext ctx = SSLContext.getInstance("SSL");
@@ -118,28 +115,10 @@ public class AuthService {
           +  "&id_profile=" + URLEncoder.encode(profile_id, "UTF-8");
       LOG.info("Post: " + post);
       
-      if(local_p12_file == null || local_ca_file == null) {
-        StringBuffer sb = new StringBuffer();
-        String scheme = servletRequest.getScheme();
-        String serverName = servletRequest.getServerName();
-        int serverPort = servletRequest.getServerPort();
-        sb.append(scheme).append("://").append(serverName);
-        if(serverPort!=80 && serverPort!=43) {
-          sb.append(":").append(serverPort);      
-        }
-        String relPath = sb.toString();
-        
-        String userPassword = profile_id + ":" + passphrase;
-        String encoding = URLEncoder.encode(userPassword, "UTF-8");
-        CookieHandler.setDefault(new CookieManager(null, java.net.CookiePolicy.ACCEPT_ALL));
-               
+      if(local_p12_file == null || local_ca_file == null) {            
         InputStream p12InputStream = this.getClass().getResourceAsStream(p12File);
         local_p12_file = convertInputStreamToFile(p12InputStream, p12File.substring(p12File.lastIndexOf("/")+1, p12File.length())); 
         
-        Authenticator.setDefault(new MyAuthenticator(PropertyManager.getProperty(PropertyManager.PROPERTY_USER_ID_AUTH), passphrase));        
-        URL urlCA = new URL(relPath + caFile);       
-        URLConnection ucCA = urlCA.openConnection();
-        ucCA.setRequestProperty("Authorization", "UTF-8" + encoding);        
         InputStream pemInputStream = this.getClass().getResourceAsStream(caFile);
         local_ca_file = convertInputStreamToFile(pemInputStream, caFile.substring(caFile.lastIndexOf("/")+1, caFile.length())); 
       }     
@@ -149,7 +128,7 @@ public class AuthService {
       ctx.init(keyManagers, trustManagers, new SecureRandom());      
       try {
         connection.setSSLSocketFactory(ctx.getSocketFactory());
-        connection.setRequestMethod("POST");
+        connection.setRequestMethod("GET");
         connection.setDoOutput(true);
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         connection.setRequestProperty("Content-Length", String.valueOf(post.getBytes().length));
@@ -338,7 +317,6 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
     try {
       SSLContext ctx = SSLContext.getInstance("SSL"); 
       URL url ;  
-      Authenticator.setDefault(new MyAuthenticator("tan_haquang", "20061985"));
       String urlStr = "https://oauths-ppr.weemo.com/auth/" + "?client_id=33cc7f1e82763049a4944a702c880d&client_secret=3569996f0d03b2cd3880223747c617";
       String post = "uid=" + URLEncoder.encode("1033a56f0e68", "UTF-8")
           + "&identifier_client=" + URLEncoder.encode("exo_domain", "UTF-8")

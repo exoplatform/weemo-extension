@@ -1,6 +1,5 @@
 <div id="weemo-status"
   data-username="<%=user%>" 
-  data-weemo-interval-notif="<%=chatIntervalNotif%>"
   data-weemo-key="<%=weemoKey%>"
   data-token-key="<%=tokenKey%>"
   data-weemo-turnoff="<%=turnOffVideoCall%>"

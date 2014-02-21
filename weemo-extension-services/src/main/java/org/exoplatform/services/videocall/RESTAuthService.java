@@ -32,7 +32,6 @@ public class RESTAuthService implements ResourceContainer{
   private final AuthService authService;
   
   public RESTAuthService() {
-    String profile_id = PropertyManager.getProperty(PropertyManager.PROPERTY_USER_ID_AUTH);
     String app_id = PropertyManager.getProperty(PropertyManager.PROPERTY_APP_ID);
     String domain_id = PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID);
     String authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);
@@ -41,7 +40,7 @@ public class RESTAuthService implements ResourceContainer{
     String caFile = PropertyManager.getProperty(PropertyManager.PROPERTY_CA_FILE);
     String p12File = PropertyManager.getProperty(PropertyManager.PROPERTY_P12_FILE);
     String passphrase = PropertyManager.getProperty(PropertyManager.PROPERTY_PASSPHRASE);
-    authService = new AuthService(profile_id, app_id, domain_id, authUrl, caFile, p12File, passphrase, client_id, clientSecret);
+    authService = new AuthService(app_id, domain_id, authUrl, caFile, p12File, passphrase, client_id, clientSecret);
   }
   
   @GET

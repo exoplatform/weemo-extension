@@ -57,39 +57,35 @@ public class VideoCallApplication {
   @View
   public void index(RenderContext renderContext) throws Exception
   {
-    remoteUser_ = renderContext.getSecurityContext().getRemoteUser();
-    int frequency = 15;
-    if(System.getProperty("user.status.ping.frequency") != null ) {
-      frequency = Integer.parseInt(System.getProperty("user.status.ping.frequency"));
-    }
+    remoteUser_ = renderContext.getSecurityContext().getRemoteUser();   
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
     if(videoCallModel == null) videoCallModel = new VideoCallModel();
     String weemoKey = videoCallModel.getWeemoKey();
     String tokenKey = videoCallModel.getTokenKey();
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
-    if(StringUtils.isEmpty(tokenKey)) {
+    //if(StringUtils.isEmpty(tokenKey)) {
       HttpServletRequest request = Util.getPortalRequestContext().getRequest();      
-      String profile_id = PropertyManager.getProperty(PropertyManager.PROPERTY_USER_ID_AUTH);
       String app_id = PropertyManager.getProperty(PropertyManager.PROPERTY_APP_ID);
       String domain_id = PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID);
-      String authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);
-      String client_id = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_KEY_AUTH);
-      String clientSecret = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_SECRET_AUTH);
+      String authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);      
       String caFile = PropertyManager.getProperty(PropertyManager.PROPERTY_CA_FILE);
       String p12File = PropertyManager.getProperty(PropertyManager.PROPERTY_P12_FILE);
-      String passphrase = PropertyManager.getProperty(PropertyManager.PROPERTY_PASSPHRASE);
-      AuthService authService = new AuthService(profile_id, app_id, domain_id, authUrl, caFile, p12File, passphrase, client_id, clientSecret);      
-      String content = authService.authenticate(request, PropertyManager.PROPERTY_VIDEO_PROFILE);
+      
+      String passphrase = videoCallModel.getCustomerCertificatePassphrase();
+      String client_id = videoCallModel.getAuthId();
+      String clientSecret = videoCallModel.getAuthSecret();
+      
+      AuthService authService = new AuthService(app_id, domain_id, authUrl, caFile, p12File, passphrase, client_id, clientSecret);      
+      String content = authService.authenticate(request, PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE));
       if(!StringUtils.isEmpty(content)) {
         JSONObject json = new JSONObject(content);
         tokenKey = json.get("token").toString();
         videoCallModel.setTokenKey(tokenKey);
       }      
-      videoCallService_.saveVideoCallProfile(videoCallModel);
-    }
+      //videoCallService_.saveVideoCallProfile(videoCallModel);
+    //}
     
-    index.with().set("user", remoteUser_)
-            .set("chatIntervalNotif", frequency)
+    index.with().set("user", remoteUser_)           
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
             .set("turnOffVideoCall", turnOffVideoCall)

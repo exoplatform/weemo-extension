@@ -56,6 +56,9 @@ public class PropertyManager {
   public static String getProperty(String key)
   {
     String value = (String)properties().get(key);
+    if(value == null) {
+      value  = System.getProperty(key);
+    }
     return value;
   }
 
@@ -94,12 +97,14 @@ public class PropertyManager {
       overridePropertyIfNotSet(PROPERTY_APP_ID, "1033a56f0e68");
       overridePropertyIfNotSet(PROPERTY_CA_FILE, "/certificate/weemo-ca.pem");
       overridePropertyIfNotSet(PROPERTY_P12_FILE, "/certificate/client.p12");
-      overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "XnyexbUF");
+      overridePropertyIfNotSet(PROPERTY_VIDEO_PROFILE, "basic");
       overridePropertyIfNotSet(PROPERTY_AUTH_URL, "https://oauths-ppr.weemo.com/auth/");
       overridePropertyIfNotSet(PROPERTY_USER_ID_AUTH, "eXoCloud");
-      overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_AUTH, "33cc7f1e82763049a4944a702c880d");
-      overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_AUTH, "3569996f0d03b2cd3880223747c617");
-      overridePropertyIfNotSet(PROPERTY_VIDEO_PROFILE, "basic");
+      
+      overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_AUTH, "");
+      overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "");
+      overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_AUTH, "");
+      
       
       videoCallService = new VideoCallService();
       if(!videoCallService.isExistVideoCallProfile()) {
