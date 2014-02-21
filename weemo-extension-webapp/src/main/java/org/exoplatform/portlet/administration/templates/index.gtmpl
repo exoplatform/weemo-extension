@@ -3,19 +3,15 @@
 
 
 
-<div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" style="padding: 50px 40px;">
+<div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" >
    
    
-   <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" displaySuccessMsg="${videoCalls.isDisplaySuccessMsg()}" style="left: 50%; position: absolute; top: 39px; display:none;" class="alert alert-success videoCallsAlertSuccess">
+   <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" displaySuccessMsg="${videoCalls.isDisplaySuccessMsg()}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-success videoCallsAlertSuccess">
+   </div>
+   <div id="videocalls-alert-error" errorMsg="&{exoplatform.videocall.save.message}" displayErrorMsg="${videoCalls.isDisplaySuccessMsg()}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-error videoCallsAlertError">
    </div>
    
-   
-  <h3 style="
-    text-align: left;
-    text-shadow: 0 3px 4px #fff;
-    margin:-7px 0 0px; color: #2F5E92;">    
-  	&{exoplatform.videocall.administration.title}
-  </h3> 
+   <h3 >&{exoplatform.videocall.administration.title}</h3> 
  
   
 
@@ -31,57 +27,53 @@
 				  <input type="hidden" id="disableVideoCall" name="disableVideoCall" value="false">
 				</span>				    
 			  </div>
-			  
+			  <h4 class="titleWithBorder">Weemo</h4>
 			  <div class="row">
 			  	<div class="span6">
-				  	<div class="control-group">
-					    <label style="text-align: left; width: auto;" class="control-label" for="weemoKey">&{exoplatform.videocall.weemokey}: </label>
-					    <div class="controls" style="margin-left: 85px;">
+				  	<div class="control-group weemoKey">
+					    <label class="control-label" for="weemoKey">&{exoplatform.videocall.weemokey}: </label>
+					    <div class="controls" >
 					      <input class="span3" type="text" id="weemoKey" name="weemoKey" value="<%=weemoKey%>">
 					    </div>
 					</div>
-			  	</div>
-			  	<div class="span6">
-			  	    <div class="control-group">
-					    <label style="text-align: left; width: auto;" class="control-label" for="passPhrase">&{exoplatform.videocall.passPhrase}: </label>
-					    <div class="controls" style="margin-left: 85px;">
-					      <input class="span3" type="password" id="customerCertificatePassphrase" name="customerCertificatePassphrase" value="<%=customerCertificatePassphrase%>">
-					    </div>
-					</div>
-			  	</div>
-			  </div>
-			  
-			  <div class="row">
-			  	<div class="span6">
-				  	<div class="control-group">
-					    <label style="text-align: left; width: auto;" class="control-label" for="authId">&{exoplatform.videocall.authId}: </label>
-					    <div class="controls" style="margin-left: 85px;">
+					<div class="control-group weemoKey">
+					    <label class="control-label" for="authId">&{exoplatform.videocall.authId}: </label>
+					    <div class="controls" >
 					      <input class="span3" type="text" id="authId" name="authId" value="<%=authId%>" >
 					    </div>
 					</div>
+					<p>Customer Certificate <strong>&nbsp; client.p12 &nbsp;</strong><i class="uiIconDelete"></i></p>
+					<p>Customer Certificate <strong>&nbsp; weemo.pem &nbsp;</strong><i class="uiIconDelete"></i></p>
 			  	</div>
 			  	<div class="span6">
-			  	    <div class="control-group">
-					    <label style="text-align: left; width: auto;" class="control-label" for="authSecret">&{exoplatform.videocall.authSecret}: </label>
-					    <div class="controls" style="margin-left: 85px;">
+				  	 <div class="control-group weemoKey">
+					    <label  class="control-label" for="passPhrase">&{exoplatform.videocall.passPhrase}: </label>
+					    <div class="controls" >
+					      <input class="span3" type="password" id="customerCertificatePassphrase" name="customerCertificatePassphrase" value="<%=customerCertificatePassphrase%>">
+					    </div>
+					</div>
+			  	    <div class="control-group weemoKey">
+					    <label  class="control-label" for="authSecret">&{exoplatform.videocall.authSecret}: </label>
+					    <div class="controls" >
 					      <input class="span3" type="password" id="authSecret" name="authSecret" value="<%=authSecret%>" >
 					    </div>
 					</div>
 			  	</div>
 			  </div>
-			  		  
+			  <div class="actionTestWeemo"><button type="button" class="btn" > Test Weemo Connection </button></div>	  
 			  
 			  
 			<div class="UIViewPermissionContainer" id="UIViewPermissionContainer" style="padding-bottom: 20px;">
 
 			<div id="UIViewPermissionList">
-			    <h6>&{exoplatform.videocall.permissions}</h6>
+			    <h4 class="titleWithBorder">&{exoplatform.videocall.permissions}</h4>
 				<table class="uiGrid table table-hover table-striped">
 				  <thead>
 				    <tr>
 				          <th>&{exoplatform.videocall.owner}</th>
-				          <th class="span3 center">&{exoplatform.videocall.1_1profile}</th>				        
-				          <th class="span2 center">&{exoplatform.videocall.action}</th>
+				          <th class="span2 center">&{exoplatform.videocall.1_1profile}</th>	
+						  <th class="span2 center">Group calls</th>						  
+				          <th class="span1 center">&{exoplatform.videocall.action}</th>
 				    </tr>
 				  </thead>
 				  <tbody>
@@ -97,6 +89,9 @@
 				      </td>
 				      <td class="center">				        
                         <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="YES" data-no="NO" checked="checked" style="visibility: hidden;" class="yesno"></div>
+                      </td>
+					  <td class="center">				        
+                        <div class="spaceRole"><input type="checkbox" id="" name="" value="<%=arrs[1]%>" data-yes="YES" data-no="NO" checked="checked" style="visibility: hidden;" class="yesno"></div>
                       </td>
                       <td class="center"><a data-original-title="Delete" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete"></i></a></td>
                     </tr>
@@ -129,7 +124,7 @@
 				<div class="permission">
 						<div class="clearfix">
 							<div class="PemissionInputset pull-left">
-						 		<input name="txtUserOrGroup" type="text" id="txtUserOrGroup" readonly="">
+						 		<input name="txtUserOrGroup" type="text" id="txtUserOrGroup" readonly="" value="Mary Simpson">
 						 		<input name="userOrGroup" type="hidden" id="userOrGroup" readonly="">
 						 	</div><div class="pull-left">
 							

@@ -47,3 +47,55 @@ button.close{
 	 border-radius: 0px;
 }
 
+.uiVideoCallAdminPortlet{
+	padding: 32px;
+}
+
+.uiVideoCallAdminPortlet h3{
+	text-align: left;
+    text-shadow: 0 3px 4px #fff;
+    margin:-7px 0 0px; 
+	color: #2F5E92;
+}
+
+.uiVideoCallAdminPortlet h4{
+    margin:14px 0; 
+}
+
+.uiVideoCallAdminPortlet .row .span6:nth-child(2n+2){
+    padding-top: 36px;
+}
+
+.uiVideoCallAdminPortlet .row .span6 p{
+    padding: 6px 0 0 0;
+}
+
+.uiVideoCallAdminPortlet .control-group{
+	margin-bottom: 20px;
+}
+
+.uiVideoCallAdminPortlet .control-group .uiCheckbox{
+	margin: 0px;
+}
+
+.uiVideoCallAdminPortlet .weemoKey .control-label{
+	text-align: left;
+    width: auto;
+	text-align: right;
+}
+.uiVideoCallAdminPortlet .control-group.weemoKey{
+	margin-bottom: 8px;
+}
+
+.uiVideoCallAdminPortlet .weemoKey .controls{
+	margin-left: 85px;
+}
+
+.uiVideoCallAdminPortlet .weemoKey .controls{
+	margin-left: 85px;
+}
+
+.uiVideoCallAdminPortlet .actionTestWeemo{
+	text-align: center;
+	margin-bottom: 28px;
+}
