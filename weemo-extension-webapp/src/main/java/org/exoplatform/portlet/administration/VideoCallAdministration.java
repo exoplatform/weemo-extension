@@ -26,6 +26,7 @@ import org.exoplatform.services.organization.User;
 import org.exoplatform.services.organization.idm.ExtGroup;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.utils.videocall.PropertyManager;
 import org.exoplatform.webui.core.UIPageIterator;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -68,35 +69,75 @@ public class VideoCallAdministration {
 
 
   @View
+  @Route("/")
   public void index(RenderContext renderContext) throws Exception
   {  
+    String weemoKey = "";
+    String passPhrase = "";
+    String authId = "";
+    String authSecret = "";
+    String p12CertName = "";
+    String pemCertName = "";
+    String videoPermissions = "";
+    boolean turnOffVideoCall = true;
+    
     VideoCallModel videoModel = videoCallService_.getVideoCallProfile();
-    String weemoKey = videoModel.getWeemoKey();
-    String passPhrase = videoModel.getCustomerCertificatePassphrase();
-    String authId = videoModel.getAuthId();
-    String authSecret = videoModel.getAuthSecret();
-    boolean turnOffVideoCall = Boolean.parseBoolean(videoModel.getDisableVideoCall());
-    String videoPermissions = videoModel.getVideoCallPermissions();
+    if(videoModel != null) {
+      weemoKey = videoModel.getWeemoKey();
+      passPhrase = videoModel.getCustomerCertificatePassphrase();
+      authId = videoModel.getAuthId();
+      authSecret = videoModel.getAuthSecret();
+      videoPermissions = videoModel.getVideoCallPermissions();
+      turnOffVideoCall = Boolean.parseBoolean(videoModel.getDisableVideoCall());
+      if(videoModel.getP12CertName() != null) {
+        p12CertName = videoModel.getP12CertName();
+      }
+      if(videoModel.getPemCertName() != null) {
+        pemCertName = videoModel.getPemCertName();
+      }
+    }    
+    
     index.with().set("turnOffVideoCall", turnOffVideoCall)
+              .set("isDisplaySuccessMsg", videoCalls.isDisplaySuccessMsg())
               .set("weemoKey", weemoKey)
               .set("customerCertificatePassphrase", passPhrase)
               .set("authId", authId)
               .set("authSecret", authSecret)
               .set("videoCallPermissions", getListOfPermissions(videoPermissions))
+              .set("p12CertName", p12CertName)
+              .set("pemCertName", pemCertName)
               .render();
     videoCalls.setDisplaySuccessMsg(false);
   }  
   
-  @Ajax
-  @Resource
-  public Response.Content save(VideoCallModel videoCallModel) {
-     if(videoCallModel.getDisableVideoCall() == null) {
+  @Action
+  @Route("/save")
+  public Response save(String disableVideoCall, String weemoKey, String authId, String authSecret, String customerCertificatePassphrase,
+                       String videoCallPermissions, org.apache.commons.fileupload.FileItem p12Cert,
+                       org.apache.commons.fileupload.FileItem pemCert) throws Exception{
+    VideoCallModel videoCallModel = new VideoCallModel();
+     if(StringUtils.isEmpty(disableVideoCall)) {
        videoCallModel.setDisableVideoCall("false");
+     }    
+     videoCallModel.setWeemoKey(weemoKey);
+     videoCallModel.setAuthId(authId);
+     videoCallModel.setAuthSecret(authSecret);
+     videoCallModel.setCustomerCertificatePassphrase(customerCertificatePassphrase);
+     videoCallModel.setVideoCallPermissions(videoCallPermissions);
+     videoCallModel.setDomainId(PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID));
+     videoCallModel.setProfileId(PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE));
+     if(p12Cert != null) {
+       videoCallModel.setP12Cert(p12Cert.getInputStream());
+       videoCallModel.setP12CertName(p12Cert.getName());
      }
+     if(pemCert != null) {
+       videoCallModel.setPemCert(pemCert.getInputStream());
+       videoCallModel.setPemCertName(pemCert.getName());
+     }    
      VideoCallService videoCallService = new VideoCallService();
      videoCallService.saveVideoCallProfile(videoCallModel);
-     videoCalls.setDisplaySuccessMsg(true);    
-     return Response.ok("OK").withMimeType("text/html; charset=UTF-8").withHeader("Cache-Control", "no-cache");
+     videoCalls.setDisplaySuccessMsg(true);     
+     return VideoCallAdministration_.index();
   }
   
   @Ajax
@@ -256,6 +297,7 @@ public class VideoCallAdministration {
     if(videoPermissions != null && videoPermissions.length() > 0) {
       String[] arrPermissions = videoPermissions.split(",");
       for (String string : arrPermissions) {
+        if(string.split("#").length < 2) continue;
         String permissionId = string.split("#")[0];
         String enableVideoCalls = string.split("#")[1];
         sb.append("#").append(permissionId).append(",").append(enableVideoCalls);
@@ -274,7 +316,7 @@ public class VideoCallAdministration {
           sb.append(",").append(user.getDisplayName());
         }
       }
-      result = sb.substring(1);      
+      if(sb.length() >= 1) result = sb.substring(1);      
     }
     return result;
   }

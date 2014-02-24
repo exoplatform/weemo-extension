@@ -1,5 +1,6 @@
 package org.exoplatform.portlet.videocall;
 
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 import juzu.*;
@@ -64,19 +65,11 @@ public class VideoCallApplication {
     String tokenKey = videoCallModel.getTokenKey();
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
     //if(StringUtils.isEmpty(tokenKey)) {
-      HttpServletRequest request = Util.getPortalRequestContext().getRequest();      
-      String app_id = PropertyManager.getProperty(PropertyManager.PROPERTY_APP_ID);
-      String domain_id = PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID);
-      String authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);      
-      String caFile = PropertyManager.getProperty(PropertyManager.PROPERTY_CA_FILE);
-      String p12File = PropertyManager.getProperty(PropertyManager.PROPERTY_P12_FILE);
+      HttpServletRequest request = Util.getPortalRequestContext().getRequest();    
+      String profile_id = videoCallModel.getProfileId();      
+      AuthService authService = new AuthService();      
+      String content = authService.authenticate(request, profile_id);
       
-      String passphrase = videoCallModel.getCustomerCertificatePassphrase();
-      String client_id = videoCallModel.getAuthId();
-      String clientSecret = videoCallModel.getAuthSecret();
-      
-      AuthService authService = new AuthService(app_id, domain_id, authUrl, caFile, p12File, passphrase, client_id, clientSecret);      
-      String content = authService.authenticate(request, PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE));
       if(!StringUtils.isEmpty(content)) {
         JSONObject json = new JSONObject(content);
         tokenKey = json.get("token").toString();

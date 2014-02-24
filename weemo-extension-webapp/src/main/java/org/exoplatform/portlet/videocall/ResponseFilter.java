@@ -1,7 +1,6 @@
 package org.exoplatform.portlet.videocall;
 
 import org.exoplatform.services.videocall.VideoCallService;
-import org.exoplatform.utils.videocall.PropertyManager;
 import org.w3c.dom.Element;
 
 import javax.portlet.MimeResponse;

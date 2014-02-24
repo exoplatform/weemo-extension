@@ -106,7 +106,7 @@ public class PropertyManager {
       overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_AUTH, "");
       
       
-      videoCallService = new VideoCallService();
+      /*videoCallService = new VideoCallService();
       if(!videoCallService.isExistVideoCallProfile()) {
         VideoCallModel videoCallModel = new VideoCallModel();
         videoCallModel.setDisableVideoCall(Boolean.toString(false));
@@ -121,13 +121,19 @@ public class PropertyManager {
           properties().getProperty(PROPERTY_CLIENT_SECRET_AUTH);
         String passPhrase = (properties().getProperty(PROPERTY_PASSPHRASE)==null) ? "" : 
           properties().getProperty(PROPERTY_PASSPHRASE);
+        String domainId = (properties().getProperty(PROPERTY_DOMAIN_ID)==null) ? "" : 
+          properties().getProperty(PROPERTY_DOMAIN_ID);
+        String profileId = (properties().getProperty(PROPERTY_VIDEO_PROFILE)==null) ? "" : 
+          properties().getProperty(PROPERTY_VIDEO_PROFILE);
         //Set default permission
         videoCallModel.setVideoCallPermissions("*:/platform/users#true");
         videoCallModel.setCustomerCertificatePassphrase(passPhrase);
         videoCallModel.setAuthId(authId);
         videoCallModel.setAuthSecret(authSecret);
+        videoCallModel.setDomainId(domainId);
+        videoCallModel.setProfileId(profileId);
         videoCallService.saveVideoCallProfile(videoCallModel);
-      }
+      }*/
     }
     return properties;
   }

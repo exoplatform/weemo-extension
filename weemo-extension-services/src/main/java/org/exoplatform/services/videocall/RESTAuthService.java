@@ -16,6 +16,7 @@
  */
 package org.exoplatform.services.videocall;
 
+
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -25,28 +26,19 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import org.exoplatform.services.rest.resource.ResourceContainer;
-import org.exoplatform.utils.videocall.PropertyManager;
 
 @Path("/weemo/")
 public class RESTAuthService implements ResourceContainer{
-  private final AuthService authService;
+  private AuthService authService;
   
-  public RESTAuthService() {
-    String app_id = PropertyManager.getProperty(PropertyManager.PROPERTY_APP_ID);
-    String domain_id = PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID);
-    String authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);
-    String client_id = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_KEY_AUTH);
-    String clientSecret = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_SECRET_AUTH);
-    String caFile = PropertyManager.getProperty(PropertyManager.PROPERTY_CA_FILE);
-    String p12File = PropertyManager.getProperty(PropertyManager.PROPERTY_P12_FILE);
-    String passphrase = PropertyManager.getProperty(PropertyManager.PROPERTY_PASSPHRASE);
-    authService = new AuthService(app_id, domain_id, authUrl, caFile, p12File, passphrase, client_id, clientSecret);
+  public RESTAuthService() {     
   }
   
   @GET
   @Path("/auth/")
   @RolesAllowed("users")
   public Response auth(@Context HttpServletRequest servletRequest) {
+    authService = new AuthService(); 
     String content = authService.authenticate(servletRequest, "basic");    
     return Response.ok(content, MediaType.APPLICATION_JSON).build();    
   }
@@ -55,6 +47,7 @@ public class RESTAuthService implements ResourceContainer{
   @Path("/auth/{profileId}/")
   @RolesAllowed("users")
   public Response auth(@Context HttpServletRequest servletRequest, @PathParam("profileId") String profileId) {
+    authService = new AuthService(); 
     String content = authService.authenticate(servletRequest, profileId);    
     return Response.ok(content, MediaType.APPLICATION_JSON).build();    
   }

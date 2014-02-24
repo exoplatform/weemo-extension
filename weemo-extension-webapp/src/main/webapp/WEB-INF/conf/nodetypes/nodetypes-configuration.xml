@@ -37,6 +37,14 @@
         onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
       </propertyDefinition>
+      <propertyDefinition name="exo:profileId" requiredType="String" autoCreated="false" mandatory="true"
+        onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+      <propertyDefinition name="exo:domainId" requiredType="String" autoCreated="false" mandatory="true"
+        onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
     </propertyDefinitions>
     <childNodeDefinitions>
 		<childNodeDefinition name="*" defaultPrimaryType="nt:file" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false" >

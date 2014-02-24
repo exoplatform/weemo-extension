@@ -64,7 +64,23 @@
     $("#videocalls-alert").show();
     setTimeout(function() {
       $("#videocalls-alert").hide();
-    }, 3000);
+    }, 5000);
+  };
+
+  Utils.prototype.displayErrorAlert = function(title) {    
+    var alertElem = $("#videocalls-alert-error");
+    var successMsg = $(alertElem).attr("errorMsg") + " " + title + ".";
+    var icon = $('<i/>', {
+      'class':'uiIconError'
+    });
+    $(alertElem).empty();
+    $(alertElem).append(icon);
+  
+    $(alertElem).append(successMsg);
+    $("#videocalls-alert-error").show();
+    setTimeout(function() {
+      $("#videocalls-alert-error").hide();
+    }, 5000);
   };
 
   Utils.prototype.openUserPermission = function(elem, modalId) {
@@ -682,6 +698,57 @@
      
     });
     
+  }
+
+  Utils.prototype.testWeemoConnection = function() {
+    var testWeemoURL = "/rest/weemo/auth";
+    jqchat.ajax({
+      url: testWeemoURL, 
+      dataType: "text",   
+      context: this,
+      success: function(data){
+        alert(data);
+        if(data.length>0) {
+          eXo.ecm.VideoCallsUtils.showTestWeemoSuccess();
+        } else {
+          eXo.ecm.VideoCallsUtils.showTestWeemoError();
+        } 
+
+      },
+      error: function(){
+        eXo.ecm.VideoCallsUtils.showTestWeemoError();
+      }
+    });
+  }
+
+  Utils.prototype.showTestWeemoSuccess = function() {
+    var testWeemoElem = $("#videocalls-alert-test-connection-error");
+    var successTestConnMsg = $(testWeemoElem).attr("successTestConnMsg");
+    var icon = $('<i/>', {
+      'class':'uiIconSuccess'
+    });
+    $(testWeemoElem).empty();
+    $(testWeemoElem).append(icon);  
+    $(testWeemoElem).append(successTestConnMsg);
+    $(testWeemoElem).show();
+    setTimeout(function() {
+      $(testWeemoElem).hide();
+    }, 5000);
+  }
+ 
+  Utils.prototype.showTestWeemoError = function() {
+    var testWeemoElem = $("#videocalls-alert-test-connection-error");
+    var errorTestConnMsg = $(testWeemoElem).attr("errorTestConnMsg");
+    var icon = $('<i/>', {
+      'class':'uiIconError'
+    });
+    $(testWeemoElem).empty();
+    $(testWeemoElem).append(icon);  
+    $(testWeemoElem).append(errorTestConnMsg);
+    $(testWeemoElem).show();
+    setTimeout(function() {
+      $(testWeemoElem).hide();
+    }, 5000);
   }
 
   Utils.prototype.capitaliseFirstLetter = function(string) {

@@ -16,6 +16,9 @@
  */
 package org.exoplatform.model.videocall;
 
+import java.io.InputStream;
+
+import org.apache.commons.fileupload.FileItem;
 import juzu.Mapped;
 
 @Mapped
@@ -28,6 +31,14 @@ public class VideoCallModel {
   private String authId = "";
   private String authSecret = "";
   private String videoCallPermissions = "";
+  private InputStream p12Cert = null;
+  private InputStream pemCert = null;
+  
+  private String p12CertName = null;
+  private String pemCertName = null;
+  
+  private String profileId = "";
+  private String domainId = "";
   
 
   
@@ -85,6 +96,54 @@ public class VideoCallModel {
   
   public void setVideoCallPermissions(String videoCallPermissions) {
     this.videoCallPermissions = videoCallPermissions;
+  }
+  
+  public InputStream getP12Cert(){
+    return p12Cert;
+  }
+  
+  public void setP12Cert(InputStream p12Cert) {
+    this.p12Cert = p12Cert;
+  }
+  
+  public InputStream getPemCert() {
+    return pemCert;
+  }
+  
+  public void setPemCert(InputStream pemCert) {
+    this.pemCert = pemCert;
+  }
+  
+  public String getP12CertName(){
+    return p12CertName;
+  }
+  
+  public void setP12CertName(String p12CertName) {
+    this.p12CertName = p12CertName;
+  }
+  
+  public String getPemCertName() {
+    return pemCertName;
+  }
+  
+  public void setPemCertName(String pemCertName) {
+    this.pemCertName = pemCertName;
+  }
+  
+  public String getProfileId() {
+    return profileId;
+  }
+  
+  public void setProfileId(String profileId) {
+    this.profileId = profileId;
+  }
+  
+  public String getDomainId(){
+    return domainId;
+  }
+  
+  public void setDomainId(String domainId) {
+    this.domainId = domainId;
   }
 
 }

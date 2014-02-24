@@ -1,21 +1,28 @@
 <script type="text/javascript" src="../../../eXoResources/javascript/jquery-1.7.1.js"></script>
 <script type="text/javascript" src="/weemo-extension/js/iphone-style-checkboxes-weemo.js"></script>
 
-
+<%
+  import org.apache.commons.lang.StringUtils;
+  
+%>
 
 <div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" >
    
    
-   <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" displaySuccessMsg="${videoCalls.isDisplaySuccessMsg()}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-success videoCallsAlertSuccess">
+   <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-success videoCallsAlertSuccess">
    </div>
-   <div id="videocalls-alert-error" errorMsg="&{exoplatform.videocall.save.message}" displayErrorMsg="${videoCalls.isDisplaySuccessMsg()}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-error videoCallsAlertError">
+   
+   <div id="videocalls-alert-test-connection-error" successTestConnMsg="&{exoplatform.videocall.test.successMessage}" errorTestConnMsg="&{exoplatform.videocall.test.errorMessage}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-error videoCallsAlertError">
+   </div>
+   
+   <div id="videocalls-alert-error" errorMsg="&{exoplatform.videocall.save.error}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-error videoCallsAlertError">
    </div>
    
    <h3 >&{exoplatform.videocall.administration.title}</h3> 
  
   
 
-		  	<form id="videoCallsPermissionForm" action="@{VideoCallAdministration.save()}" method="post" class="form-horizontal">
+		  	<form id="videoCallsPermissionForm" enctype="multipart/form-data" action="@{VideoCallAdministration.save()}" method="post" class="form-horizontal">
 			  <div class="control-group">			    
 				<span class="uiCheckbox">
 				  <input id="chkTurnOff" class="checkbox" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">				  
@@ -33,34 +40,59 @@
 				  	<div class="control-group weemoKey">
 					    <label class="control-label" for="weemoKey">&{exoplatform.videocall.weemokey}: </label>
 					    <div class="controls" >
-					      <input class="span3" type="text" id="weemoKey" name="weemoKey" value="<%=weemoKey%>">
+					      <input class="span3" label="&{exoplatform.videocall.weemokey}" type="text" id="weemoKey" name="weemoKey" value="<%=weemoKey%>">
 					    </div>
 					</div>
 					<div class="control-group weemoKey">
 					    <label class="control-label" for="authId">&{exoplatform.videocall.authId}: </label>
 					    <div class="controls" >
-					      <input class="span3" type="text" id="authId" name="authId" value="<%=authId%>" >
+					      <input class="span3" label="&{exoplatform.videocall.authId}" type="text" id="authId" name="authId" value="<%=authId%>" >
 					    </div>
 					</div>
-					<p>Customer Certificate <strong>&nbsp; client.p12 &nbsp;</strong><i class="uiIconDelete"></i></p>
-					<p>Customer Certificate <strong>&nbsp; weemo.pem &nbsp;</strong><i class="uiIconDelete"></i></p>
+			
+					<%
+					  if(StringUtils.isEmpty(p12CertName)) {
+					%>
+					  <p id="p12Cert">&{exoplatform.videocall.p12Certificate} &nbsp; <input type="file" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert"></p>					  
+					<%  
+					  } else {
+					%>
+					  <p id="p12Cert">&{exoplatform.videocall.p12Certificate} <strong>&nbsp; <%=p12CertName%> &nbsp;</strong><i class="uiIconDelete"></i></p>
+					<%
+					  }
+					  if(StringUtils.isEmpty(pemCertName)) {
+					%>
+					  <p id="pemCert">&{exoplatform.videocall.pemCertificate} &nbsp; <input type="file" label="&{exoplatform.videocall.p12Certificate}" id="pemCert" name="pemCert"></p>
+					<%  
+					  } else {
+					%>
+					  <p id="pemCert">&{exoplatform.videocall.pemCertificate} <strong>&nbsp; <%=pemCertName%> &nbsp;</strong><i class="uiIconDelete"></i></p>
+					<%
+					  }
+					%>
+					
+					
+					
+					
+					
+					
 			  	</div>
 			  	<div class="span6">
 				  	 <div class="control-group weemoKey">
 					    <label  class="control-label" for="passPhrase">&{exoplatform.videocall.passPhrase}: </label>
 					    <div class="controls" >
-					      <input class="span3" type="password" id="customerCertificatePassphrase" name="customerCertificatePassphrase" value="<%=customerCertificatePassphrase%>">
+					      <input class="span3" type="password" label="&{exoplatform.videocall.passPhrase}" id="customerCertificatePassphrase" name="customerCertificatePassphrase" value="<%=customerCertificatePassphrase%>">
 					    </div>
 					</div>
 			  	    <div class="control-group weemoKey">
 					    <label  class="control-label" for="authSecret">&{exoplatform.videocall.authSecret}: </label>
 					    <div class="controls" >
-					      <input class="span3" type="password" id="authSecret" name="authSecret" value="<%=authSecret%>" >
+					      <input class="span3" type="password" label="&{exoplatform.videocall.authSecret}" id="authSecret" name="authSecret" value="<%=authSecret%>" >
 					    </div>
 					</div>
 			  	</div>
 			  </div>
-			  <div class="actionTestWeemo"><button type="button" class="btn" > Test Weemo Connection </button></div>	  
+			  <div class="actionTestWeemo"><button type="button" onClick="eXo.ecm.VideoCallsUtils.testWeemoConnection();" class="btn" > &{exoplatform.videocall.testWeemoConnection} </button></div>	  
 			  
 			  
 			<div class="UIViewPermissionContainer" id="UIViewPermissionContainer" style="padding-bottom: 20px;">
@@ -72,7 +104,6 @@
 				    <tr>
 				          <th>&{exoplatform.videocall.owner}</th>
 				          <th class="span2 center">&{exoplatform.videocall.1_1profile}</th>	
-						  <th class="span2 center">Group calls</th>						  
 				          <th class="span1 center">&{exoplatform.videocall.action}</th>
 				    </tr>
 				  </thead>
@@ -89,10 +120,7 @@
 				      </td>
 				      <td class="center">				        
                         <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="YES" data-no="NO" checked="checked" style="visibility: hidden;" class="yesno"></div>
-                      </td>
-					  <td class="center">				        
-                        <div class="spaceRole"><input type="checkbox" id="" name="" value="<%=arrs[1]%>" data-yes="YES" data-no="NO" checked="checked" style="visibility: hidden;" class="yesno"></div>
-                      </td>
+                      </td>					 
                       <td class="center"><a data-original-title="Delete" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete"></i></a></td>
                     </tr>
 				  <%
@@ -111,7 +139,8 @@
 				    
 					
 					
-				  
+				  <input type="hidden" id="videoCallPermissions" name="videoCallPermissions" value="<%=videoCallPermissions%>">
+				  <input type="hidden" id="isDisplaySuccessMsg" name="isDisplaySuccessMsg" value="<%=isDisplaySuccessMsg%>">
 				  </tbody>
 				</table> 
 				<!--End UIGrid-->
@@ -149,7 +178,7 @@
 			  
 			  
 			  <div class="uiAction">				
-			    <button type="button" onClick="eXo.ecm.VideoCallsUtils.saveVideoCallsPermission();" class="btn">&{exoplatform.videocall.action.save}</button>
+			    <button type="submit" class="btn">&{exoplatform.videocall.action.save}</button>
   			  </div>
 		  </form>
 
@@ -321,11 +350,10 @@
 </div>
 
 
-<script type="text/javascript">
-   
-    
+<script type="text/javascript">   
     
     $( document ).ready(function() {
+    
 	  $("#chkTurnOff").change(function() {
 	    if ($("#chkTurnOff").is(':checked')) {
 	      $("#disableVideoCall").val("true");
@@ -381,9 +409,71 @@
 	            $(this).closest("div.spaceRole").trigger("click");
 	        });
 	     });
-
-
-	  });   
+	  });  
+	  
+	  //Display the success alert after save
+	  /*var isDisplaySuccessMsg = $("#isDisplaySuccessMsg").val();
+	  if(isDisplaySuccessMsg == "true") {
+	    eXo.ecm.VideoCallsUtils.displaySuccessAlert();
+	  }*/
+	  
+	  //Validate before submit form
+	  $("#videoCallsPermissionForm").submit(function () {
+	    var weemoKey = $.trim($('#weemoKey').val());
+	    if (weemoKey  === '') {	      
+          eXo.ecm.VideoCallsUtils.displayErrorAlert($('#weemoKey').attr('label'));
+          return false;
+        }
+        
+        var authId = $.trim($('#authId').val());
+	    if (authId  === '') {	      
+          eXo.ecm.VideoCallsUtils.displayErrorAlert($('#authId').attr('label'));
+          return false;
+        }
+        
+        var authSecret = $.trim($('#authSecret').val());
+	    if (authSecret  === '') {	      
+          eXo.ecm.VideoCallsUtils.displayErrorAlert($('#authSecret').attr('label'));
+          return false;
+        }
+        
+        var authSecret = $.trim($('#authSecret').val());
+	    if (authSecret  === '') {	      
+          eXo.ecm.VideoCallsUtils.displayErrorAlert($('#authSecret').attr('label'));
+          return false;
+        }
+        
+        
+        var customerCertificatePassphrase = $.trim($('#customerCertificatePassphrase').val());
+	    if (customerCertificatePassphrase  === '') {	      
+          eXo.ecm.VideoCallsUtils.displayErrorAlert($('#customerCertificatePassphrase').attr('label'));
+          return false;
+        }       
+        
+	    //Get list of permissions
+	    var permissionData = "";
+	    var uiViewPermissionList = $("#UIViewPermissionList");
+	    if($(uiViewPermissionList).find(".empty").length>0) {
+	      permissionData = null;
+	    } else {	      
+	      var tbody = $(uiViewPermissionList).find("tbody:first");
+	      if($(tbody).find("tr").length>0) {
+	        $(tbody).find("tr").each(function(i) {
+	          if($(this).find("td").length>0) {
+	            var tdPermission = $(this).find("td")[0];
+		        var tdOnOff = $(this).find("td")[1];
+	            var value = $(tdOnOff).find("input:first").val();
+	            permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value;
+	          }
+	        });
+	      }
+	      permissionData = permissionData.substring(1);
+	    }
+	    console.log(" == permissionData = " + permissionData);
+        $("#videoCallPermissions").val(permissionData);
+        
+	   
+	  }); 
 
 	});
     
