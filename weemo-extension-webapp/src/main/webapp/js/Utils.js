@@ -707,7 +707,6 @@
       dataType: "text",   
       context: this,
       success: function(data){
-        alert(data);
         if(data.length>0) {
           eXo.ecm.VideoCallsUtils.showTestWeemoSuccess();
         } else {

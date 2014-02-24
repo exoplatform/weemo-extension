@@ -33,7 +33,9 @@ import java.net.URLEncoder;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -115,10 +117,11 @@ public class AuthService {
       
       String post = "identifier_client=" + URLEncoder.encode(domain_id, "UTF-8")
           +  "&id_profile=" + URLEncoder.encode(profile_id, "UTF-8");
-      LOG.info("Post: " + post);     
+      LOG.info("Post: " + post);  
       
+      TrustManager[] trustManagers = getTrustManagers(caFile, passphrase);
       KeyManager[] keyManagers = getKeyManagers("PKCS12", p12File, passphrase);
-      TrustManager[] trustManagers = getTrustManagers(caFile, passphrase);          
+                
       ctx.init(keyManagers, trustManagers, new SecureRandom());      
       try {
         connection.setSSLSocketFactory(ctx.getSocketFactory());
