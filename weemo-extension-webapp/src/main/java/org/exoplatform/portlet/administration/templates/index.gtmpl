@@ -22,7 +22,7 @@
  
   
 
-		  	<form id="videoCallsPermissionForm" enctype="multipart/form-data" action="@{VideoCallAdministration.save()}" method="post" class="form-horizontal">
+		  	<form id="videoCallsPermissionForm" enctype="multipart/form-data" action="@{VideoCallAdministration.save()}" method="POST" class="form-horizontal">
 			  <div class="control-group">			    
 				<span class="uiCheckbox">
 				  <input id="chkTurnOff" class="checkbox" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">				  
@@ -422,10 +422,21 @@
 	  });  
 	  
 	  //Display the success alert after save
-	  /*var isDisplaySuccessMsg = $("#isDisplaySuccessMsg").val();
-	  if(isDisplaySuccessMsg == "true") {
-	    eXo.ecm.VideoCallsUtils.displaySuccessAlert();
-	  }*/
+	  var isDisplaySuccessMsg = $("#isDisplaySuccessMsg").val();
+	  if(isDisplaySuccessMsg === 'true') {
+	    var alertElem = $("#videocalls-alert");
+	    var successMsg = $(alertElem).attr("successMsg");
+	    var icon = $('<i/>', {
+	      'class':'uiIconSuccess'
+	    });
+	    $(alertElem).empty();
+	    $(alertElem).append(icon);  
+	    $(alertElem).append(successMsg);
+	    $("#videocalls-alert").show();
+	    setTimeout(function() {
+	      $("#videocalls-alert").hide();
+	    }, 5000);
+	  }
 	  
 	  //Validate before submit form
 	  $("#videoCallsPermissionForm").submit(function () {

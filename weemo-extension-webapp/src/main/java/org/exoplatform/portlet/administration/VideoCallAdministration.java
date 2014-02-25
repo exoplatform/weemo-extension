@@ -120,7 +120,9 @@ public class VideoCallAdministration {
     VideoCallModel videoCallModel = new VideoCallModel();
      if(StringUtils.isEmpty(disableVideoCall)) {
        videoCallModel.setDisableVideoCall("false");
-     }    
+     } else {
+       videoCallModel.setDisableVideoCall(disableVideoCall);
+     }     
      videoCallModel.setWeemoKey(weemoKey);
      videoCallModel.setAuthId(authId);
      videoCallModel.setAuthSecret(authSecret);

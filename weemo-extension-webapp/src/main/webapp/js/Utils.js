@@ -58,8 +58,7 @@
       'class':'uiIconSuccess'
     });
     $(alertElem).empty();
-    $(alertElem).append(icon);
-  
+    $(alertElem).append(icon);  
     $(alertElem).append(successMsg);
     $("#videocalls-alert").show();
     setTimeout(function() {
