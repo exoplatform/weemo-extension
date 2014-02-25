@@ -89,12 +89,8 @@ public class VideoCallAdministration {
       authSecret = videoModel.getAuthSecret();
       videoPermissions = videoModel.getVideoCallPermissions();
       turnOffVideoCall = Boolean.parseBoolean(videoModel.getDisableVideoCall());
-      if(videoModel.getP12CertName() != null) {
-        p12CertName = videoModel.getP12CertName();
-      }
-      if(videoModel.getPemCertName() != null) {
-        pemCertName = videoModel.getPemCertName();
-      }
+      p12CertName = VideoCallService.VIDEO_P12_CERT_NODE_NAME;
+      pemCertName = VideoCallService.VIDEO_PEM_CERT_NODE_NAME;    
     }    
     
     index.with().set("turnOffVideoCall", turnOffVideoCall)
@@ -115,6 +111,7 @@ public class VideoCallAdministration {
   public Response save(String disableVideoCall, String weemoKey, String authId, String authSecret, String customerCertificatePassphrase,
                        String videoCallPermissions, org.apache.commons.fileupload.FileItem p12Cert,
                        org.apache.commons.fileupload.FileItem pemCert) throws Exception{
+    VideoCallService videoCallService = new VideoCallService();
     VideoCallModel videoCallModel = new VideoCallModel();
      if(StringUtils.isEmpty(disableVideoCall)) {
        videoCallModel.setDisableVideoCall("false");
@@ -126,15 +123,20 @@ public class VideoCallAdministration {
      videoCallModel.setVideoCallPermissions(videoCallPermissions);
      videoCallModel.setDomainId(PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID));
      videoCallModel.setProfileId(PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE));
+     
      if(p12Cert != null) {
        videoCallModel.setP12Cert(p12Cert.getInputStream());
        videoCallModel.setP12CertName(p12Cert.getName());
+     } else {
+       videoCallModel.setP12CertName(VideoCallService.VIDEO_P12_CERT_NODE_NAME);
      }
      if(pemCert != null) {
        videoCallModel.setPemCert(pemCert.getInputStream());
        videoCallModel.setPemCertName(pemCert.getName());
-     }    
-     VideoCallService videoCallService = new VideoCallService();
+     } else {
+       videoCallModel.setP12CertName(VideoCallService.VIDEO_PEM_CERT_NODE_NAME);
+     }
+     
      videoCallService.saveVideoCallProfile(videoCallModel);
      videoCalls.setDisplaySuccessMsg(true);     
      return VideoCallAdministration_.index();

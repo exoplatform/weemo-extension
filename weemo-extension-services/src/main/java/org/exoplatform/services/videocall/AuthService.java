@@ -95,6 +95,16 @@ public class AuthService {
   
   
   public String authenticate(HttpServletRequest servletRequest, String profile_id) {
+    VideoCallService videoCallService = new VideoCallService();
+    caFile = videoCallService.getPemCertInputStream();
+    p12File = videoCallService.getP12CertInputStream();
+    VideoCallModel videoCallModel = videoCallService.getVideoCallProfile();
+    if(videoCallModel != null) {
+      domain_id = videoCallModel.getDomainId();      
+      clientId = videoCallModel.getAuthId();
+      clientSecret = videoCallModel.getAuthSecret();      
+      passphrase = videoCallModel.getCustomerCertificatePassphrase();
+    }
     String responseContent = null;
     if(StringUtils.isEmpty(passphrase)) return null;
     if(caFile == null || p12File == null) return null;
