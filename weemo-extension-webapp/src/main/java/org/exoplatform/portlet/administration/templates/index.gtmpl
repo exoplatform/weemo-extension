@@ -49,29 +49,39 @@
 					      <input class="span3" label="&{exoplatform.videocall.authId}" type="text" id="authId" name="authId" value="<%=authId%>" >
 					    </div>
 					</div>
-			
+			        <div class="control-group">
+			          <label for="p12Cert" class="control-label" style="text-align: left; width: auto;">&{exoplatform.videocall.p12Certificate}: </label>
+			          <div class="controls" style="margin-left: auto;">
 					<%
 					  if(StringUtils.isEmpty(p12CertName)) {
 					%>
-					  <p id="p12Cert">&{exoplatform.videocall.p12Certificate} &nbsp; <input type="file" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert"></p>					  
+					  <input style="margin: 0 8px;" type="file" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert">					  				  
 					<%  
 					  } else {
 					%>
-					  <p id="p12Cert">&{exoplatform.videocall.p12Certificate} <strong>&nbsp; <%=p12CertName%> &nbsp;</strong><i class="uiIconDelete"></i></p>
+					  <strong style="margin: 0 8px;"><%=p12CertName%></strong><i class="uiIconDelete" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i>
 					<%
 					  }
+					%>
+					  </div>
+					</div>
+					
+					<div class="control-group">
+			          <label for="pemCert" class="control-label" style="text-align: left; width: auto;">&{exoplatform.videocall.pemCertificate}: </label>
+			          <div class="controls" style="margin-left: auto;">
+					<%  
 					  if(StringUtils.isEmpty(pemCertName)) {
 					%>
-					  <p id="pemCert">&{exoplatform.videocall.pemCertificate} &nbsp; <input type="file" label="&{exoplatform.videocall.p12Certificate}" id="pemCert" name="pemCert"></p>
+					  <input style="padding: 0 8px;" type="file" label="&{exoplatform.videocall.pemCertificate}" id="pemCert" name="pemCert">
 					<%  
 					  } else {
 					%>
-					  <p id="pemCert">&{exoplatform.videocall.pemCertificate} <strong>&nbsp; <%=pemCertName%> &nbsp;</strong><i class="uiIconDelete"></i></p>
+					  <strong style="padding: 0 8px;"><%=pemCertName%></strong><i class="uiIconDelete" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i>
 					<%
 					  }
-					%>
-					
-					
+					%>					
+					  </div>
+					</div>
 					
 					
 					
@@ -431,24 +441,51 @@
           return false;
         }
         
-        var authSecret = $.trim($('#authSecret').val());
-	    if (authSecret  === '') {	      
-          eXo.ecm.VideoCallsUtils.displayErrorAlert($('#authSecret').attr('label'));
-          return false;
-        }
-        
-        var authSecret = $.trim($('#authSecret').val());
-	    if (authSecret  === '') {	      
-          eXo.ecm.VideoCallsUtils.displayErrorAlert($('#authSecret').attr('label'));
-          return false;
-        }
-        
-        
         var customerCertificatePassphrase = $.trim($('#customerCertificatePassphrase').val());
 	    if (customerCertificatePassphrase  === '') {	      
           eXo.ecm.VideoCallsUtils.displayErrorAlert($('#customerCertificatePassphrase').attr('label'));
           return false;
+        }    
+        
+        var p12Cert = $("#p12Cert");
+        if(p12Cert) {
+          var fileVal = $(p12Cert).val(); 
+          if(fileVal=='') 
+          { 
+            var container = $(p12Cert).closest(".control-group");
+            var labelElem = $(container).find("label:first");
+            var label = $.trim($(labelElem).text());
+            if(label.indexOf(":") > 0) {
+              label = label.substring(0,label.indexOf(":"));
+            }
+            eXo.ecm.VideoCallsUtils.displayErrorAlert(label);
+            return false;
+          } 
+        }
+        
+        var authSecret = $.trim($('#authSecret').val());
+	    if (authSecret  === '') {	      
+          eXo.ecm.VideoCallsUtils.displayErrorAlert($('#authSecret').attr('label'));
+          return false;
+        }
+        
+        var pemCert = $("#pemCert");
+        if(pemCert) {
+          var fileVal = $(pemCert).val(); 
+          if(fileVal=='') 
+          { 
+            var container = $(pemCert).closest(".control-group");
+            var labelElem = $(container).find("label:first");
+            var label = $.trim($(labelElem).text());
+            if(label.indexOf(":") > 0) {
+              label = label.substring(0,label.indexOf(":"));
+            }
+            eXo.ecm.VideoCallsUtils.displayErrorAlert(label);
+            return false;
+          } 
         }       
+        
+           
         
 	    //Get list of permissions
 	    var permissionData = "";

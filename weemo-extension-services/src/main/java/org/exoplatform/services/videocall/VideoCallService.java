@@ -207,7 +207,10 @@ public class VideoCallService {
             if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
               InputStream isP12 = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();
               videoCallModel.setP12Cert(isP12);
+              videoCallModel.setP12CertName("");
             }
+          } else {
+            videoCallModel.setP12Cert(null);
           }
           if(videoCallNode.hasNode(VIDEO_PEM_CERT_NODE_NAME)) {
             Node pemCertNode = videoCallNode.getNode(VIDEO_PEM_CERT_NODE_NAME);
@@ -216,6 +219,9 @@ public class VideoCallService {
               InputStream isPem = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();
               videoCallModel.setPemCert(isPem);
             }
+          } else {
+            videoCallModel.setPemCert(null);
+            videoCallModel.setPemCertName("");
           }
           videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
         }
@@ -318,10 +324,6 @@ public class VideoCallService {
       } catch (RepositoryException e) {
         if (LOG.isErrorEnabled()) {
           LOG.error("getWeemoKey() failed because of ", e);
-        }
-      } finally {
-        if (sessionProvider != null) {
-          sessionProvider.close();
         }
       }
     }     

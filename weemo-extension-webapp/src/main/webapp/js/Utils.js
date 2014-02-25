@@ -734,6 +734,22 @@
       $(testWeemoElem).hide();
     }, 5000);
   }
+
+  Utils.prototype.removeUploadedFile = function(elem, id) {
+    var container = $(elem).closest(".control-group");
+    var control = $(container).find(".controls:first");
+    var label = $(container).find("label:first");
+    var id = $(label).attr("for");
+    $(control).empty();
+    
+    var inputUpload = $('<input/>', { 
+      "type":"file",
+      "id":id,
+      "name":id,
+      "style":"margin: 0 8px;"
+    });
+    $(control).append(inputUpload);
+  }
  
   Utils.prototype.showTestWeemoError = function() {
     var testWeemoElem = $("#videocalls-alert-test-connection-error");

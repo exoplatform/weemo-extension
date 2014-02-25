@@ -73,17 +73,24 @@ public class AuthService {
   private static final Log LOG = ExoLogger.getLogger(AuthService.class.getName());
   
   public AuthService() {
+    authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);
     VideoCallService videoCallService = new VideoCallService();
     VideoCallModel videoCallModel = videoCallService.getVideoCallProfile();
     if(videoCallModel != null) {
-      domain_id = videoCallModel.getDomainId();
-      authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);
+      domain_id = videoCallModel.getDomainId();      
       clientId = videoCallModel.getAuthId();
       clientSecret = videoCallModel.getAuthSecret();
       caFile = videoCallModel.getPemCert();
       p12File = videoCallModel.getP12Cert();
       passphrase = videoCallModel.getCustomerCertificatePassphrase();
-    }    
+    } else {
+      domain_id = PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID);
+      clientId = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_KEY_AUTH);
+      clientSecret = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_SECRET_AUTH);
+      caFile = null;
+      p12File = null;
+      passphrase = PropertyManager.getProperty(PropertyManager.PROPERTY_PASSPHRASE);
+    }
   }
   
   
