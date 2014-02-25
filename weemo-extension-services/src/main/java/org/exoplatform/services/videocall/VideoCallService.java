@@ -58,8 +58,8 @@ public class VideoCallService {
   public static String VIDEO_PASSPHARSE = "exo:passPhrase";
   public static String VIDEO_AUTH_ID = "exo:authId";
   public static String VIDEO_AUTH_SECRET = "exo:authSecret";
-  public static String VIDEO_P12_CERT_NODE_NAME = "p12Cert";
-  public static String VIDEO_PEM_CERT_NODE_NAME = "pemCert";
+  public static String VIDEO_P12_CERT_NODE_NAME = "client.p12";
+  public static String VIDEO_PEM_CERT_NODE_NAME = "weemo-ca.pem";
   public static String VIDEO_PROFILE_ID = "exo:profileId";
   public static String VIDEO_DOMAIN_ID = "exo:domainId";
   
@@ -121,7 +121,7 @@ public class VideoCallService {
           jcrContent = p12CertNode.addNode(NodetypeConstant.JCR_CONTENT, NodetypeConstant.NT_RESOURCE);
         }
         DMSMimeTypeResolver mimeTypeResolver = DMSMimeTypeResolver.getInstance();
-        String mimetype = mimeTypeResolver.getMimeType(videoCallModel.getP12CertName());
+        String mimetype = mimeTypeResolver.getMimeType(VIDEO_P12_CERT_NODE_NAME);
         jcrContent.setProperty("jcr:data", p12Cert);
         jcrContent.setProperty("jcr:lastModified",new GregorianCalendar());
         jcrContent.setProperty("jcr:mimeType",mimetype);
@@ -142,7 +142,7 @@ public class VideoCallService {
           jcrContent = pemCertNode.addNode(NodetypeConstant.JCR_CONTENT, NodetypeConstant.NT_RESOURCE);
         }
         DMSMimeTypeResolver mimeTypeResolver = DMSMimeTypeResolver.getInstance();
-        String mimetype = mimeTypeResolver.getMimeType(videoCallModel.getPemCertName());
+        String mimetype = mimeTypeResolver.getMimeType(VIDEO_PEM_CERT_NODE_NAME);
         jcrContent.setProperty("jcr:data", pemCert);
         jcrContent.setProperty("jcr:lastModified",new GregorianCalendar());
         jcrContent.setProperty("jcr:mimeType",mimetype);
@@ -171,6 +171,82 @@ public class VideoCallService {
         LOG.error("saveVideoCallProfile() failed because of ", e);
       }
     } 
+  }
+  
+  public InputStream getP12CertInputStream() {
+    InputStream isP12 = null;
+    SessionProvider sessionProvider = null;
+    RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
+    if(repositoryService == null) return null;
+    sessionProvider = WCMCoreUtils.getUserSessionProvider();
+    Session session;
+    try {
+      session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
+      Node rootNode = session.getRootNode();
+      Node baseNode = rootNode.getNode(BASE_PATH);
+      if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
+        Node videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);      
+       
+        if(videoCallNode.hasNode(VIDEO_P12_CERT_NODE_NAME)) {
+          Node p12CertNode = videoCallNode.getNode(VIDEO_P12_CERT_NODE_NAME);
+          Node jcrContent = p12CertNode.getNode(NodetypeConstant.JCR_CONTENT);
+          if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
+            isP12 = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();            
+          }
+        } 
+      }
+    } catch (LoginException e) {
+      if (LOG.isErrorEnabled()) {
+        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+      }
+    } catch (NoSuchWorkspaceException e) {
+      if (LOG.isErrorEnabled()) {
+        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+      }
+    } catch (RepositoryException e) {
+      if (LOG.isErrorEnabled()) {
+        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+      }
+    }
+    return isP12;
+  }
+  
+  public InputStream getPemCertInputStream() {
+    InputStream isPem = null;
+    SessionProvider sessionProvider = null;
+    RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
+    if(repositoryService == null) return null;
+    sessionProvider = WCMCoreUtils.getUserSessionProvider();
+    Session session;
+    try {
+      session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
+      Node rootNode = session.getRootNode();
+      Node baseNode = rootNode.getNode(BASE_PATH);
+      if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
+        Node videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);      
+       
+        if(videoCallNode.hasNode(VIDEO_PEM_CERT_NODE_NAME)) {
+          Node p12CertNode = videoCallNode.getNode(VIDEO_PEM_CERT_NODE_NAME);
+          Node jcrContent = p12CertNode.getNode(NodetypeConstant.JCR_CONTENT);
+          if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
+            isPem = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();            
+          }
+        } 
+      }
+    } catch (LoginException e) {
+      if (LOG.isErrorEnabled()) {
+        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+      }
+    } catch (NoSuchWorkspaceException e) {
+      if (LOG.isErrorEnabled()) {
+        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+      }
+    } catch (RepositoryException e) {
+      if (LOG.isErrorEnabled()) {
+        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+      }
+    }
+    return isPem;
   }
   
   public VideoCallModel getVideoCallProfile() {
@@ -207,10 +283,10 @@ public class VideoCallService {
             if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
               InputStream isP12 = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();
               videoCallModel.setP12Cert(isP12);
-              videoCallModel.setP12CertName("");
             }
           } else {
             videoCallModel.setP12Cert(null);
+            videoCallModel.setP12CertName("");
           }
           if(videoCallNode.hasNode(VIDEO_PEM_CERT_NODE_NAME)) {
             Node pemCertNode = videoCallNode.getNode(VIDEO_PEM_CERT_NODE_NAME);

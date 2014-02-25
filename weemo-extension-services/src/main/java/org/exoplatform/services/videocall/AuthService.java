@@ -80,15 +80,15 @@ public class AuthService {
       domain_id = videoCallModel.getDomainId();      
       clientId = videoCallModel.getAuthId();
       clientSecret = videoCallModel.getAuthSecret();
-      caFile = videoCallModel.getPemCert();
-      p12File = videoCallModel.getP12Cert();
+      caFile = videoCallService.getPemCertInputStream();
+      p12File = videoCallService.getP12CertInputStream();
       passphrase = videoCallModel.getCustomerCertificatePassphrase();
     } else {
       domain_id = PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID);
       clientId = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_KEY_AUTH);
       clientSecret = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_SECRET_AUTH);
-      caFile = null;
-      p12File = null;
+      caFile = videoCallService.getPemCertInputStream();
+      p12File = videoCallService.getP12CertInputStream();
       passphrase = PropertyManager.getProperty(PropertyManager.PROPERTY_PASSPHRASE);
     }
   }
@@ -124,7 +124,7 @@ public class AuthService {
       
       String post = "identifier_client=" + URLEncoder.encode(domain_id, "UTF-8")
           +  "&id_profile=" + URLEncoder.encode(profile_id, "UTF-8");
-      LOG.info("Post: " + post);  
+      LOG.info("Post: " + post);      
       
       TrustManager[] trustManagers = getTrustManagers(caFile, passphrase);
       KeyManager[] keyManagers = getKeyManagers("PKCS12", p12File, passphrase);
@@ -310,15 +310,14 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
           + "&id_profile=" + URLEncoder.encode("basic", "UTF-8");      
       url = new URL(urlStr);      
       HttpsURLConnection connection = (HttpsURLConnection) url.openConnection(); 
-      
-      //InputStream p12InputStream = new URL("http://localhost:8080/weemo-extension/resources/client.p12").openStream();
+      InputStream p12InputStream = new URL("http://localhost:8080/rest/private/jcr/repository/collaboration/exo:applications/VideoCallsProfile/client.p12").openStream();
       //InputStream p12InputStream = new URL("http://plfent-4.1.x-pkgpriv-weemo-addon-snapshot.acceptance4.exoplatform.org/weemo-extension/resources/client.p12").openStream();
-      InputStream p12InputStream = AuthService.class.getResourceAsStream("/certificate/client.p12");
+      //InputStream p12InputStream = AuthService.class.getResourceAsStream("http://localhost:8080/rest/private/jcr/repository/collaboration/exo:applications/VideoCallsProfile/client.p12");
       File p12File = convertInputStreamToFile(p12InputStream, "client.p12");
       
-      //InputStream pemInputStream = new URL("http://localhost:8080/weemo-extension/resources/weemo-ca.pem").openStream();
+      InputStream pemInputStream = new URL("http://localhost:8080/rest/private/jcr/repository/collaboration/exo:applications/VideoCallsProfile/weemo-ca.pem").openStream();
       //InputStream pemInputStream = new URL("http://plfent-4.1.x-pkgpriv-weemo-addon-snapshot.acceptance4.exoplatform.org/weemo-extension/resources/weemo-ca.pem").openStream();
-      InputStream pemInputStream = AuthService.class.getResourceAsStream("/certificate/weemo-ca.pem");
+      //InputStream pemInputStream = AuthService.class.getResourceAsStream("http://localhost:8080/rest/private/jcr/repository/collaboration/exo:applications/VideoCallsProfile/weemo-ca.pem");
       File pemFile = convertInputStreamToFile(pemInputStream, "weemo-ca.pem");
       
       //KeyManager[] keyManagers = getKeyManagers("PKCS12", new FileInputStream(new File("/home/tanhq/java/eXoProjects/weemo-extension/weemo-extension-webapp/src/main/webapp/resources/client.p12")), "XnyexbUF");      
