@@ -199,7 +199,6 @@ public class AuthService {
         LOG.error("Could not find or read " + keyStoreFile, e.getMessage());
       }
     } catch (IOException e) {
-      e.printStackTrace();
       if (LOG.isErrorEnabled()) {
         LOG.error("PKCS12 password is incorrect or keystore is inconsistent: " + keyStoreFile);
       }      

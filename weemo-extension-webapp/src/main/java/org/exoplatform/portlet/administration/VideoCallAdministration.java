@@ -89,8 +89,13 @@ public class VideoCallAdministration {
       authSecret = videoModel.getAuthSecret();
       videoPermissions = videoModel.getVideoCallPermissions();
       turnOffVideoCall = Boolean.parseBoolean(videoModel.getDisableVideoCall());
-      p12CertName = VideoCallService.VIDEO_P12_CERT_NODE_NAME;
-      pemCertName = VideoCallService.VIDEO_PEM_CERT_NODE_NAME;    
+      if(videoCallService_.getP12CertInputStream() != null) {
+        p12CertName = videoModel.getP12CertName();
+      }
+      if(videoCallService_.getPemCertInputStream() != null) {
+        pemCertName = videoModel.getPemCertName(); 
+      }
+         
     }    
     
     index.with().set("turnOffVideoCall", turnOffVideoCall)
@@ -123,19 +128,14 @@ public class VideoCallAdministration {
      videoCallModel.setVideoCallPermissions(videoCallPermissions);
      videoCallModel.setDomainId(PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID));
      videoCallModel.setProfileId(PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE));
-     
      if(p12Cert != null) {
        videoCallModel.setP12Cert(p12Cert.getInputStream());
        videoCallModel.setP12CertName(p12Cert.getName());
-     } else {
-       videoCallModel.setP12CertName(VideoCallService.VIDEO_P12_CERT_NODE_NAME);
-     }
+     } 
      if(pemCert != null) {
        videoCallModel.setPemCert(pemCert.getInputStream());
        videoCallModel.setPemCertName(pemCert.getName());
-     } else {
-       videoCallModel.setP12CertName(VideoCallService.VIDEO_PEM_CERT_NODE_NAME);
-     }
+     } 
      
      videoCallService.saveVideoCallProfile(videoCallModel);
      videoCalls.setDisplaySuccessMsg(true);     

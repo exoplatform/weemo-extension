@@ -54,6 +54,16 @@
 		</childNodeDefinition>
 	</childNodeDefinitions>   
   </nodeType> 
+  
+  
+  <nodeType name="exo:videoCallCertificate" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+    <propertyDefinitions>
+      <propertyDefinition name="exo:videoCallCertificateFileName" requiredType="String" autoCreated="false" mandatory="false"
+        onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>    
+    </propertyDefinitions>
+  </nodeType>
 
 </nodeTypes>
   

@@ -727,8 +727,27 @@
       'class':'uiIconSuccess'
     });
     $(testWeemoElem).empty();
+    $(testWeemoElem).removeClass("alert-error videoCallsAlertError");
+    $(testWeemoElem).addClass("alert-success videoCallsAlertSuccess");    
     $(testWeemoElem).append(icon);  
     $(testWeemoElem).append(successTestConnMsg);
+    $(testWeemoElem).show();
+    setTimeout(function() {
+      $(testWeemoElem).hide();
+    }, 5000);
+  } 
+ 
+  Utils.prototype.showTestWeemoError = function() {
+    var testWeemoElem = $("#videocalls-alert-test-connection-error");
+    var errorTestConnMsg = $(testWeemoElem).attr("errorTestConnMsg");
+    var icon = $('<i/>', {
+      'class':'uiIconError'
+    });
+    $(testWeemoElem).empty();    
+    $(testWeemoElem).removeClass("alert-success videoCallsAlertSuccess");
+    $(testWeemoElem).addClass("alert-error videoCallsAlertError");
+    $(testWeemoElem).append(icon);  
+    $(testWeemoElem).append(errorTestConnMsg);
     $(testWeemoElem).show();
     setTimeout(function() {
       $(testWeemoElem).hide();
@@ -749,21 +768,6 @@
       "style":"margin: 0 8px;"
     });
     $(control).append(inputUpload);
-  }
- 
-  Utils.prototype.showTestWeemoError = function() {
-    var testWeemoElem = $("#videocalls-alert-test-connection-error");
-    var errorTestConnMsg = $(testWeemoElem).attr("errorTestConnMsg");
-    var icon = $('<i/>', {
-      'class':'uiIconError'
-    });
-    $(testWeemoElem).empty();
-    $(testWeemoElem).append(icon);  
-    $(testWeemoElem).append(errorTestConnMsg);
-    $(testWeemoElem).show();
-    setTimeout(function() {
-      $(testWeemoElem).hide();
-    }, 5000);
   }
 
   Utils.prototype.capitaliseFirstLetter = function(string) {

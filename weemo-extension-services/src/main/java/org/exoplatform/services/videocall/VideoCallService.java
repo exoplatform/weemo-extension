@@ -58,8 +58,9 @@ public class VideoCallService {
   public static String VIDEO_PASSPHARSE = "exo:passPhrase";
   public static String VIDEO_AUTH_ID = "exo:authId";
   public static String VIDEO_AUTH_SECRET = "exo:authSecret";
-  public static String VIDEO_P12_CERT_NODE_NAME = "client.p12";
-  public static String VIDEO_PEM_CERT_NODE_NAME = "weemo-ca.pem";
+  public static String VIDEO_P12_CERT_NODE_NAME = "p12Cert";
+  public static String VIDEO_PEM_CERT_NODE_NAME = "pemCert";
+  public static String VIDEO_CERT_MIXIN_NAME = "exo:videoCallCertificate";
   public static String VIDEO_PROFILE_ID = "exo:profileId";
   public static String VIDEO_DOMAIN_ID = "exo:domainId";
   
@@ -121,10 +122,22 @@ public class VideoCallService {
           jcrContent = p12CertNode.addNode(NodetypeConstant.JCR_CONTENT, NodetypeConstant.NT_RESOURCE);
         }
         DMSMimeTypeResolver mimeTypeResolver = DMSMimeTypeResolver.getInstance();
-        String mimetype = mimeTypeResolver.getMimeType(VIDEO_P12_CERT_NODE_NAME);
+        String mimetype = mimeTypeResolver.getMimeType(videoCallModel.getP12CertName());
         jcrContent.setProperty("jcr:data", p12Cert);
         jcrContent.setProperty("jcr:lastModified",new GregorianCalendar());
         jcrContent.setProperty("jcr:mimeType",mimetype);
+        if(jcrContent.canAddMixin(VIDEO_CERT_MIXIN_NAME)) {
+          jcrContent.addMixin(VIDEO_CERT_MIXIN_NAME);
+          jcrContent.setProperty("exo:videoCallCertificateFileName", videoCallModel.getP12CertName());
+        }
+      } else if(videoCallNode.hasNode(VIDEO_P12_CERT_NODE_NAME)){
+        Node p12CertNode = videoCallNode.getNode(VIDEO_P12_CERT_NODE_NAME);
+        if(p12CertNode.hasNode(NodetypeConstant.JCR_CONTENT)) {
+          Node jcrContent = p12CertNode.getNode(NodetypeConstant.JCR_CONTENT);
+          if(jcrContent.hasProperty("exo:videoCallCertificateFileName")) {
+            videoCallModel.setP12CertName(jcrContent.getProperty("exo:videoCallCertificateFileName").getString());
+          }
+        }        
       }
       
       // Update pem certificate file
@@ -142,11 +155,24 @@ public class VideoCallService {
           jcrContent = pemCertNode.addNode(NodetypeConstant.JCR_CONTENT, NodetypeConstant.NT_RESOURCE);
         }
         DMSMimeTypeResolver mimeTypeResolver = DMSMimeTypeResolver.getInstance();
-        String mimetype = mimeTypeResolver.getMimeType(VIDEO_PEM_CERT_NODE_NAME);
+        String mimetype = mimeTypeResolver.getMimeType(videoCallModel.getPemCertName());
         jcrContent.setProperty("jcr:data", pemCert);
         jcrContent.setProperty("jcr:lastModified",new GregorianCalendar());
         jcrContent.setProperty("jcr:mimeType",mimetype);
+        if(jcrContent.canAddMixin(VIDEO_CERT_MIXIN_NAME)) {
+          jcrContent.addMixin(VIDEO_CERT_MIXIN_NAME);
+          jcrContent.setProperty("exo:videoCallCertificateFileName", videoCallModel.getPemCertName());
+        }
+      } else if(videoCallNode.hasNode(VIDEO_PEM_CERT_NODE_NAME)){
+        Node pemCertNode = videoCallNode.getNode(VIDEO_PEM_CERT_NODE_NAME);
+        if(pemCertNode.hasNode(NodetypeConstant.JCR_CONTENT)) {
+          Node jcrContent = pemCertNode.getNode(NodetypeConstant.JCR_CONTENT);
+          if(jcrContent.hasProperty("exo:videoCallCertificateFileName")) {
+            videoCallModel.setPemCertName(jcrContent.getProperty("exo:videoCallCertificateFileName").getString());
+          }
+        }        
       }
+      
       ExtendedNode node = (ExtendedNode) videoCallNode;
       if (node.canAddMixin("exo:privilegeable")) { 
         node.addMixin("exo:privilegeable");
@@ -283,6 +309,7 @@ public class VideoCallService {
             if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
               InputStream isP12 = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();
               videoCallModel.setP12Cert(isP12);
+              videoCallModel.setP12CertName(jcrContent.getProperty("exo:videoCallCertificateFileName").getString());
             }
           } else {
             videoCallModel.setP12Cert(null);
@@ -294,6 +321,7 @@ public class VideoCallService {
             if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
               InputStream isPem = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();
               videoCallModel.setPemCert(isPem);
+              videoCallModel.setPemCertName(jcrContent.getProperty("exo:videoCallCertificateFileName").getString());
             }
           } else {
             videoCallModel.setPemCert(null);
