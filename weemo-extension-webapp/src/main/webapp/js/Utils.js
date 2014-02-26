@@ -759,19 +759,22 @@
     var label = $(container).find("label:first");
     var id = $(label).attr("for");
     $(control).empty();
+    var linkUpload = $('<a/>', { 
+      "href":"javascript:void(0);"
+    });
     var buttonUpload = $('<button/>', { 
       "type":"button",
       "class":"btn btn-small",
       "onkeypress":"return false;",
       "style":"left:180px; top:2px; position:absolute; z-index: 1;"
     });
-    
+    $(linkUpload).append(buttonUpload);
     var iconUpload = $('<i/>', { 
       "class":"uiIconUpload uiIconLightGray"
     });    
     $(buttonUpload).append(iconUpload);
     $(buttonUpload).append(" Upload");
-    $(control).append(buttonUpload);
+    $(control).append(linkUpload);
 
     var inputUpload = $('<input/>', { 
       "type":"file",

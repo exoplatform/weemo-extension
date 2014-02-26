@@ -61,7 +61,7 @@
 					<%  
 					  } else {
 					%>
-					  <strong style="margin: 0 8px 0 20px;"><%=p12CertName%></strong><i class="uiIconDelete" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i>
+					  <strong style="margin: 0 8px 0 20px;"><%=p12CertName%></strong><a href="javascript:void(0);"><i class="uiIconDelete" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i></a>
 					<%
 					  }
 					%>
@@ -81,7 +81,7 @@
 					<%  
 					  } else {
 					%>
-					  <strong style="margin: 0 8px 0 20px;"><%=pemCertName%></strong><i class="uiIconDelete" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i>
+					  <strong style="margin: 0 8px 0 20px;"><%=pemCertName%></strong><a href="javascript:void(0);"><i class="uiIconDelete" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i></a>
 					<%
 					  }
 					%>					
