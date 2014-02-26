@@ -225,17 +225,11 @@ public class VideoCallService {
         } 
       }
     } catch (LoginException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getP12CertInputStream() failed because of ", e.getMessage());
-      }
+      // Do nothing
     } catch (NoSuchWorkspaceException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getP12CertInputStream() failed because of ", e.getMessage());
-      }
+      // Do nothing
     } catch (RepositoryException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getP12CertInputStream() failed because of ", e.getMessage());
-      }
+      // Do nothing
     }
     return isP12;
   }
@@ -263,17 +257,11 @@ public class VideoCallService {
         } 
       }
     } catch (LoginException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getPemCertInputStream() failed because of ", e.getMessage());
-      }
+      // Do nothing
     } catch (NoSuchWorkspaceException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getPemCertInputStream() failed because of ", e.getMessage());
-      }
+      // Do nothing
     } catch (RepositoryException e) {
-      if (LOG.isErrorEnabled()) {
-        LOG.error("getPemCertInputStream() failed because of ", e.getMessage());
-      }
+      // Do nothing
     }
     return isPem;
   }
@@ -335,17 +323,11 @@ public class VideoCallService {
           videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
         }
       } catch (LoginException e) {
-        if (LOG.isErrorEnabled()) {
-          LOG.error("getVideoCallProfile() failed because of ", e.getMessage());
-        }
+        // Do nothing
       } catch (NoSuchWorkspaceException e) {
-        if (LOG.isErrorEnabled()) {
-          LOG.error("getVideoCallProfile() failed because of ", e.getMessage());
-        }
+        // Do nothing
       } catch (RepositoryException e) {
-        if (LOG.isErrorEnabled()) {
-          LOG.error("getVideoCallProfile() failed because of ", e.getMessage());
-        }
+        // Do nothing
       }
     }
     return videoCallModel;

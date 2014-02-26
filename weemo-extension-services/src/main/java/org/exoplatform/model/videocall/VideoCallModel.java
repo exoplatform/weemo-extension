@@ -18,7 +18,6 @@ package org.exoplatform.model.videocall;
 
 import java.io.InputStream;
 
-import org.apache.commons.fileupload.FileItem;
 import juzu.Mapped;
 
 @Mapped

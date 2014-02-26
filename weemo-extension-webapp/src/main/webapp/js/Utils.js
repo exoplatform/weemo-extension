@@ -763,7 +763,7 @@
       "type":"button",
       "class":"btn btn-small",
       "onkeypress":"return false;",
-      "style":"left:150px; top:2px; position:absolute; z-index: 1;"
+      "style":"left:180px; top:2px; position:absolute; z-index: 1;"
     });
     
     var iconUpload = $('<i/>', { 
@@ -779,13 +779,13 @@
       "name":id,
       "class":"file fileHidden",
       "onkeypress":"return false;",
-      "style":"margin: 0 8px; width: 70px;"
+      "style":"margin: 0 8px 0 22px; width: 80px;"
     });
     $(control).append(inputUpload);
 
     var spanElem = $('<span/>', {       
       "text":"No file chosen",
-      "style":"position: absolute;top: 0px;left: 245px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;"
+      "style":"position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;"
     });
     $(control).append(spanElem);
   }
