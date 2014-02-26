@@ -354,8 +354,8 @@
 		<div class="PopupContent popupContent modal-body">    
 			<span msg="&{exoplatform.videocall.administration.deleteConfirm}"></span>
 			<div class="uiAction uiActionBorder">
-				<button type="button" class="btn btn-primary" >Delete</button>
-				<button type="button" class="btn" data-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-primary" >Yes</button>
+				<button type="button" class="btn" data-dismiss="modal">No</button>
 			</div>
 		</div>
 		
