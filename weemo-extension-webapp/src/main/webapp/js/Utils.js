@@ -788,6 +788,20 @@
       "style":"position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;"
     });
     $(control).append(spanElem);
+    //Listen onchange event of upload field
+    $(inputUpload).change(function (){
+      var fileName = $(this).val();
+      if(fileName.length > 0) {
+        fileName = eXo.ecm.VideoCallsUtils.getNameOfFile(fileName);
+      }
+      $(this).next().html(fileName);
+    });
+
+  }
+
+  Utils.prototype.getNameOfFile = function(fileName) {
+    fileName = fileName.replace(/^.*[\\\/]/, '');
+    return fileName;
   }
 
   Utils.prototype.capitaliseFirstLetter = function(string) {

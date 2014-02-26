@@ -448,7 +448,7 @@
 	  $("#p12Cert").change(function (){
         var fileName = $(this).val();
         if(fileName.length > 0) {
-          fileName = fileName.substring(fileName.lastIndexOf('/')+1);
+          fileName = eXo.ecm.VideoCallsUtils.getNameOfFile(fileName);
         }
         $(this).next().html(fileName);
       });
@@ -456,7 +456,7 @@
       $("#pemCert").change(function (){
         var fileName = $(this).val();
         if(fileName.length > 0) {
-          fileName = fileName.substring(fileName.lastIndexOf('/')+1);
+          fileName = eXo.ecm.VideoCallsUtils.getNameOfFile(fileName);
         }
         $(this).next().html(fileName);
       });
