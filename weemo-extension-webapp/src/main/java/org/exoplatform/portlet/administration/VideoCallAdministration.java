@@ -94,9 +94,14 @@ public class VideoCallAdministration {
       }
       if(videoCallService_.getPemCertInputStream() != null) {
         pemCertName = videoModel.getPemCertName(); 
-      }
-         
-    }    
+      }         
+    } else {
+      weemoKey = PropertyManager.getProperty(PropertyManager.PROPERTY_WEEMO_KEY);
+      passPhrase = PropertyManager.getProperty(PropertyManager.PROPERTY_PASSPHRASE);
+      authId = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_KEY_AUTH);
+      authSecret = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_SECRET_AUTH);
+      videoPermissions = "*:/platform/users#true";
+    }
     
     index.with().set("turnOffVideoCall", turnOffVideoCall)
               .set("isDisplaySuccessMsg", videoCalls.isDisplaySuccessMsg())
@@ -111,7 +116,7 @@ public class VideoCallAdministration {
     videoCalls.setDisplaySuccessMsg(false);
   }  
   
-  @Action
+  @View
   @Route("/save")
   public Response save(String disableVideoCall, String weemoKey, String authId, String authSecret, String customerCertificatePassphrase,
                        String videoCallPermissions, org.apache.commons.fileupload.FileItem p12Cert,

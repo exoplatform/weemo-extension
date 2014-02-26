@@ -27,10 +27,9 @@ import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.services.videocall.VideoCallService;
 
 public class PropertyManager {
-  private static Properties properties;
+  private static Properties properties = null;
 
   private static final String PROPERTIES_PATH = System.getProperty("catalina.base")+"/conf/weemo.properties";
-  public static final String PROPERTY_SYSTEM_PREFIX = "weemo.";
   
   public static final String PROPERTY_WEEMO_KEY = "weemo.webappId";
   public static final String PROPERTY_CLIENT_KEY_AUTH = "weemo.authClientId";
@@ -39,7 +38,6 @@ public class PropertyManager {
   public static final String PROPERTY_AUTH_URL = "weemo.authURL";
   public static final String PROPERTY_USER_ID_AUTH = "user_id_auth";
   
-  public static final String PROPERTY_APP_ID = "app_id";
   public static final String PROPERTY_DOMAIN_ID = "domain_id";  
   
   public static final String PROPERTY_CA_FILE = "ca_file";
@@ -55,10 +53,7 @@ public class PropertyManager {
 
   public static String getProperty(String key)
   {
-    String value = (String)properties().get(key);
-    if(value == null) {
-      value  = System.getProperty(key);
-    }
+    String value = (String)properties().get(key);    
     return value;
   }
 
@@ -77,30 +72,17 @@ public class PropertyManager {
       catch (Exception e)
       {
       }     
-      /*overridePropertyIfNotSet(PROPERTY_APP_ID, "1033a56f0e68");
-      overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "exo_domain");
-      overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "XnyexbUF");
-      overridePropertyIfNotSet(PROPERTY_AUTH_URL, "https://oauths-ppr.weemo.com/auth/");
-      overridePropertyIfNotSet(PROPERTY_CA_FILE, "/certificate/weemo-ca.pem");
-      overridePropertyIfNotSet(PROPERTY_P12_FILE, "/certificate/client.p12");
-      overridePropertyIfNotSet(PROPERTY_USER_ID_AUTH, "eXoCloud");
-      overridePropertyIfNotSet(PROPERTY_PASS_AUTH, "bc2e05cf11");
-      overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_AUTH, "33cc7f1e82763049a4944a702c880d");
-      overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_AUTH, "3569996f0d03b2cd3880223747c617");
-      overridePropertyIfNotSet(PROPERTY_USER_ID_ALLOW, "eXoCloud");
+      /*overridePropertyIfNotSet(PROPERTY_PASS_AUTH, "bc2e05cf11");
       overridePropertyIfNotSet(PROPERTY_PASS_ALLOW, "7625b9b08d");
       overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_ALLOW, "33cc7f1e82763049a4944a702c880d");
-      overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_ALLOW, "3569996f0d03b2cd3880223747c617");
-      overridePropertyIfNotSet(PROPERTY_VIDEO_PROFILE, "basic");*/
+      overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_ALLOW, "3569996f0d03b2cd3880223747c617");*/
       
       overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "exo_domain");
-      overridePropertyIfNotSet(PROPERTY_APP_ID, "1033a56f0e68");
-      overridePropertyIfNotSet(PROPERTY_CA_FILE, "/certificate/weemo-ca.pem");
-      overridePropertyIfNotSet(PROPERTY_P12_FILE, "/certificate/client.p12");
       overridePropertyIfNotSet(PROPERTY_VIDEO_PROFILE, "basic");
       overridePropertyIfNotSet(PROPERTY_AUTH_URL, "https://oauths-ppr.weemo.com/auth/");
       overridePropertyIfNotSet(PROPERTY_USER_ID_AUTH, "eXoCloud");
       
+      overridePropertyIfNotSet(PROPERTY_WEEMO_KEY, "");
       overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_AUTH, "");
       overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "");
       overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_AUTH, "");
@@ -142,10 +124,10 @@ public class PropertyManager {
     if (properties().getProperty(key)==null)
     {
       properties().setProperty(key, value);
+      
+      if (System.getProperty(key)!=null) {
+        properties().setProperty(key, System.getProperty(key));
+      }
     }
-    if (System.getProperty(PROPERTY_SYSTEM_PREFIX+key)!=null) {
-      properties().setProperty(key, System.getProperty(PROPERTY_SYSTEM_PREFIX+key));
-    }
-
   }
 }
