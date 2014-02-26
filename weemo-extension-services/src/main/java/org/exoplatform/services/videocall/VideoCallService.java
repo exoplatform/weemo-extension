@@ -27,9 +27,13 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.http.HttpSession;
+
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.config.UserACL;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.ExoCache;
 import org.exoplatform.services.cms.mimetype.DMSMimeTypeResolver;
@@ -100,7 +104,6 @@ public class VideoCallService {
       }
       videoCallNode.setProperty(DISABLEVIDEOCALL_PROP, Boolean.valueOf(disbaleVideoCall));
       videoCallNode.setProperty(WEEMOKEY_PROP, weemoKey);
-      videoCallNode.setProperty(VIDEO_TOKEN_KEY, videoCallModel.getTokenKey());
       videoCallNode.setProperty(VIDEO_PERMISSIONS_PROP, videoCallPermissions);
       videoCallNode.setProperty(VIDEO_PASSPHARSE, passPharse);
       videoCallNode.setProperty(VIDEO_AUTH_ID, authId);
@@ -223,15 +226,15 @@ public class VideoCallService {
       }
     } catch (LoginException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+        LOG.error("getP12CertInputStream() failed because of ", e.getMessage());
       }
     } catch (NoSuchWorkspaceException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+        LOG.error("getP12CertInputStream() failed because of ", e.getMessage());
       }
     } catch (RepositoryException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+        LOG.error("getP12CertInputStream() failed because of ", e.getMessage());
       }
     }
     return isP12;
@@ -261,15 +264,15 @@ public class VideoCallService {
       }
     } catch (LoginException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+        LOG.error("getPemCertInputStream() failed because of ", e.getMessage());
       }
     } catch (NoSuchWorkspaceException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+        LOG.error("getPemCertInputStream() failed because of ", e.getMessage());
       }
     } catch (RepositoryException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("getWeemoKey() failed because of ", e.getMessage());
+        LOG.error("getPemCertInputStream() failed because of ", e.getMessage());
       }
     }
     return isPem;
@@ -280,6 +283,8 @@ public class VideoCallService {
     if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
       videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);
     } else {
+      PortalRequestContext requestContext = Util.getPortalRequestContext();
+      HttpSession httpSession = requestContext.getRequest().getSession();
       SessionProvider sessionProvider = null;
       RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
       if(repositoryService == null) return null;
@@ -294,7 +299,7 @@ public class VideoCallService {
           videoCallModel = new VideoCallModel();
           videoCallModel.setWeemoKey(videoCallNode.getProperty(WEEMOKEY_PROP).getString());
           videoCallModel.setDisableVideoCall(videoCallNode.getProperty(DISABLEVIDEOCALL_PROP).getString());
-          videoCallModel.setTokenKey(videoCallNode.getProperty(VIDEO_TOKEN_KEY).getString());
+          httpSession.setAttribute("tokenKey", videoCallNode.getProperty(VIDEO_TOKEN_KEY).getString());
           videoCallModel.setProfileId(videoCallNode.getProperty(VIDEO_PROFILE_ID).getString());
           videoCallModel.setDomainId(videoCallNode.getProperty(VIDEO_DOMAIN_ID).getString());
           if(videoCallNode.hasProperty(VIDEO_PERMISSIONS_PROP)) {
@@ -331,15 +336,15 @@ public class VideoCallService {
         }
       } catch (LoginException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("getWeemoKey() failed because of ", e.getMessage());
+          LOG.error("getVideoCallProfile() failed because of ", e.getMessage());
         }
       } catch (NoSuchWorkspaceException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("getWeemoKey() failed because of ", e.getMessage());
+          LOG.error("getVideoCallProfile() failed because of ", e.getMessage());
         }
       } catch (RepositoryException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("getWeemoKey() failed because of ", e.getMessage());
+          LOG.error("getVideoCallProfile() failed because of ", e.getMessage());
         }
       }
     }
@@ -419,15 +424,15 @@ public class VideoCallService {
         }
       } catch (LoginException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("getWeemoKey() failed because of ", e);
+          LOG.error("isExistVideoCallProfile() failed because of ", e);
         }
       } catch (NoSuchWorkspaceException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("getWeemoKey() failed because of ", e);
+          LOG.error("isExistVideoCallProfile() failed because of ", e);
         }
       } catch (RepositoryException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("getWeemoKey() failed because of ", e);
+          LOG.error("isExistVideoCallProfile() failed because of ", e);
         }
       }
     }     

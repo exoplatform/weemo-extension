@@ -20,11 +20,7 @@
       <propertyDefinition name="exo:weemoKey" requiredType="String" autoCreated="false" mandatory="true"
         onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
-      </propertyDefinition>      
-      <propertyDefinition name="exo:tokenKey" requiredType="String" autoCreated="false" mandatory="false"
-        onParentVersion="COPY" protected="false" multiple="false">
-        <valueConstraints/>
-      </propertyDefinition>
+      </propertyDefinition>     
       <propertyDefinition name="exo:authId" requiredType="String" autoCreated="false" mandatory="true"
         onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>

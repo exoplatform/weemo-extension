@@ -50,16 +50,18 @@
 					    </div>
 					</div>
 			        <div class="control-group">
-			          <label for="p12Cert" class="control-label" style="text-align: left; width: auto;">&{exoplatform.videocall.p12Certificate}: </label>
-			          <div class="controls" style="margin-left: auto;">
+			          <label for="p12Cert" class="control-label" style="text-align: left; width: 148px;">&{exoplatform.videocall.p12Certificate}: </label>
+			          <div class="controls" style="margin-left:auto; position:relative;">
 					<%
 					  if(StringUtils.isEmpty(p12CertName)) {
 					%>
-					  <input style="margin: 0 8px;" type="file" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert">					  				  
+					  <button type="button" class="btn btn-small" style="left:150px; top:2px; position:absolute; z-index: 1;"><i class="uiIconUpload uiIconLightGray"></i>&nbsp;Upload</button>
+					  <input style="margin: 0 8px; width: 70px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert">
+					  <span style="position: absolute;top: 0px;left: 245px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;">No file chosen</span>					  					  				  
 					<%  
 					  } else {
 					%>
-					  <strong style="margin: 0 8px;"><%=p12CertName%></strong><i class="uiIconDelete" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i>
+					  <strong style="margin-right: 8px;"><%=p12CertName%></strong><i class="uiIconDelete" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i>
 					<%
 					  }
 					%>
@@ -67,16 +69,19 @@
 					</div>
 					
 					<div class="control-group">
-			          <label for="pemCert" class="control-label" style="text-align: left; width: auto;">&{exoplatform.videocall.pemCertificate}: </label>
-			          <div class="controls" style="margin-left: auto;">
+			          <label for="pemCert" class="control-label" style="text-align: left; width: 148px;">&{exoplatform.videocall.pemCertificate}: </label>
+			          <div class="controls" style="margin-left: auto; position:relative;">
 					<%  
 					  if(StringUtils.isEmpty(pemCertName)) {
 					%>
-					  <input style="padding: 0 8px;" type="file" label="&{exoplatform.videocall.pemCertificate}" id="pemCert" name="pemCert">
+					  <button type="button" class="btn btn-small" style="left:150px; top:2px; position:absolute; z-index: 1;"><i class="uiIconUpload uiIconLightGray"></i>&nbsp;Upload</button>
+					  <input style="padding: 0 8px; width: 70px;" type="file" class="file fileHidden" onkeypress="return false;" label="&{exoplatform.videocall.pemCertificate}" id="pemCert" name="pemCert">
+					  <span style="position: absolute;top: 0px;left: 245px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;">No file chosen</span>					  					  				  
+					  
 					<%  
 					  } else {
 					%>
-					  <strong style="padding: 0 8px;"><%=pemCertName%></strong><i class="uiIconDelete" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i>
+					  <strong style="margin-right: 8px;"><%=pemCertName%></strong><i class="uiIconDelete" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i>
 					<%
 					  }
 					%>					
@@ -437,6 +442,23 @@
 	      $("#videocalls-alert").hide();
 	    }, 5000);
 	  }
+	  
+	  //Listen onchange event for 2 upload inputs
+	  $("#p12Cert").change(function (){
+        var fileName = $(this).val();
+        if(fileName.length > 0) {
+          fileName = fileName.substring(fileName.lastIndexOf('/')+1);
+        }
+        $(this).next().html(fileName);
+      });
+      
+      $("#pemCert").change(function (){
+        var fileName = $(this).val();
+        if(fileName.length > 0) {
+          fileName = fileName.substring(fileName.lastIndexOf('/')+1);
+        }
+        $(this).next().html(fileName);
+      });
 	  
 	  //Validate before submit form
 	  $("#videoCallsPermissionForm").submit(function () {

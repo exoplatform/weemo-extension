@@ -759,14 +759,35 @@
     var label = $(container).find("label:first");
     var id = $(label).attr("for");
     $(control).empty();
+    var buttonUpload = $('<button/>', { 
+      "type":"button",
+      "class":"btn btn-small",
+      "onkeypress":"return false;",
+      "style":"left:150px; top:2px; position:absolute; z-index: 1;"
+    });
     
+    var iconUpload = $('<i/>', { 
+      "class":"uiIconUpload uiIconLightGray"
+    });    
+    $(buttonUpload).append(iconUpload);
+    $(buttonUpload).append(" Upload");
+    $(control).append(buttonUpload);
+
     var inputUpload = $('<input/>', { 
       "type":"file",
       "id":id,
       "name":id,
-      "style":"margin: 0 8px;"
+      "class":"file fileHidden",
+      "onkeypress":"return false;",
+      "style":"margin: 0 8px; width: 70px;"
     });
     $(control).append(inputUpload);
+
+    var spanElem = $('<span/>', {       
+      "text":"No file chosen",
+      "style":"position: absolute;top: 0px;left: 245px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;"
+    });
+    $(control).append(spanElem);
   }
 
   Utils.prototype.capitaliseFirstLetter = function(string) {

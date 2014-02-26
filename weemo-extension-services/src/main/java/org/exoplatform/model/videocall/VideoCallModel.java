@@ -26,7 +26,6 @@ public class VideoCallModel {
   
   private String disableVideoCall = null;
   private String weemoKey = "";
-  private String tokenKey = "";  
   private String customerCertificatePassphrase = "";
   private String authId = "";
   private String authSecret = "";
@@ -34,8 +33,8 @@ public class VideoCallModel {
   private InputStream p12Cert = null;
   private InputStream pemCert = null;
   
-  private String p12CertName = null;
-  private String pemCertName = null;
+  private String p12CertName = "";
+  private String pemCertName = "";
   
   private String profileId = "";
   private String domainId = "";
@@ -80,15 +79,7 @@ public class VideoCallModel {
   
   public void setAuthSecret(String authSecret) {
     this.authSecret = authSecret;
-  }
-  
-  public String getTokenKey() {
-    return tokenKey;
-  }
-  
-  public void setTokenKey(String tokenKey) {
-    this.tokenKey = tokenKey;
-  }
+  }  
   
   public String getVideoCallPermissions() {
     return videoCallPermissions;

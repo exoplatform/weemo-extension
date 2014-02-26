@@ -1,6 +1,5 @@
 package org.exoplatform.portlet.videocall;
 
-import java.io.InputStream;
 import java.util.logging.Logger;
 
 import juzu.*;
@@ -10,10 +9,11 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.portlet.PortletPreferences;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.utils.videocall.PropertyManager;
 import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.videocall.AuthService;
@@ -58,25 +58,29 @@ public class VideoCallApplication {
   @View
   public void index(RenderContext renderContext) throws Exception
   {
+    PortalRequestContext requestContext = Util.getPortalRequestContext();
+    HttpSession httpSession = requestContext.getRequest().getSession();
     remoteUser_ = renderContext.getSecurityContext().getRemoteUser();   
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
     if(videoCallModel == null) videoCallModel = new VideoCallModel();
     String weemoKey = videoCallModel.getWeemoKey();
-    String tokenKey = videoCallModel.getTokenKey();
+    String tokenKey = "";
+    if(httpSession.getAttribute("tokenKey") != null) {
+      tokenKey = httpSession.getAttribute("tokenKey").toString();
+    }
+    
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
-    //if(StringUtils.isEmpty(tokenKey)) {
+    if(StringUtils.isEmpty(tokenKey)) {
       HttpServletRequest request = Util.getPortalRequestContext().getRequest();    
       String profile_id = videoCallModel.getProfileId();      
       AuthService authService = new AuthService();      
-      String content = authService.authenticate(request, profile_id);
-      
+      String content = authService.authenticate(request, profile_id);      
       if(!StringUtils.isEmpty(content)) {
         JSONObject json = new JSONObject(content);
         tokenKey = json.get("token").toString();
-        videoCallModel.setTokenKey(tokenKey);
+        httpSession.setAttribute("tokenKey", tokenKey);
       }      
-      //videoCallService_.saveVideoCallProfile(videoCallModel);
-    //}
+    }
     
     index.with().set("user", remoteUser_)           
             .set("weemoKey", weemoKey)
