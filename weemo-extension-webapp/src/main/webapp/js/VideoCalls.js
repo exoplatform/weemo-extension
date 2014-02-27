@@ -25,8 +25,8 @@
     weemoExtension.getStatus(userName, cbGetSuggestionStatus);
     
     function cbGetSuggestionStatus(targetUser, activity) {
-      if (activity !== "offline" && weemoExtension.isTurnOffForUser == false && weemoExtension.isValidWeemoKey == false 
-        && weemoExtension.tokenKey.length == 0) {
+      if (activity !== "offline" && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
+        && weemoExtension.tokenKey.length > 0) {
         gj(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
       }
     }
@@ -38,7 +38,7 @@
           var targetFullname = gj(this).attr("data-fullname");
           weemoExtension.createWeemoCall(targetUser, targetFullname);
         } else {
-          if(weemoExtension.isValidWeemoKey == false) {
+          if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
             eXo.ecm.VideoCalls.showInstallInterceptor();
           } else if(weemoExtension.isTurnOffForUser == "true") {
             eXo.ecm.VideoCalls.showPermissionInterceptor();

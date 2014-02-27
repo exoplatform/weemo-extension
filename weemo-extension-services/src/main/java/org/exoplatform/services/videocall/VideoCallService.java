@@ -65,7 +65,8 @@ public class VideoCallService {
   public static String VIDEO_PEM_CERT_NODE_NAME = "pemCert";
   public static String VIDEO_CERT_MIXIN_NAME = "exo:videoCallCertificate";
   public static String VIDEO_PROFILE_ID = "exo:profileId";
-  public static String VIDEO_DOMAIN_ID = "exo:domainId";
+  public static String VIDEO_DOMAIN_ID = "exo:domainId";  
+  private static String tokenKey = null;
   
   private static final Log LOG = ExoLogger.getLogger(VideoCallService.class.getName());
   
@@ -73,6 +74,14 @@ public class VideoCallService {
   
   public VideoCallService() {
     videoProfileCache = WCMCoreUtils.getService(CacheService.class).getCacheInstance(VideoCallService.class.getName());
+  }
+  
+  public String getTokenKey() {
+    return tokenKey;
+  }
+  
+  public void setTokenKey(String newTokenKey) {
+    tokenKey = newTokenKey;
   }
   
   public void saveVideoCallProfile(VideoCallModel videoCallModel) {
@@ -85,7 +94,8 @@ public class VideoCallService {
     InputStream p12Cert = videoCallModel.getP12Cert();
     InputStream pemCert = videoCallModel.getPemCert();
     String profileId = videoCallModel.getProfileId();
-    String domainId = videoCallModel.getDomainId();
+    String domainId = videoCallModel.getDomainId();  
+    
    
     SessionProvider sessionProvider = null;
     try {
@@ -206,7 +216,7 @@ public class VideoCallService {
     SessionProvider sessionProvider = null;
     RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
     if(repositoryService == null) return null;
-    sessionProvider = WCMCoreUtils.getUserSessionProvider();
+    sessionProvider = WCMCoreUtils.getSystemSessionProvider();
     Session session;
     try {
       session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
@@ -238,7 +248,7 @@ public class VideoCallService {
     SessionProvider sessionProvider = null;
     RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
     if(repositoryService == null) return null;
-    sessionProvider = WCMCoreUtils.getUserSessionProvider();
+    sessionProvider = WCMCoreUtils.getSystemSessionProvider();
     Session session;
     try {
       session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
@@ -273,7 +283,7 @@ public class VideoCallService {
       SessionProvider sessionProvider = null;
       RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
       if(repositoryService == null) return null;
-      sessionProvider = WCMCoreUtils.getUserSessionProvider();
+      sessionProvider = WCMCoreUtils.getSystemSessionProvider();
       Session session;
       try {
         session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    

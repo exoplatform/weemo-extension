@@ -25,17 +25,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.Authenticator;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -50,6 +46,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import juzu.impl.request.Request;
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.model.videocall.VideoCallModel;
@@ -173,19 +171,18 @@ public class AuthService {
       }
       br.close();
       responseContent = sbuilder.toString();
-      /*PortalRequestContext requestContext = Util.getPortalRequestContext();
-      HttpSession httpSession = requestContext.getRequest().getSession();      
-      if(!StringUtils.isEmpty(responseContent)) {
-        
+      // Set new token key
+      String tokenKey = "";
+      if(!StringUtils.isEmpty(responseContent)) {        
         JSONObject json = new JSONObject(responseContent);
-        String tokenKey = json.get("token").toString();
-        httpSession.setAttribute("tokenKey", tokenKey);
+        tokenKey = json.get("token").toString();        
       } else {
-        httpSession.setAttribute("tokenKey", "");
-      }*/
+        tokenKey = "";
+      }
+      videoCallService.setTokenKey(tokenKey);
     } catch(Exception ex) {
-      ex.printStackTrace();
       LOG.error("Have problem during authenticating process.");
+      videoCallService.setTokenKey("");
     }    
     return responseContent;
   } 

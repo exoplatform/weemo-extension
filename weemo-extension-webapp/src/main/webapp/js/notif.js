@@ -442,7 +442,7 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
           var targetFullname = jqchat(this).attr("data-fullname");
           weemoExtension.createWeemoCall(targetUser, targetFullname);
         } else {
-          if(weemoExtension.isValidWeemoKey == false) {
+          if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
             eXo.ecm.VideoCalls.showInstallInterceptor();
           } else if(weemoExtension.isTurnOffForUser == "true") {
             eXo.ecm.VideoCalls.showPermissionInterceptor();
@@ -450,10 +450,9 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
         }
       });
 
-      function cbGetStatus(targetUser, activity) {
-
-	if (activity !== "offline" && weemoExtension.isTurnOffForUser == false && weemoExtension.isValidWeemoKey == false 
-        && weemoExtension.tokenKey.length == 0) {
+      function cbGetStatus(targetUser, activity) {       
+	if (activity !== "offline" && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
+        && weemoExtension.tokenKey.length > 0) {
           jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
         }
       }      
@@ -489,8 +488,8 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
   jqchat(h3Elem).append(html);
 
   function cbGetProfileStatus(targetUser, activity) {
-    if (activity !== "offline" && weemoExtension.isTurnOffForUser == false && weemoExtension.isValidWeemoKey == false 
-        && weemoExtension.tokenKey.length == 0) {
+    if (activity !== "offline" && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
+        && weemoExtension.tokenKey.length > 0) {
       jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
     }
   }
@@ -501,7 +500,7 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
           var targetFullname = jqchat(this).attr("data-fullname");
           weemoExtension.createWeemoCall(targetUser, targetFullname);
         } else {
-          if(weemoExtension.isValidWeemoKey == false) {
+          if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
             eXo.ecm.VideoCalls.showInstallInterceptor();
           } else if(weemoExtension.isTurnOffForUser == "true") {
             eXo.ecm.VideoCalls.showPermissionInterceptor();
@@ -522,8 +521,8 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
   }
 
   function cbGetConnectionStatus(targetUser, activity) {
-    if (activity !== "offline" && weemoExtension.isTurnOffForUser == false && weemoExtension.isValidWeemoKey == false 
-        && weemoExtension.tokenKey.length == 0) {
+    if (activity !== "offline" && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
+        && weemoExtension.tokenKey.length > 0) {
       jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
     }
   }
@@ -555,7 +554,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
           var targetFullname = jqchat(this).attr("data-fullname");
           weemoExtension.createWeemoCall(targetUser, targetFullname);
         } else {
-          if(weemoExtension.isValidWeemoKey == false) {
+          if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
             eXo.ecm.VideoCalls.showInstallInterceptor();
           } else if(weemoExtension.isTurnOffForUser == "true") {
             eXo.ecm.VideoCalls.showPermissionInterceptor();
