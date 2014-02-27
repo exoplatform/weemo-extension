@@ -220,8 +220,8 @@
           <i class="uiIconWarning"></i> &{exoplatform.videocall.permissions.empty.alertMessage}
         </div>
         <form class="UIForm" id="UIUserSelector" action="" method="post"><div><input type="hidden" name="formOp" value=""><input type="hidden" name="gtn:csrf" value="A64A2D967F00010111B72C96CA121B53"></div>
-		<div class="uiUserSelector" id="UIUserSelector">
-			<div class="selectUserContainer resizable">
+		<div class="uiUserSelector" style="height: 320px;overflow: auto;" id="UIUserSelector">
+			<div class="selectUserContainer">
 					
 		      <div class="uiSearch clearfix">
 		        
@@ -277,11 +277,12 @@
 			
 
 		</div>
-		</form>
-        <div class="uiAction uiActionBorder">
+		<div class="uiAction uiActionBorder">
 			<button type="button" class="btn" onClick="eXo.ecm.VideoCallsUtils.addUserPermission(this)" emptyMsg="&{exoplatform.videocall.permissions.empty.alertMessage}" >Add</button>
 			<button type="button" class="btn" data-dismiss="modal">Close</button>
 		</div>
+		</form>
+        
       </div>
 	  
     </div><!-- /.modal-content -->
