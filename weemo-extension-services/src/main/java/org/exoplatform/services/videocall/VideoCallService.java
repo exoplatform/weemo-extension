@@ -58,7 +58,6 @@ public class VideoCallService {
   public static String DISABLEVIDEOCALL_PROP ="exo:disableVideoCall";
   public static String WEEMOKEY_PROP = "exo:weemoKey";
   public static String VIDEO_PERMISSIONS_PROP = "exo:videoCallPermissions";
-  public static String VIDEO_TOKEN_KEY = "exo:tokenKey";
   public static String VIDEO_PASSPHARSE = "exo:passPhrase";
   public static String VIDEO_AUTH_ID = "exo:authId";
   public static String VIDEO_AUTH_SECRET = "exo:authSecret";
@@ -271,8 +270,6 @@ public class VideoCallService {
     if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
       videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);
     } else {
-      PortalRequestContext requestContext = Util.getPortalRequestContext();
-      HttpSession httpSession = requestContext.getRequest().getSession();
       SessionProvider sessionProvider = null;
       RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
       if(repositoryService == null) return null;
@@ -287,7 +284,6 @@ public class VideoCallService {
           videoCallModel = new VideoCallModel();
           videoCallModel.setWeemoKey(videoCallNode.getProperty(WEEMOKEY_PROP).getString());
           videoCallModel.setDisableVideoCall(videoCallNode.getProperty(DISABLEVIDEOCALL_PROP).getString());
-          httpSession.setAttribute("tokenKey", videoCallNode.getProperty(VIDEO_TOKEN_KEY).getString());
           videoCallModel.setProfileId(videoCallNode.getProperty(VIDEO_PROFILE_ID).getString());
           videoCallModel.setDomainId(videoCallNode.getProperty(VIDEO_DOMAIN_ID).getString());
           if(videoCallNode.hasProperty(VIDEO_PERMISSIONS_PROP)) {
@@ -320,7 +316,7 @@ public class VideoCallService {
             videoCallModel.setPemCert(null);
             videoCallModel.setPemCertName("");
           }
-          videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
+          //videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
         }
       } catch (LoginException e) {
         // Do nothing
@@ -345,19 +341,7 @@ public class VideoCallService {
       weemoKey = videoCallModel.getWeemoKey();
     }
     return weemoKey;
-  }
-  ///////////////////////////////////////////////////////////////////////////////////////////  
-  public String getTokenKey() {
-    String tokenKey = null;
-    VideoCallModel videoCallModel = null;
-    if(videoProfileCache != null && videoProfileCache.get(VIDEO_TOKEN_KEY) != null) {
-      videoCallModel = videoProfileCache.get(VIDEO_TOKEN_KEY);      
-     } else {
-       videoCallModel = getVideoCallProfile();      
-     }
-    tokenKey = videoCallModel.getWeemoKey();
-    return tokenKey;
-  }
+  } 
   
   /////////////////////////////////
   public boolean isDisableVideoCall() {
@@ -374,17 +358,7 @@ public class VideoCallService {
     return disableVideoCall;
   }
   
-  //////////////////////////////////////////////////////
-  public void setDisableVideoCall(boolean disableVideoCall) {
-    VideoCallModel videoCallModel = null;
-    if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
-      videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);      
-    } else {
-      videoCallModel = getVideoCallProfile();
-    }
-    videoCallModel.setDisableVideoCall(String.valueOf(disableVideoCall));
-    saveVideoCallProfile(videoCallModel);   
-  }
+  
   //////////////////////////////////////////////////////////
   public boolean isExistVideoCallProfile() {
     boolean isExist = false;

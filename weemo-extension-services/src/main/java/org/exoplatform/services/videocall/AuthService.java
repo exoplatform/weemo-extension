@@ -49,13 +49,17 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.utils.videocall.PropertyManager;
+import org.json.JSONObject;
 
 
 
@@ -169,8 +173,18 @@ public class AuthService {
       }
       br.close();
       responseContent = sbuilder.toString();
-      
+      /*PortalRequestContext requestContext = Util.getPortalRequestContext();
+      HttpSession httpSession = requestContext.getRequest().getSession();      
+      if(!StringUtils.isEmpty(responseContent)) {
+        
+        JSONObject json = new JSONObject(responseContent);
+        String tokenKey = json.get("token").toString();
+        httpSession.setAttribute("tokenKey", tokenKey);
+      } else {
+        httpSession.setAttribute("tokenKey", "");
+      }*/
     } catch(Exception ex) {
+      ex.printStackTrace();
       LOG.error("Have problem during authenticating process.");
     }    
     return responseContent;
