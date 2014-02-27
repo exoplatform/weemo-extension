@@ -62,11 +62,7 @@ button.close{
     margin:14px 0; 
 }
 
-.uiVideoCallAdminPortlet .row .span6:nth-child(2n+2){
-    padding-top: 48px;
-}
-
-.uiVideoCallAdminPortlet .row .span6 p{
+.uiVideoCallAdminPortlet .row .span5 p{
     padding: 6px 0 0 0;
 }
 

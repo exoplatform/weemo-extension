@@ -36,7 +36,9 @@ public class PropertyManager {
   public static final String PROPERTY_CLIENT_SECRET_AUTH = "weemo.authSecretId";
   public static final String PROPERTY_PASSPHRASE = "weemo.customerCertificatePassphrase";
   public static final String PROPERTY_AUTH_URL = "weemo.authURL";
+  public static final String PROPERTY_DEFAULT_PERMISSION = "weemo.defaultPermission";
   public static final String PROPERTY_USER_ID_AUTH = "user_id_auth";
+  
   
   public static final String PROPERTY_DOMAIN_ID = "domain_id";  
   
@@ -86,6 +88,7 @@ public class PropertyManager {
       overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_AUTH, "");
       overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "");
       overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_AUTH, "");
+      overridePropertyIfNotSet(PROPERTY_DEFAULT_PERMISSION, "*:/platform/users#true");
       
       
       videoCallService = new VideoCallService();
@@ -108,7 +111,7 @@ public class PropertyManager {
         String profileId = (properties().getProperty(PROPERTY_VIDEO_PROFILE)==null) ? "" : 
           properties().getProperty(PROPERTY_VIDEO_PROFILE);
         //Set default permission
-        videoCallModel.setVideoCallPermissions("*:/platform/users#true");
+        videoCallModel.setVideoCallPermissions(properties().getProperty(PROPERTY_DEFAULT_PERMISSION));
         videoCallModel.setCustomerCertificatePassphrase(passPhrase);
         videoCallModel.setAuthId(authId);
         videoCallModel.setAuthSecret(authSecret);

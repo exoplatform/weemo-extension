@@ -100,7 +100,7 @@ public class VideoCallAdministration {
       passPhrase = PropertyManager.getProperty(PropertyManager.PROPERTY_PASSPHRASE);
       authId = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_KEY_AUTH);
       authSecret = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_SECRET_AUTH);
-      videoPermissions = "*:/platform/users#true";
+      videoPermissions = PropertyManager.getProperty(PropertyManager.PROPERTY_DEFAULT_PERMISSION);
     }
     
     index.with().set("turnOffVideoCall", turnOffVideoCall)
@@ -116,7 +116,7 @@ public class VideoCallAdministration {
     videoCalls.setDisplaySuccessMsg(false);
   }  
   
-  @View
+  @Action
   @Route("/save")
   public Response save(String disableVideoCall, String weemoKey, String authId, String authSecret, String customerCertificatePassphrase,
                        String videoCallPermissions, org.apache.commons.fileupload.FileItem p12Cert,
