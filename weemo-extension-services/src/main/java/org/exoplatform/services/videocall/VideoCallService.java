@@ -422,6 +422,22 @@ public class VideoCallService {
   }
   ////////////////////////////////////////////////////////
   public boolean isTurnOffVideoCall() throws Exception {
+    VideoCallModel videoCallModel = null;
+    if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
+      videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);      
+    } else {
+      videoCallModel = getVideoCallProfile();
+    }
+    if(videoCallModel == null) return true;
+    String str = videoCallModel.getDisableVideoCall();    
+    if(Boolean.valueOf(str)) {
+      return true; 
+    }    
+    return false;
+  }
+
+  ////////////////////////////////////////////////////////
+  public boolean isTurnOffVideoCallForUser() throws Exception {
     boolean isTurnOff = true;
     VideoCallModel videoCallModel = null;
     if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {

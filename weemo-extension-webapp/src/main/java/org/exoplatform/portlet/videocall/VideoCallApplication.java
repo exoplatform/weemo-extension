@@ -69,6 +69,7 @@ public class VideoCallApplication {
       tokenKey = httpSession.getAttribute("tokenKey").toString();
     }
     
+    boolean turnOffVideoCallForUser = videoCallService_.isTurnOffVideoCallForUser();
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
     if(StringUtils.isEmpty(tokenKey)) {
       HttpServletRequest request = Util.getPortalRequestContext().getRequest();    
@@ -85,6 +86,7 @@ public class VideoCallApplication {
     index.with().set("user", remoteUser_)           
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
+            .set("turnOffVideoCallForUser", turnOffVideoCallForUser)
             .set("turnOffVideoCall", turnOffVideoCall)
             .render();
   }  

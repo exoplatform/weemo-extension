@@ -29,7 +29,7 @@ import org.exoplatform.services.videocall.VideoCallService;
 public class PropertyManager {
   private static Properties properties = null;
 
-  private static final String PROPERTIES_PATH = System.getProperty("catalina.base")+"/conf/weemo.properties";
+  private static final String PROPERTIES_PATH = System.getProperty("catalina.base")+"/conf/weemo/weemo.properties";
   
   public static final String PROPERTY_WEEMO_KEY = "weemo.webappId";
   public static final String PROPERTY_CLIENT_KEY_AUTH = "weemo.authClientId";

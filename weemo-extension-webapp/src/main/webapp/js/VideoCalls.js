@@ -25,16 +25,24 @@
     weemoExtension.getStatus(userName, cbGetSuggestionStatus);
     
     function cbGetSuggestionStatus(targetUser, activity) {
-      if (activity !== "offline") {
-        jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
+      if (activity !== "offline" && weemoExtension.isTurnOffForUser == false && weemoExtension.isValidWeemoKey == false 
+        && weemoExtension.tokenKey.length == 0) {
+        gj(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
       }
     }
 
+    
     gj(".weemoCallOverlay").on("click", function() {
         if (!gj(this).hasClass("disabled")) {
           var targetUser = gj(this).attr("data-username");
           var targetFullname = gj(this).attr("data-fullname");
           weemoExtension.createWeemoCall(targetUser, targetFullname);
+        } else {
+          if(weemoExtension.isValidWeemoKey == false) {
+            eXo.ecm.VideoCalls.showInstallInterceptor();
+          } else if(weemoExtension.isTurnOffForUser == "true") {
+            eXo.ecm.VideoCalls.showPermissionInterceptor();
+          }
         }
       });
 
@@ -44,6 +52,21 @@
   VideoCalls.prototype.hidePopover = function (element) {
     gj(element).popover('hide');
   };
+
+  VideoCalls.prototype.showInstallInterceptor = function(title, message) {
+    var interceptor = gj("#install-interceptor");
+    gj(interceptor).appendTo("body");       
+    gj(interceptor).modal('show');
+    gj(".modal-backdrop").remove();
+  } 
+
+  VideoCalls.prototype.showPermissionInterceptor = function(title, message) {
+    var interceptor = gj("#permission-interceptor");
+    gj(interceptor).appendTo("body");       
+    gj(interceptor).modal('show');
+    gj(".modal-backdrop").remove();
+  } 
+
 
   gj(document).ready(function() {
 

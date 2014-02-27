@@ -3,6 +3,7 @@
   data-weemo-key="<%=weemoKey%>"
   data-token-key="<%=tokenKey%>"
   data-weemo-turnoff="<%=turnOffVideoCall%>"
+  data-weemo-turnoff-user="<%=turnOffVideoCallForUser%>"
   style="display: none;"> 
 </div>
 
@@ -11,4 +12,57 @@
 	<strong>&{exoplatform.videocall.installer.message}</strong> 
         <a id="weemo-alert-download" href="javascript:void(0);"><strong>&{exoplatform.videocall.installer.download}</strong></a> | 
         <a id="weemo-alert-dismiss" href="javascript:void(0);">&{exoplatform.videocall.installer.dismiss}</a>
+</div>
+
+<div id="weemo-interceptor" style="display:none;" permissions-title="&{exoplatform.videocall.permissions.title}" permissions-message="&{exoplatform.videocall.permissions.message}" 
+permissions-okButton="&{exoplatform.videocall.permissions.okButton}" installKey-title="&{exoplatform.videocall.installKey.title}"
+installKey-message="&{exoplatform.videocall.installKey.message}" 
+installKey-learnMoreButton="&{exoplatform.videocall.installKey.learnMoreButton}"
+installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
+</div>
+
+
+<!--Install Interceptor Modal -->
+<div id="install-interceptor" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-vertical-centered">
+    <div class="modal-content">
+		<div class="popupHeader clearfix modal-header">
+			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
+			<span id="groupModalTitle" class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.installKey.title}</span>
+		</div>
+
+		<div class="PopupContent popupContent modal-body">    
+			<i class="uiVideoCallIconWarning"></i><span> &{exoplatform.videocall.installKey.message}</span>
+			<div class="uiAction uiActionBorder">
+				<button type="button" class="btn btn-primary" onclick="window.open('http://www.exoplatform.com/addons/video-calls')">&{exoplatform.videocall.installKey.learnMoreButton}</button>
+				<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.installKey.cancelButton}</button>
+			</div>
+		</div>
+		
+      </div>
+		
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<!--Permission Interceptor Modal -->
+<div id="permission-interceptor" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+		<div class="popupHeader clearfix modal-header">
+			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
+			<span id="groupModalTitle" class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.permissions.title}</span>
+		</div>
+
+		<div class="PopupContent popupContent modal-body">    
+			<i class="uiVideoCallIconWarning"></i><span> &{exoplatform.videocall.permissions.message}</span>
+			<div class="uiAction uiActionBorder">
+				<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.permissions.okButton}</button>
+			</div>
+		</div>
+		
+      </div>
+		
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div>
