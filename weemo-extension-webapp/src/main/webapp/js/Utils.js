@@ -68,7 +68,7 @@
 
   Utils.prototype.displayErrorAlert = function(title) {    
     var alertElem = $("#videocalls-alert-error");
-    var successMsg = $(alertElem).attr("errorMsg") + " " + title + ".";
+    var successMsg = title + " " + $(alertElem).attr("errorMsg");
     var icon = $('<i/>', {
       'class':'uiIconError'
     });
