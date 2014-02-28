@@ -59,15 +59,15 @@
 					<%
 					  if(StringUtils.isEmpty(p12CertName)) {
 					%>
-					  <button type="button" class="btn btn-small" style="left:180px; top:2px; position:absolute; z-index: 1;"><i class="uiIconUpload uiIconLightGray"></i>&nbsp;Upload</button>
+					  <button type="button" class="btn btn-small" style="left:180px; top:2px; position:absolute; z-index: 1;"><i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
 					  <input style="margin: 0 8px 0 22px; width: 80px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert">
-					  <span style="position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;">No file selected</span>
+					  <span style="position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;">&{exoplatform.videocall.administration.noFile}</span>
 					<%  
 					  } else {
 					%>
 					  <strong style="margin: 0 8px 0 20px;"><%=p12CertName%></strong>
                       <div class="pull-right" onclick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);" >
-                        <a data-placement="bottom" rel="tooltip" class="actionIcon" href="#" data-original-title="Delete"><i class="uiIconDelete uiIconLightGray"></i></a>
+                        <a data-placement="bottom" rel="tooltip" class="actionIcon" href="#" data-original-title="&{exoplatform.videocall.administration.delete}"><i class="uiIconDelete uiIconLightGray"></i></a>
                       </div>
                     <%
 					  }
@@ -81,16 +81,16 @@
 					<%  
 					  if(StringUtils.isEmpty(pemCertName)) {
 					%>
-					  <button type="button" class="btn btn-small" style="left:180px; top:2px; position:absolute; z-index: 1;"><i class="uiIconUpload uiIconLightGray"></i>&nbsp;Upload</button>
+					  <button type="button" class="btn btn-small" style="left:180px; top:2px; position:absolute; z-index: 1;"><i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
 					  <input style="margin: 0 8px 0 22px; width: 80px;" type="file" class="file fileHidden" onkeypress="return false;" label="&{exoplatform.videocall.pemCertificate}" id="pemCert" name="pemCert">
-					  <span style="position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;">No file chosen</span>					  					  				  
+					  <span style="position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;">&{exoplatform.videocall.administration.noFile}</span>
 					  
 					<%  
 					  } else {
 					%>
 					  <strong style="margin: 0 8px 0 20px;"><%=pemCertName%></strong>
                       <div class="pull-right" onclick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);" >
-                        <a data-placement="bottom" rel="tooltip" class="actionIcon" href="#" data-original-title="Delete"><i class="uiIconDelete uiIconLightGray"></i></a>
+                        <a data-placement="bottom" rel="tooltip" class="actionIcon" href="#" data-original-title="&{exoplatform.videocall.administration.delete}"><i class="uiIconDelete uiIconLightGray"></i></a>
                       </div>
 					<%
 					  }
@@ -147,7 +147,7 @@
 				      <td class="center">				        
                         <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="YES" data-no="NO" checked="checked" style="visibility: hidden;" class="yesno"></div>
                       </td>					 
-                      <td class="center"><a data-original-title="Delete" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete uiIconLightGray"></i></a></td>
+                      <td class="center"><a data-original-title="&{exoplatform.videocall.administration.delete}" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete uiIconLightGray"></i></a></td>
                     </tr>
 				  <%
 				    }
@@ -183,9 +183,9 @@
 						 		<input name="userOrGroup" type="hidden" id="userOrGroup" readonly="">
 						 	</div><div class="pull-left">
 							
-									<a class="actionIcon" link="@{VideoCallAdministration.openUserPermission()}" href="javascript:void(0);" onClick="eXo.ecm.VideoCallsUtils.openUserPermission(this, 'userSelector');" rel="tooltip" data-placement="bottom" data-original-title="Select User"><i class="uiIconSelectUser uiIconLightGray"></i></a>
+									<a class="actionIcon" link="@{VideoCallAdministration.openUserPermission()}" href="javascript:void(0);" onClick="eXo.ecm.VideoCallsUtils.openUserPermission(this, 'userSelector');" rel="tooltip" data-placement="bottom" data-original-title="&{exoplatform.videocall.administration.selectUser}"><i class="uiIconSelectUser uiIconLightGray"></i></a>
 								
-									<a class="actionIcon" link="@{VideoCallAdministration.openGroupPermission()}" href="javascript:void(0);" onClick="eXo.ecm.VideoCallsUtils.openGroupPermission(this, 'groupSelector');"  rel="tooltip" data-placement="bottom" data-original-title="Select Membership"><i class="uiIconSelectMember uiIconLightGray"></i></a>
+									<a class="actionIcon" link="@{VideoCallAdministration.openGroupPermission()}" href="javascript:void(0);" onClick="eXo.ecm.VideoCallsUtils.openGroupPermission(this, 'groupSelector');"  rel="tooltip" data-placement="bottom" data-original-title="&{exoplatform.videocall.administration.selectMembership}"><i class="uiIconSelectMember uiIconLightGray"></i></a>
 								
 							
 							     <button type="button" onClick="eXo.ecm.VideoCallsUtils.addPermissions();" class="btn">&{exoplatform.videocall.action.add}</button>
@@ -217,8 +217,8 @@
     <div class="modal-content">
 
       <div class="popupHeader clearfix modal-header">
-		<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
-		<span id="userModalTitle" class="PopupTitle popupTitle modal-title">User Selector</span>
+		<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="&{exoplatform.videocall.administration.close}" ></button>
+		<span id="userModalTitle" class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.administration.userSelector}</span>
       </div>
       <div class="PopupContent popupContent modal-body">
         <div class="alert alert-warning alert-dismissable" style="display:none; left: 30%; position: absolute; top: 27px;">
@@ -239,10 +239,10 @@
 						<span class="selectboxMedium">
 							<span class="uiSelectbox">
 								<select class="selectbox" id="filter" name="filter">
-									<option value="userName">User Name</option>
-									<option value="lastName">Last Name</option>
-									<option value="firstName">First Name</option>
-									<option value="email">Email Name</option>
+									<option value="userName">&{exoplatform.videocall.administration.name}</option>
+									<option value="lastName">&{exoplatform.videocall.administration.lastName}</option>
+									<option value="firstName">&{exoplatform.videocall.administration.firstName}</option>
+									<option value="email">&{exoplatform.videocall.administration.email}</option>
 								</select>
 							</span>		
 						</span>
@@ -262,16 +262,16 @@
 								</th>
 								
 								<th>
-									User Name
+                                    &{exoplatform.videocall.administration.name}
 								</th>
 								<th>
-									First Name
+                                    &{exoplatform.videocall.administration.firstName}
 								</th>
 								<th>
-									Last Name
+                                    &{exoplatform.videocall.administration.lastName}
 								</th>
 								<th>
-									Email
+                                    &{exoplatform.videocall.administration.email}
 								</th>
 								
 							</tr>
@@ -284,8 +284,8 @@
 
 		</div>
 		<div class="uiAction uiActionBorder">
-			<button type="button" class="btn" onClick="eXo.ecm.VideoCallsUtils.addUserPermission(this)" emptyMsg="&{exoplatform.videocall.permissions.empty.alertMessage}" >Add</button>
-			<button type="button" class="btn" data-dismiss="modal">Close</button>
+			<button type="button" class="btn" onClick="eXo.ecm.VideoCallsUtils.addUserPermission(this)" emptyMsg="&{exoplatform.videocall.permissions.empty.alertMessage}" >&{exoplatform.videocall.administration.add}</button>
+			<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.administration.close}</button>
 		</div>
 		</form>
         
@@ -300,8 +300,8 @@
   <div class="modal-dialog">
     <div class="modal-content">
 	  <div class="popupHeader clearfix modal-header">
-		<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
-		<span class="PopupTitle popupTitle modal-title">Group Selector</span>
+		<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="&{exoplatform.videocall.administration.close}" ></button>
+		<span class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.administration.groupSelector}</span>
       </div>
 
       <div class="PopupContent popupContent modal-body">        
@@ -317,11 +317,11 @@
 			<div class="row-fluid">
 				<div class="span6">
 					<div class="uiBox selectGroup noRounded">
-						<h6 class="title">Select Group</h6>
+						<h6 class="title">&{exoplatform.videocall.administration.selectGroup}</h6>
 						<div class="uiTrees scrollArea">
 							<div class="treeContainer jsContainer">					
 								<div class="homeNode clearfix">
-									<a class="actionIcon pull-left" href="#" rel="tooltip" style="display: block;" data-original-title="Up Level"><i class="uiIconUpLevel uiIconLightGray"></i></a>
+									<a class="actionIcon pull-left" href="#" rel="tooltip" style="display: block;" data-original-title="&{exoplatform.videocall.administration.upLevel}"><i class="uiIconUpLevel uiIconLightGray"></i></a>
 								</div>					
 							</div>	
 						</div>
@@ -330,7 +330,7 @@
 				<div class="span6">
 					<div class="uiBox noRounded childGoup">
 						<h6 class="title">
-							Select Membership
+                            &{exoplatform.videocall.administration.selectMembership}
 						</h6>
 						<div class="uiContentBox">
 							<ul>
@@ -342,7 +342,7 @@
 					
 			</div>
 		<div class="uiAction uiActionBorder">
-			<button type="button" class="btn" data-dismiss="modal">Close</button>
+			<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.administration.close}</button>
 		</div>
       </div>
 
@@ -358,15 +358,15 @@
   <div class="modal-dialog">
     <div class="modal-content">
 		<div class="popupHeader clearfix modal-header">
-			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
-			<span class="PopupTitle popupTitle modal-title">Delete Confirmation</span>
+			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="&{exoplatform.videocall.administration.close}" ></button>
+			<span class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.administration.deleteConfirmTitle}</span>
 		</div>
 
 		<div class="PopupContent popupContent modal-body">    
 			<span msg="&{exoplatform.videocall.administration.deleteConfirm}"></span>
 			<div class="uiAction uiActionBorder">
-				<button type="button" class="btn btn-primary" >Yes</button>
-				<button type="button" class="btn" data-dismiss="modal">No</button>
+				<button type="button" class="btn btn-primary" >&{exoplatform.videocall.administration.confirmYes}</button>
+				<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.administration.confirmNo}</button>
 			</div>
 		</div>
 		

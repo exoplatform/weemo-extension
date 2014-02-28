@@ -609,7 +609,7 @@
         "name":"enableVideoCalls",
         "value":"true",
         "data-yes":"YES",
-	"data-no":"NO",
+        "data-no":"NO",
         "checked":"checked",
         "style":"visibility: hidden;",       
         "class":"yesno"
@@ -787,7 +787,7 @@
     $(control).append(inputUpload);
 
     var spanElem = $('<span/>', {       
-      "text":"No file chosen",
+      "text":"No file selected",
       "style":"position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;"
     });
     $(control).append(spanElem);
