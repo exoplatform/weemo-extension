@@ -105,7 +105,7 @@
 					    </div>
 					</div>
 					<div class="control-group">
-					    <label  class="control-label" for="passPhrase">&{exoplatform.videocall.passPhrase}: </label>
+					    <label  class="control-label" for="customerCertificatePassphrase">&{exoplatform.videocall.passPhrase}: </label>
 					    <div class="controls" >
 					      <input class="span3" type="password" label="&{exoplatform.videocall.passPhrase}" id="customerCertificatePassphrase" name="customerCertificatePassphrase" value="<%=customerCertificatePassphrase%>">
 					    </div>
@@ -220,7 +220,7 @@
           <i class="uiIconWarning"></i> &{exoplatform.videocall.permissions.empty.alertMessage}
         </div>
         <form class="UIForm" id="UIUserSelector" action="" method="post"><div><input type="hidden" name="formOp" value=""><input type="hidden" name="gtn:csrf" value="A64A2D967F00010111B72C96CA121B53"></div>
-		<div class="uiUserSelector" style="height: 320px;overflow: auto;" id="UIUserSelector">
+		<div class="uiUserSelector" style="height: 320px;overflow: auto;">
 			<div class="selectUserContainer">
 					
 		      <div class="uiSearch clearfix">
@@ -295,7 +295,7 @@
     <div class="modal-content">
 	  <div class="popupHeader clearfix modal-header">
 		<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
-		<span id="groupModalTitle" class="PopupTitle popupTitle modal-title">Group Selector</span>
+		<span class="PopupTitle popupTitle modal-title">Group Selector</span>
       </div>
 
       <div class="PopupContent popupContent modal-body">        
@@ -353,7 +353,7 @@
     <div class="modal-content">
 		<div class="popupHeader clearfix modal-header">
 			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
-			<span id="groupModalTitle" class="PopupTitle popupTitle modal-title">Delete Confirmation</span>
+			<span class="PopupTitle popupTitle modal-title">Delete Confirmation</span>
 		</div>
 
 		<div class="PopupContent popupContent modal-body">    
