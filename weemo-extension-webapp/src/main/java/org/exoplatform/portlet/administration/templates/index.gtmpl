@@ -61,12 +61,15 @@
 					%>
 					  <button type="button" class="btn btn-small" style="left:180px; top:2px; position:absolute; z-index: 1;"><i class="uiIconUpload uiIconLightGray"></i>&nbsp;Upload</button>
 					  <input style="margin: 0 8px 0 22px; width: 80px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert">
-					  <span style="position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;">No file chosen</span>					  					  				  
+					  <span style="position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;">No file selected</span>
 					<%  
 					  } else {
 					%>
-					  <strong style="margin: 0 8px 0 20px;"><%=p12CertName%></strong><a href="javascript:void(0);"><i class="uiIconDelete" data-placement="bottom" rel="tooltip" data-toggle="tooltip" data-original-title="Remove File" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i></a>
-					<%
+					  <strong style="margin: 0 8px 0 20px;"><%=p12CertName%></strong>
+                      <div class="pull-right" onclick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);" >
+                        <a data-placement="bottom" rel="tooltip" class="actionIcon" href="#" data-original-title="Delete"><i class="uiIconDelete uiIconLightGray"></i></a>
+                      </div>
+                    <%
 					  }
 					%>
 					  </div>
@@ -85,7 +88,10 @@
 					<%  
 					  } else {
 					%>
-					  <strong style="margin: 0 8px 0 20px;"><%=pemCertName%></strong><a href="javascript:void(0);"><i class="uiIconDelete" data-placement="bottom" rel="tooltip" data-toggle="tooltip" data-original-title="Remove File" onClick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);"></i></a>
+					  <strong style="margin: 0 8px 0 20px;"><%=pemCertName%></strong>
+                      <div class="pull-right" onclick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);" >
+                        <a data-placement="bottom" rel="tooltip" class="actionIcon" href="#" data-original-title="Delete"><i class="uiIconDelete uiIconLightGray"></i></a>
+                      </div>
 					<%
 					  }
 					%>					
@@ -141,7 +147,7 @@
 				      <td class="center">				        
                         <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="YES" data-no="NO" checked="checked" style="visibility: hidden;" class="yesno"></div>
                       </td>					 
-                      <td class="center"><a data-original-title="Delete" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete"></i></a></td>
+                      <td class="center"><a data-original-title="Delete" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete uiIconLightGray"></i></a></td>
                     </tr>
 				  <%
 				    }
