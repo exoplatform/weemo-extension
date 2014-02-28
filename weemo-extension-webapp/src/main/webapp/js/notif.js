@@ -24,6 +24,7 @@ function WeemoExtension() {
   this.isTurnOffForUser = false;
   this.isTurnOff = false;
   this.connectedWeemoDriver = false;
+  this.videoCallVersion = "";
   try {
     this.weemo = new Weemo("", "", "internal", "ppr/");
     /**
@@ -511,6 +512,8 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
 
 };
 
+
+
 WeemoExtension.prototype.attachWeemoToConnections = function() {
   if (window.location.href.indexOf("/portal/intranet/connexions")==-1) return;
 
@@ -621,6 +624,23 @@ var weemoExtension = new WeemoExtension();
     weemoExtension.isTurnOffForUser = $notificationApplication.attr("data-weemo-turnoff-user");
 
     var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
+
+    weemoExtension.videoCallVersion = $notificationApplication.attr("videoCallVersion");
+    if(weemoExtension.videoCallVersion.length > 0) {
+      var oldVersion = weemoExtension.getCookie("videoCallVersion");
+      console.log(weemoExtension.videoCallVersion + " = " + oldVersion);
+      console.log(document.cookie);
+
+      if(weemoExtension.videoCallVersion  > oldVersion) {
+        if(isNotInstallWeemoDriver == 'true') {
+          weemoExtension.removeCookie("isDismiss");
+	  weemoExtension.showWeemoInstaller();
+    	}        
+        weemoExtension.setCookie("videoCallVersion", weemoExtension.videoCallVersion, 365);
+      }
+    }
+
+   
     if(isNotInstallWeemoDriver == 'true') {
 	weemoExtension.showWeemoInstaller();
     }

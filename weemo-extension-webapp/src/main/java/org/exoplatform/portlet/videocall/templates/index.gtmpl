@@ -1,5 +1,6 @@
 <div id="weemo-status"
   data-username="<%=user%>" 
+  videoCallVersion="<%=videoCallVersion%>"
   data-weemo-key="<%=weemoKey%>"
   data-token-key="<%=tokenKey%>"
   data-weemo-turnoff="<%=turnOffVideoCall%>"

@@ -38,6 +38,7 @@ public class PropertyManager {
   public static final String PROPERTY_AUTH_URL = "weemo.authURL";
   public static final String PROPERTY_DEFAULT_PERMISSION = "weemo.defaultPermission";
   public static final String PROPERTY_USER_ID_AUTH = "user_id_auth";
+  public static final String PROPERTY_VIDEOCALL_VERSION = "videocall.version";
   
   
   public static final String PROPERTY_DOMAIN_ID = "domain_id";  
@@ -89,6 +90,7 @@ public class PropertyManager {
       overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "");
       overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_AUTH, "");
       overridePropertyIfNotSet(PROPERTY_DEFAULT_PERMISSION, "*:/platform/users#true");
+      overridePropertyIfNotSet(PROPERTY_VIDEOCALL_VERSION, "");
       
       
       videoCallService = new VideoCallService();

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.commons.version.util.VersionComparator;
 import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
@@ -19,6 +20,7 @@ import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.videocall.AuthService;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.utils.videocall.PropertyManager;
 import org.json.JSONObject;
 
 public class VideoCallApplication {
@@ -64,7 +66,8 @@ public class VideoCallApplication {
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
     if(videoCallModel == null) videoCallModel = new VideoCallModel();
     String weemoKey = videoCallModel.getWeemoKey();
-    String tokenKey = videoCallService_.getTokenKey();   
+    String tokenKey = videoCallService_.getTokenKey(); 
+    String videoCallVersion = PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEOCALL_VERSION);    
     boolean turnOffVideoCallForUser = videoCallService_.isTurnOffVideoCallForUser();
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
     if(tokenKey == null) {
@@ -87,6 +90,7 @@ public class VideoCallApplication {
             .set("tokenKey", tokenKey)
             .set("turnOffVideoCallForUser", turnOffVideoCallForUser)
             .set("turnOffVideoCall", turnOffVideoCall)
+            .set("videoCallVersion", videoCallVersion)
             .render();
   }  
 }
