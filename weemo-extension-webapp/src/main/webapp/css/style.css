@@ -104,8 +104,11 @@ button.close{
 	display: inline-block;
 }
 
-.modal {
-    position: fixed;
-    top: 50% !important;
-    left: 50%;
+.modal {   
+    width: auto;
+    -webkit-transform: translate(-50%);
+    transform: translate(-50%);
+    position: absolute;
+    margin-left: auto;
+    min-width: 560px;
 }
