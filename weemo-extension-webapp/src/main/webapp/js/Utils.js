@@ -3,54 +3,9 @@
 
   var Map = {};
 
-  function Utils() {} ;
+  function Utils() {} ;  
 
-  Utils.prototype.saveVideoCallsPermission = function() {
-    var ajaxLink = $("#videoCallsPermissionForm").attr("action");
-    var disableVideoCall = $("#disableVideoCall").val();
-    var weemoKey = $("#weemoKey").val();
-    var authId = $("#authId").val();
-    var authSecret = $("#authSecret").val();
-    var passPhrase = $("#customerCertificatePassphrase").val();
-    var permissionData = "";
-    //Get list of permissions
-    var uiViewPermissionList = $("#UIViewPermissionList");
-    if($(uiViewPermissionList).find(".empty").length>0) {
-      permissionData = null;
-    } else {
-      var tbody = $(uiViewPermissionList).find("tbody:first");
-      if($(tbody).find("tr").length>0) {
-        $(tbody).find("tr").each(function(i) {
-          if($(this).find("td").length>0) {
-            var tdPermission = $(this).find("td")[0];
-	    var tdOnOff = $(this).find("td")[1];
-            var value = $(tdOnOff).find("input:first").val();
-            permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value;
-          }
-        });
-      }
-      permissionData = permissionData.substring(1);
-    }
-    $.ajax({
-      url: ajaxLink,
-      dataType: "text",
-      data: {
-      "disableVideoCall": disableVideoCall,
-      "weemoKey": weemoKey,
-      "authId":authId,
-      "authSecret":authSecret,
-      "customerCertificatePassphrase":passPhrase,
-      "videoCallPermissions":permissionData
-      },
-      success: function(data){
-        eXo.ecm.VideoCallsUtils.displaySuccessAlert();
-      },
-      error: function(){
-      }
-    });  
-    
-  };
-
+  // Display success message after saving VideoCalls Profile
   Utils.prototype.displaySuccessAlert = function() {    
     var alertElem = $("#videocalls-alert");
     var successMsg = $(alertElem).attr("successMsg");
@@ -66,6 +21,7 @@
     }, 5000);
   };
 
+  // Display warning message when have some field is blank
   Utils.prototype.displayErrorAlert = function(title) {    
     var alertElem = $("#videocalls-alert-error");
     var successMsg = title + " " + $(alertElem).attr("errorMsg");
@@ -82,6 +38,7 @@
     }, 5000);
   };
 
+  // Open User Selector popup
   Utils.prototype.openUserPermission = function(elem, modalId) {
     var $videoAdminApplication = $('#videocalls-alert');
     var url = $(elem).attr("link");
@@ -171,7 +128,7 @@
       }
     });   
   };
-
+  // Add a use from User Selector into the permission table
   Utils.prototype.addUserPermission = function(elem) {
     var isSelected = false;
     var permissions = "";
@@ -198,6 +155,7 @@
     }
   };
 
+  // Search user by name in User Selector
   Utils.prototype.searchUserPermission = function(elem) {
     var ajaxLink = $(elem).attr("ajaxLink");
     var keyword = $("#keyword").val();
@@ -286,6 +244,7 @@
     return false; 
   }
 
+  // Open Group Permission popup
   Utils.prototype.openGroupPermission = function(elem, modalId) {
     var $videoAdminApplication = $('#videocalls-alert');
     var ajaxLink = $(elem).attr("link");
@@ -344,6 +303,7 @@
     }); 
   };
 
+  // Add a group into the permission field.
   Utils.prototype.selectGroupPermision = function(elem)
   {
     var ajaxLink = $(elem).attr("ajaxLink");
@@ -538,6 +498,7 @@
     });
   }
 
+  // Select a membership add fill it into permission field.
   Utils.prototype.selectMembership = function(elem)
   {
     var membership = $(elem).attr("membership");   
@@ -546,7 +507,8 @@
     $("#txtUserOrGroup").val(membershipLabel);
     gj('#groupSelector').modal('hide');
   }
-
+  
+  // Add a permission into permission table
   Utils.prototype.addPermissions = function() {
     var permissions = $("#userOrGroup").val();  
     if(!permissions || permissions.length==0) return;
@@ -643,6 +605,7 @@
     $("#txtUserOrGroup").val("");  
   }
 
+  // Show confirmation message before removing a permission
   Utils.prototype.showDeleteConfirm = function(elem) {
     $('#deleteCofirmation').appendTo("body");
     var deleteButton = $('#deleteCofirmation').find(".btn-primary:first");
@@ -667,9 +630,8 @@
     $(".modal-backdrop").remove();
     
   }
-
   
-
+  // Reload swithcer button to get right status
   Utils.prototype.reloadSwitcherButton = function() {
 
     $("div.spaceRole").each(function() {
@@ -698,7 +660,8 @@
     });
     
   }
-
+  
+  // Test Weemo connection with parametters getted from VideoCalls Profile
   Utils.prototype.testWeemoConnection = function() {
     var testWeemoURL = "/rest/weemo/auth";
     jqchat.ajax({
@@ -718,7 +681,8 @@
       }
     });
   }
-
+  
+  // Show message when connect to Weemo successfull
   Utils.prototype.showTestWeemoSuccess = function() {
     var testWeemoElem = $("#videocalls-alert-test-connection-error");
     var successTestConnMsg = $(testWeemoElem).attr("successTestConnMsg");
@@ -735,7 +699,8 @@
       $(testWeemoElem).hide();
     }, 5000);
   } 
- 
+  
+  // Show the message when have problem while connecto to Weemo
   Utils.prototype.showTestWeemoError = function() {
     var testWeemoElem = $("#videocalls-alert-test-connection-error");
     var errorTestConnMsg = $(testWeemoElem).attr("errorTestConnMsg");
@@ -753,6 +718,7 @@
     }, 5000);
   }
 
+  // Remove the updated file for chosing another file
   Utils.prototype.removeUploadedFile = function(elem, id) {
     var container = $(elem).closest(".control-group");
     var control = $(container).find(".controls:first");
@@ -801,7 +767,7 @@
     });
 
   }
-
+  // Get file's name from full path
   Utils.prototype.getNameOfFile = function(fileName) {
     fileName = fileName.replace(/^.*[\\\/]/, '');
     return fileName;
