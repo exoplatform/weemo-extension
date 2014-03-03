@@ -727,11 +727,14 @@
     var label = $(container).find("label:first");
     var id = $(label).attr("for");
     $(control).empty();    
+    var divElem = $('<div/>', { 
+      "style":"left: 0px; position: absolute; top: 0px; z-index: 1; white-space: nowrap;"      
+    });
+
     var buttonUpload = $('<button/>', { 
       "type":"button",
       "class":"btn btn-small",
-      "onkeypress":"return false;",
-      "style":"left:180px; top:2px; position:absolute; z-index: 1;"
+      "onkeypress":"return false;"
     });
     var iconUpload = $('<i/>', { 
       "class":"uiIconUpload uiIconLightGray"
@@ -739,7 +742,15 @@
     var uploadLabel = $("#videocalls-label").attr("uploadLabel");
     $(buttonUpload).append(iconUpload);
     $(buttonUpload).append(" ").append(uploadLabel);
-    $(control).append(buttonUpload);
+    $(divElem).append(buttonUpload);
+    $(control).append(divElem);
+
+    var noFileLable = $("#videocalls-label").attr("noFileLabel");
+    var spanElem = $('<span/>', {       
+      "text":noFileLable,
+      "style":"text-overflow: ellipsis; white-space: nowrap; width: 137px; overflow: hidden; height: 28px; display: inline-block; margin: 0px 10px; vertical-align: middle;"
+    });
+    $(divElem).append(spanElem);
 
     var inputUpload = $('<input/>', { 
       "type":"file",
@@ -750,19 +761,19 @@
       "style":"margin: 0 8px 0 22px; width: 80px;"
     });
     $(control).append(inputUpload);
-    var noFileLable = $("#videocalls-label").attr("noFileLabel");
-    var spanElem = $('<span/>', {       
-      "text":noFileLable,
-      "style":"position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;"
-    });
-    $(control).append(spanElem);
+    $(inputUpload).width($(buttonUpload).width());
+    
+    
     //Listen onchange event of upload field
     $(inputUpload).change(function (){
       var fileName = $(this).val();
       if(fileName.length > 0) {
         fileName = eXo.ecm.VideoCallsUtils.getNameOfFile(fileName);
       }
-      $(this).next().html(fileName);
+      var containerElem = $(this).closest(".controls");
+      var spanElem = $(containerElem).find("span:first");
+      $(spanElem).html(fileName);
+      
     });
 
   }

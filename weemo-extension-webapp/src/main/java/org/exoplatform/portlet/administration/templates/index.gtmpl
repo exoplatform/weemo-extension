@@ -65,7 +65,7 @@
 							  <i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
 							<span style="text-overflow: ellipsis; white-space: nowrap; width: 137px; overflow: hidden; height: 28px; display: inline-block; margin: 0px 10px; vertical-align: middle;">&{exoplatform.videocall.administration.noFile}</span>
 						</div>
-						<input style="margin: 0 8px 0 22px; width: 80px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert">				  
+						<input style="margin: 0 8px 0 22px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert">				  
 					  
 					 
 					<%  
@@ -94,7 +94,7 @@
 							  <i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
 							<span style="text-overflow: ellipsis; white-space: nowrap; width: 137px; overflow: hidden; height: 28px; display: inline-block; margin: 0px 10px; vertical-align: middle;">&{exoplatform.videocall.administration.noFile}</span>
 						</div>
-						<input style="margin: 0 8px 0 22px; width: 80px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.pemCertificate}" id="pemCert" name="pemCert">				  
+						<input style="margin: 0 8px 0 22px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.pemCertificate}" id="pemCert" name="pemCert">				  
 					  
 					  
 					<%  
@@ -157,7 +157,7 @@
 				        <div data-placement="bottom" rel="tooltip" permission="<%=arrs[0]%>" data-original-title="<%=arrs[2]%>" class="Text"><%=arrs[2]%></div>
 				      </td>
 				      <td class="center">				        
-                        <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="YES" data-no="NO" checked="checked" style="visibility: hidden;" class="yesno"></div>
+                        <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="&{exoplatform.videocall.administration.swither.yes}" data-no="&{exoplatform.videocall.administration.swither.no}" checked="checked" style="visibility: hidden;" class="yesno"></div>
                       </td>					 
                       <td class="center"><a data-original-title="&{exoplatform.videocall.administration.delete}" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete uiIconLightGray"></i></a></td>
                     </tr>
@@ -467,6 +467,15 @@
 	      $("#videocalls-alert").hide();
 	    }, 5000);
 	  }
+	  var controlsP12 = $("#p12Cert").closest(".controls");
+	  var inputP12 = $(controlsP12).find("input:first");
+	  var buttonP12 = $(controlsP12).find("button:first");
+	  $(inputP12).width($(buttonP12).width());
+	  
+	  var controlsPem = $("#pemCert").closest(".controls");
+	  var inputPem = $(controlsPem).find("input:first");
+	  var buttonPem = $(controlsPem).find("button:first");
+	  $(inputPem).width($(buttonPem).width());
 	  
 	  //Listen onchange event for 2 upload inputs
 	  $("#p12Cert").change(function (){
@@ -474,7 +483,9 @@
         if(fileName.length > 0) {
           fileName = eXo.ecm.VideoCallsUtils.getNameOfFile(fileName);
         }
-        $(this).next().html(fileName);
+        var containerElem = $(this).closest(".controls");
+        var spanElem = $(containerElem).find("span:first");
+        $(spanElem).html(fileName);
       });
       
       $("#pemCert").change(function (){
@@ -482,7 +493,9 @@
         if(fileName.length > 0) {
           fileName = eXo.ecm.VideoCallsUtils.getNameOfFile(fileName);
         }
-        $(this).next().html(fileName);
+        var containerElem = $(this).closest(".controls");
+        var spanElem = $(containerElem).find("span:first");
+        $(spanElem).html(fileName);
       });
 	  
 	  //Validate before submit form
