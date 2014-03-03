@@ -55,17 +55,23 @@
 					</div>
 			        <div class="control-group">
 			          <label for="p12Cert" class="control-label">&{exoplatform.videocall.p12Certificate}: </label>
-			          <div class="controls" style="margin-left:auto; position:relative;">
+			          <div class="controls" style="position:relative;">
 					<%
 					  if(StringUtils.isEmpty(p12CertName)) {
 					%>
-					  <button type="button" class="btn btn-small" style="left:180px; top:2px; position:absolute; z-index: 1;"><i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
-					  <input style="margin: 0 8px 0 22px; width: 80px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert">
-					  <span style="position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;">&{exoplatform.videocall.administration.noFile}</span>
+					  
+						<div style="left: 0px; position: absolute; top: 0px; z-index: 1; white-space: nowrap;">
+						      <button onkeypress="return false;" class="btn btn-small" type="button">
+							  <i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
+							<span style="text-overflow: ellipsis; white-space: nowrap; width: 137px; overflow: hidden; height: 28px; display: inline-block; margin: 0px 10px; vertical-align: middle;">&{exoplatform.videocall.administration.noFile}</span>
+						</div>
+						<input style="margin: 0 8px 0 22px; width: 80px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert">				  
+					  
+					 
 					<%  
 					  } else {
-					%>
-					  <strong style="margin: 0 8px 0 20px;"><%=p12CertName%></strong>
+					%>						  
+					  <strong><%=p12CertName%></strong>
                       <div class="pull-right" onclick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);" >
                         <a data-placement="bottom" rel="tooltip" class="actionIcon" href="#" data-original-title="&{exoplatform.videocall.administration.delete}"><i class="uiIconDelete uiIconLightGray"></i></a>
                       </div>
@@ -77,18 +83,24 @@
 					
 					<div class="control-group">
 			          <label for="pemCert" class="control-label">&{exoplatform.videocall.pemCertificate}: </label>
-			          <div class="controls" style="margin-left: auto; position:relative;">
+			          <div class="controls" style="position:relative;">
 					<%  
 					  if(StringUtils.isEmpty(pemCertName)) {
 					%>
-					  <button type="button" class="btn btn-small" style="left:180px; top:2px; position:absolute; z-index: 1;"><i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
-					  <input style="margin: 0 8px 0 22px; width: 80px;" type="file" class="file fileHidden" onkeypress="return false;" label="&{exoplatform.videocall.pemCertificate}" id="pemCert" name="pemCert">
-					  <span style="position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;">&{exoplatform.videocall.administration.noFile}</span>
+					  			  
+					  
+					    <div style="left: 0px; position: absolute; top: 0px; z-index: 1; white-space: nowrap;">
+						      <button onkeypress="return false;" class="btn btn-small" type="button">
+							  <i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
+							<span style="text-overflow: ellipsis; white-space: nowrap; width: 137px; overflow: hidden; height: 28px; display: inline-block; margin: 0px 10px; vertical-align: middle;">&{exoplatform.videocall.administration.noFile}</span>
+						</div>
+						<input style="margin: 0 8px 0 22px; width: 80px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.pemCertificate}" id="pemCert" name="pemCert">				  
+					  
 					  
 					<%  
 					  } else {
 					%>
-					  <strong style="margin: 0 8px 0 20px;"><%=pemCertName%></strong>
+					  <strong><%=pemCertName%></strong>
                       <div class="pull-right" onclick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);" >
                         <a data-placement="bottom" rel="tooltip" class="actionIcon" href="#" data-original-title="&{exoplatform.videocall.administration.delete}"><i class="uiIconDelete uiIconLightGray"></i></a>
                       </div>
@@ -376,6 +388,7 @@
   </div><!-- /.modal-dialog -->
 </div>
 
+<div id="videocalls-label" type="hidden" noLabel="&{exoplatform.videocall.administration.swither.no}" yesLabel="&{exoplatform.videocall.administration.swither.yes}" noFileLabel="&{exoplatform.videocall.administration.noFile}" uploadLabel="&{exoplatform.videocall.administration.upload}"></div>
 
 <script type="text/javascript">   
     

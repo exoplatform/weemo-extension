@@ -565,13 +565,15 @@
       var divIcon = $('<div/>', {        
         "class":"spaceRole"
       });
+      var yesLabel = $("#videocalls-label").attr("yesLabel");
+      var noLabel = $("#videocalls-label").attr("noLabel");
       var inputIcon = $('<input/>', { 
         "type":"checkbox",
         "id":"enableVideoCalls",
         "name":"enableVideoCalls",
         "value":"true",
-        "data-yes":"YES",
-        "data-no":"NO",
+        "data-yes":yesLabel,
+        "data-no":noLabel,
         "checked":"checked",
         "style":"visibility: hidden;",       
         "class":"yesno"
@@ -724,23 +726,20 @@
     var control = $(container).find(".controls:first");
     var label = $(container).find("label:first");
     var id = $(label).attr("for");
-    $(control).empty();
-    var linkUpload = $('<a/>', { 
-      "href":"javascript:void(0);"
-    });
+    $(control).empty();    
     var buttonUpload = $('<button/>', { 
       "type":"button",
       "class":"btn btn-small",
       "onkeypress":"return false;",
       "style":"left:180px; top:2px; position:absolute; z-index: 1;"
     });
-    $(linkUpload).append(buttonUpload);
     var iconUpload = $('<i/>', { 
       "class":"uiIconUpload uiIconLightGray"
     });    
+    var uploadLabel = $("#videocalls-label").attr("uploadLabel");
     $(buttonUpload).append(iconUpload);
-    $(buttonUpload).append(" Upload");
-    $(control).append(linkUpload);
+    $(buttonUpload).append(" ").append(uploadLabel);
+    $(control).append(buttonUpload);
 
     var inputUpload = $('<input/>', { 
       "type":"file",
@@ -751,9 +750,9 @@
       "style":"margin: 0 8px 0 22px; width: 80px;"
     });
     $(control).append(inputUpload);
-
+    var noFileLable = $("#videocalls-label").attr("noFileLabel");
     var spanElem = $('<span/>', {       
-      "text":"No file selected",
+      "text":noFileLable,
       "style":"position: absolute;top: 0px;left: 275px;display: block;text-overflow: ellipsis;overflow: hidden;height: 28px;white-space: nowrap;width: 200px;"
     });
     $(control).append(spanElem);
