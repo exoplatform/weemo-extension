@@ -74,16 +74,13 @@ public class PropertyManager {
       }
       catch (Exception e)
       {
+        //Do nothing
       }     
-      /*overridePropertyIfNotSet(PROPERTY_PASS_AUTH, "bc2e05cf11");
-      overridePropertyIfNotSet(PROPERTY_PASS_ALLOW, "7625b9b08d");
-      overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_ALLOW, "33cc7f1e82763049a4944a702c880d");
-      overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_ALLOW, "3569996f0d03b2cd3880223747c617");*/
-      
-      overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "exo_domain");
+            
+      overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "");
       overridePropertyIfNotSet(PROPERTY_VIDEO_PROFILE, "basic");
       overridePropertyIfNotSet(PROPERTY_AUTH_URL, "https://oauths-ppr.weemo.com/auth/");
-      overridePropertyIfNotSet(PROPERTY_USER_ID_AUTH, "eXoCloud");
+      overridePropertyIfNotSet(PROPERTY_USER_ID_AUTH, "");
       
       overridePropertyIfNotSet(PROPERTY_WEEMO_KEY, "");
       overridePropertyIfNotSet(PROPERTY_CLIENT_KEY_AUTH, "");

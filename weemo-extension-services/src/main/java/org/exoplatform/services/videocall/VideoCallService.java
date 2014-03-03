@@ -72,18 +72,31 @@ public class VideoCallService {
   
   protected static final String WORKSPACE_NAME = "collaboration";
   
+  /**
+   * Method constructor   
+   */
   public VideoCallService() {
     videoProfileCache = WCMCoreUtils.getService(CacheService.class).getCacheInstance(VideoCallService.class.getName());
   }
   
+  /**
+   * Get token key from VideoCalls Profile   
+   * @return token key.
+   */
   public String getTokenKey() {
     return tokenKey;
   }
-  
+  /**
+   * Set token key into VideoCalls Profile
+   * @param newTokenKey The token key's value.
+   */
   public void setTokenKey(String newTokenKey) {
     tokenKey = newTokenKey;
   }
-  
+  /**
+   * Stores a VideoCalls Profile in a repository with given properties.   *
+   * @param videoCallModel contains properties of VideoCalls Profile.
+   */
   public void saveVideoCallProfile(VideoCallModel videoCallModel) {
     String disbaleVideoCall = videoCallModel.getDisableVideoCall();
     String weemoKey = videoCallModel.getWeemoKey();
@@ -210,7 +223,10 @@ public class VideoCallService {
       }
     } 
   }
-  
+  /**
+   * Get P12 certificate from VideoCalls Profile.  
+   * @return InputStream object for P12 certificate file.
+   */
   public InputStream getP12CertInputStream() {
     InputStream isP12 = null;
     SessionProvider sessionProvider = null;
@@ -242,7 +258,10 @@ public class VideoCallService {
     }
     return isP12;
   }
-  
+  /**
+   * Get PEM certificate from VideoCalls Profile.  
+   * @return InputStream object for PEM certificate file.
+   */
   public InputStream getPemCertInputStream() {
     InputStream isPem = null;
     SessionProvider sessionProvider = null;
@@ -274,7 +293,10 @@ public class VideoCallService {
     }
     return isPem;
   }
-  
+  /**
+   * Get VideoCalls Profile.  
+   * @return VideoCallModel object that represents for VideoCalls Profile.
+   */
   public VideoCallModel getVideoCallProfile() {
     VideoCallModel videoCallModel = null;
     if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
@@ -338,7 +360,10 @@ public class VideoCallService {
     }
     return videoCallModel;
   }
-  ///////////////////////////////////////////////////////////////////////////////////////////  
+  /**
+   * Get Weemo key from VideoCalls Profile.  
+   * @return Weemo key.
+   */
   public String getWeemoKey() {
     String weemoKey = null;
     VideoCallModel videoCallModel = null;
@@ -351,25 +376,14 @@ public class VideoCallService {
       weemoKey = videoCallModel.getWeemoKey();
     }
     return weemoKey;
-  } 
-  
-  /////////////////////////////////
-  public boolean isDisableVideoCall() {
-    boolean disableVideoCall = false;
-    VideoCallModel videoCallModel = null;
-    if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
-      videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);      
-    } else {
-      videoCallModel = getVideoCallProfile();
-    }
-    if(videoCallModel.getDisableVideoCall() != null) {
-      disableVideoCall = Boolean.valueOf(videoCallModel.getDisableVideoCall());
-    }
-    return disableVideoCall;
-  }
+  }  
   
   
-  //////////////////////////////////////////////////////////
+  /**
+   * Check if VideoCalls Profile is exist or not
+   * @return true if VideoCalls is exist.
+   * @return false if VideoCals is not exist.
+   */
   public boolean isExistVideoCallProfile() {
     boolean isExist = false;
     VideoCallModel videoCallModel = null;
@@ -404,7 +418,11 @@ public class VideoCallService {
     }     
     return isExist;
   }
-  ////////////////////////////////////////////////////////
+  /**
+   * Check if VideoCalls is turn off or not
+   * @return true if VideoCalls is turn off.
+   * @return false if VideoCals is turn on.
+   */
   public boolean isTurnOffVideoCall() throws Exception {
     VideoCallModel videoCallModel = null;
     if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
@@ -419,8 +437,12 @@ public class VideoCallService {
     }    
     return false;
   }
-
-  ////////////////////////////////////////////////////////
+  
+  /**
+   * Check if VideoCalls is turn off or not for current user.
+   * @return true if VideoCalls is turn off.
+   * @return false if VideoCals is turn on.
+   */
   public boolean isTurnOffVideoCallForUser() throws Exception {
     boolean isTurnOff = true;
     VideoCallModel videoCallModel = null;

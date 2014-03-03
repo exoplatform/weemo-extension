@@ -37,7 +37,7 @@
         onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
       </propertyDefinition>
-      <propertyDefinition name="exo:domainId" requiredType="String" autoCreated="false" mandatory="true"
+      <propertyDefinition name="exo:domainId" requiredType="String" autoCreated="false" mandatory="false"
         onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
       </propertyDefinition>
