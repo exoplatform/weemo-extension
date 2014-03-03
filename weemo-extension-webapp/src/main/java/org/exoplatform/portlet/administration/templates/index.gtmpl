@@ -233,8 +233,8 @@
 		        
 					<span class="searchByUser">
 						<span class="inputLarge ">
-							<a id="searchLink" class="btnSearchUser" data-placement="left" rel="tooltip" href="javascript:void(0);" onClick="eXo.ecm.VideoCallsUtils.searchUserPermission(this);" ajaxLink="@{VideoCallAdministration.searchUserPermission()}" data-original-title="Quick Search"><i class="uiIconSearch uiIconLightGray"></i></a>
-							<input name="Quick Search" type="text" id="keyword" name="keyword" placeholder="Search">
+							<a id="searchLink" class="btnSearchUser" data-placement="left" rel="tooltip" href="javascript:void(0);" onClick="eXo.ecm.VideoCallsUtils.searchUserPermission(this);" ajaxLink="@{VideoCallAdministration.searchUserPermission()}" data-original-title="&{exoplatform.videocall.administration.quickSearch}"><i class="uiIconSearch uiIconLightGray"></i></a>
+							<input name="Quick Search" type="text" id="keyword" name="keyword" placeholder="&{exoplatform.videocall.administration.search}">
 						</span>
 						<span class="selectboxMedium">
 							<span class="uiSelectbox">
