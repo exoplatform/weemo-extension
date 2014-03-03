@@ -128,6 +128,7 @@ public class VideoCallAdministration {
      } else {
        videoCallModel.setDisableVideoCall(disableVideoCall);
      }     
+     if(weemoKey == null) weemoKey = "";
      videoCallModel.setWeemoKey(weemoKey);
      videoCallModel.setAuthId(authId);
      videoCallModel.setAuthSecret(authSecret);

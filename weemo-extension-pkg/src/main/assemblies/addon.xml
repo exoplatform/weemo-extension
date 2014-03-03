@@ -53,5 +53,15 @@
       <outputFileNameMapping>weemo-extension-services.jar</outputFileNameMapping>
       <useProjectArtifact>false</useProjectArtifact>
     </dependencySet>
+    
+    <dependencySet>
+      <outputDirectory>/${project.build.finalName}/gatein/conf</outputDirectory>
+      <includes>
+        <include>${project.groupId}:weemo-extension-pkg:jar</include>
+      </includes>
+      <scope>provided</scope>
+      <outputFileNameMapping>weemo-extension-services.jar</outputFileNameMapping>
+      <useProjectArtifact>false</useProjectArtifact>
+    </dependencySet>
   </dependencySets>
 </assembly>

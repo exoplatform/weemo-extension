@@ -54,8 +54,8 @@ function WeemoExtension() {
           weemoExtension.isSupport = false;
         case 'sipOk':
           weemoExtension.isConnected = true;         	 
-          jqchat(".btn-weemo").removeClass('disabled');
-          jqchat(".weemoCallOverlay").removeClass('disabled');
+          //jqchat(".btn-weemo").removeClass('disabled');
+          //jqchat(".weemoCallOverlay").removeClass('disabled');
           var fn = jqchat(".label-user").text();
           var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
           if (fullname!=="") {
@@ -380,7 +380,6 @@ WeemoExtension.prototype.joinWeemoCall = function(chatMessage) {
  * @param targetUser
  */
 WeemoExtension.prototype.getStatus = function(targetUser, callback) {
-
   var refreshURL = this.getStateURL + targetUser + "/";
   jqchat.ajax({
     url: refreshURL, 
@@ -451,7 +450,7 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
         }
       });
 
-      function cbGetStatus(targetUser, activity) {       
+      function cbGetStatus(targetUser, activity) { 
 	if (activity !== "offline" && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
         && weemoExtension.tokenKey.length > 0) {
           jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
@@ -523,12 +522,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
     return;
   }
 
-  function cbGetConnectionStatus(targetUser, activity) {
-    if (activity !== "offline" && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
-        && weemoExtension.tokenKey.length > 0) {
-      jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
-    }
-  }
+  
 
   jqchat(".contentBox", ".uiTabInPage").each(function() {
     var $uiUsername = jqchat(this).children(".spaceTitle").children("a").first();
@@ -544,6 +538,13 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
       html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> Call</a>';
       html += jqchat(nextElem).html();
       jqchat(nextElem).html(html);
+
+      function cbGetConnectionStatus(targetUser, activity) {
+        if (activity !== "offline" && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
+	&& weemoExtension.tokenKey.length > 0) {
+         jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
+        }
+      }
 
       weemoExtension.getStatus(username, cbGetConnectionStatus);
     }

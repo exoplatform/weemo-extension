@@ -317,7 +317,9 @@ public class VideoCallService {
           videoCallModel.setWeemoKey(videoCallNode.getProperty(WEEMOKEY_PROP).getString());
           videoCallModel.setDisableVideoCall(videoCallNode.getProperty(DISABLEVIDEOCALL_PROP).getString());
           videoCallModel.setProfileId(videoCallNode.getProperty(VIDEO_PROFILE_ID).getString());
-          videoCallModel.setDomainId(videoCallNode.getProperty(VIDEO_DOMAIN_ID).getString());
+          if(videoCallNode.hasProperty(VIDEO_DOMAIN_ID)) {
+            videoCallModel.setDomainId(videoCallNode.getProperty(VIDEO_DOMAIN_ID).getString());
+          }          
           if(videoCallNode.hasProperty(VIDEO_PERMISSIONS_PROP)) {
             videoCallModel.setVideoCallPermissions(videoCallNode.getProperty(VIDEO_PERMISSIONS_PROP).getString());
           }          
@@ -348,7 +350,7 @@ public class VideoCallService {
             videoCallModel.setPemCert(null);
             videoCallModel.setPemCertName("");
           }
-          //videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
+          videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
         }
       } catch (LoginException e) {
         // Do nothing
