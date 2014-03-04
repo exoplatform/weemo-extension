@@ -20,6 +20,7 @@
 package org.exoplatform.utils.videocall;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -30,6 +31,7 @@ public class PropertyManager {
   private static Properties properties = null;
 
   private static final String PROPERTIES_PATH = System.getProperty("catalina.base")+"/gatein/conf/weemo/weemo.properties";
+  private static final String PROPERTIES_CERT_BASE_PATH = System.getProperty("catalina.base")+"/gatein/conf/weemo/";
   
   public static final String PROPERTY_WEEMO_KEY = "weemo.webappId";
   public static final String PROPERTY_CLIENT_KEY_AUTH = "weemo.authClientId";
@@ -43,8 +45,9 @@ public class PropertyManager {
   
   public static final String PROPERTY_DOMAIN_ID = "domain_id";  
   
-  public static final String PROPERTY_CA_FILE = "ca_file";
-  public static final String PROPERTY_P12_FILE = "p12_file";  
+  public static final String PROPERTY_CA_FILE = "weemo.commonCertificateFile";
+  public static final String PROPERTY_P12_FILE = "weemo.customerCertificateFile";  
+  
   public static final String PROPERTY_PASS_AUTH = "pass_auth";  
   public static final String PROPERTY_USER_ID_ALLOW = "user_id_allow";
   public static final String PROPERTY_PASS_ALLOW = "pass_allow";
@@ -88,6 +91,8 @@ public class PropertyManager {
       overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_AUTH, "");
       overridePropertyIfNotSet(PROPERTY_DEFAULT_PERMISSION, "*:/platform/users#true");
       overridePropertyIfNotSet(PROPERTY_VIDEOCALL_VERSION, "");
+      overridePropertyIfNotSet(PROPERTY_CA_FILE, "weemo.pem");
+      overridePropertyIfNotSet(PROPERTY_P12_FILE, "client.p12");
       
       
       videoCallService = new VideoCallService();
@@ -109,6 +114,28 @@ public class PropertyManager {
           properties().getProperty(PROPERTY_DOMAIN_ID);
         String profileId = (properties().getProperty(PROPERTY_VIDEO_PROFILE)==null) ? "" : 
           properties().getProperty(PROPERTY_VIDEO_PROFILE);
+        //Load pem file
+        InputStream isPem = null;
+        String pemName = null;
+        try {
+          isPem = new FileInputStream(PROPERTIES_CERT_BASE_PATH + properties().getProperty(PROPERTY_CA_FILE));
+          if(isPem != null) pemName = properties().getProperty(PROPERTY_CA_FILE);
+        } catch (FileNotFoundException ex) {
+          isPem = null;
+        }
+        if(isPem == null) {
+          isPem = videoCallService.getClass().getResourceAsStream("/cert/weemo-ca.pem");
+          if(isPem != null) pemName = "weemo-ca.pem"; 
+        }
+        //Load p12 file
+        InputStream isP12 = null;
+        String p12Name = null;
+        try {
+          isP12 = new FileInputStream(PROPERTIES_CERT_BASE_PATH + properties().getProperty(PROPERTY_P12_FILE));
+          if(isP12 != null) p12Name = properties().getProperty(PROPERTY_P12_FILE);
+        } catch (FileNotFoundException ex) {
+          isP12 = null;
+        }       
         //Set default permission
         videoCallModel.setVideoCallPermissions(properties().getProperty(PROPERTY_DEFAULT_PERMISSION));
         videoCallModel.setCustomerCertificatePassphrase(passPhrase);
@@ -116,6 +143,14 @@ public class PropertyManager {
         videoCallModel.setAuthSecret(authSecret);
         videoCallModel.setDomainId(domainId);
         videoCallModel.setProfileId(profileId);
+        if(isPem != null) {
+          videoCallModel.setPemCert(isPem);
+          videoCallModel.setPemCertName(pemName);
+        }
+        if(isP12 != null) {
+          videoCallModel.setP12Cert(isP12);
+          videoCallModel.setP12CertName(p12Name);
+        }
         videoCallService.saveVideoCallProfile(videoCallModel);
       }
     }
