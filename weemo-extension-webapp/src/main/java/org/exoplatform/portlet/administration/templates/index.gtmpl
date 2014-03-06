@@ -191,7 +191,7 @@
 				<div class="permission">
 						<div class="clearfix">
 							<div class="PemissionInputset pull-left">
-						 		<input name="txtUserOrGroup" type="text" id="txtUserOrGroup" readonly="">
+						 		<input name="txtUserOrGroup" type="text" id="txtUserOrGroup" readonly="" placeholder="&{exoplatform.videocall.administration.input.hint}">
 						 		<input name="userOrGroup" type="hidden" id="userOrGroup" readonly="">
 						 	</div><div class="pull-left">
 							
