@@ -1,5 +1,5 @@
-[class^="uiIconWeemo"] {
-  background-image: url('/weemo-extension/img/uiIconWeemoDarkGray.png');
+[class^="uiIconWeemo"], .btn.disabled:hover [class^="uiIconWeemo"], .btn[disabled]:hover [class^="uiIconWeemo"]{
+  background-image: url('/weemo-extension/img/uiIconWeemoDarkGray.png'); 
 }
 
 .nav-pills > .active > a > [class^="uiIconWeemo"],
