@@ -1,4 +1,4 @@
-[class^="uiIconWeemo"] {
+[class^="uiIconWeemo"], .btn.disabled:hover  [class^="uiIconWeemo"] {
   background-image: url('/weemo-extension/img/uiIconWeemoDarkGray.png');
 }
 
