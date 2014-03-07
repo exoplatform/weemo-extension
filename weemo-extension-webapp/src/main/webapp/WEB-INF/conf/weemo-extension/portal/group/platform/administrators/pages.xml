@@ -126,7 +126,7 @@
     
     
     <page>
-      <name>videoCallAdmin</name>
+      <name>videoCalls</name>
       <title>Video Calls Administration</title>
       <access-permissions>manager:/platform/administrators</access-permissions>
       <edit-permission>manager:/platform/administrators</edit-permission>

@@ -28,10 +28,10 @@
 
     <page-nodes>       
         <node>
-            <uri>videoCallAdmin</uri>
-            <name>videoCallAdmin</name>
+            <uri>videoCalls</uri>
+            <name>videoCalls</name>
             <label>#{administration.videocalls}</label>
-            <page-reference>group::/platform/administrators::videoCallAdmin</page-reference>
+            <page-reference>group::/platform/administrators::videoCalls</page-reference>
         </node>
     </page-nodes>
 </node-navigation>
