@@ -191,8 +191,8 @@
 				<div class="permission">
 						<div class="clearfix">
 							<div class="PemissionInputset pull-left">
-						 		<input name="txtUserOrGroup" type="text" id="txtUserOrGroup" readonly="" placeholder="&{exoplatform.videocall.administration.input.hint}">
-						 		<input name="userOrGroup" type="hidden" id="userOrGroup" readonly="">
+						 		<input name="txtUserOrGroup" type="text" id="txtUserOrGroup" placeholder="&{exoplatform.videocall.administration.input.hint}">
+						 		<input name="userOrGroup" type="hidden" id="userOrGroup">
 						 	</div><div class="pull-left">
 							
 									<a class="actionIcon" link="@{VideoCallAdministration.openUserPermission()}" href="javascript:void(0);" onClick="eXo.ecm.VideoCallsUtils.openUserPermission(this, 'userSelector');" rel="tooltip" data-placement="bottom" data-original-title="&{exoplatform.videocall.administration.selectUser}"><i class="uiIconSelectUser uiIconLightGray"></i></a>
@@ -400,6 +400,11 @@
 	    } else {
 	      $("#disableVideoCall").val("false");	      
 	    }
+	  });
+	  
+	  $("#txtUserOrGroup").change(function() {
+	    var str = $(this).val();
+	    $("#userOrGroup").val(str);
 	  });
 
 	  $('#selectAllUsers').click (function () {
