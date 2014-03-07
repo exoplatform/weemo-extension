@@ -108,3 +108,7 @@ button.close{
     margin-left: auto;
     min-width: 560px;
 }
+
+.connectAction .btn{
+	margin-top: 5px;
+}
