@@ -66,10 +66,6 @@ button.close{
     padding: 6px 0 0 0;
 }
 
-.uiVideoCallAdminPortlet .control-group{
-	margin-bottom: 20px;
-}
-
 .uiVideoCallAdminPortlet .control-group .uiCheckbox{
 	margin: 0px;
 }
