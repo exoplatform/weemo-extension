@@ -53,9 +53,7 @@ function WeemoExtension() {
         case 'unsupportedOS':
           weemoExtension.isSupport = false;
         case 'sipOk':
-          weemoExtension.isConnected = true;         	 
-          //jqchat(".btn-weemo").removeClass('disabled');
-          //jqchat(".weemoCallOverlay").removeClass('disabled');
+          weemoExtension.isConnected = true; 
           var fn = jqchat(".label-user").text();
           var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
           if (fullname!=="") {
@@ -76,8 +74,11 @@ function WeemoExtension() {
       weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
       weemoExtension.setCookie("downloadUrl", downloadUrl, 365);
       weemoExtension.showWeemoInstaller();
-      if (navigator.platform !== "Linux") {        
-        jqchat("#weemo-alert-download").attr("href", downloadUrl);
+      if (navigator.platform !== "Linux") {
+        jqchat("#weemo-alert-download").click(function() {
+          jqchat("#weemo-alert").hide();
+          location.href=downloadUrl;
+        });   
       }
     };
 
@@ -235,7 +236,11 @@ WeemoExtension.prototype.showWeemoInstaller = function() {
       jqchat("#weemo-alert").css({ top: height+'px' });
       jqchat("#weemo-alert").show();   
       var downloadUrl = weemoExtension.getCookie("downloadUrl");
-      jqchat("#weemo-alert-download").attr("href", downloadUrl);    
+      jqchat("#weemo-alert-download").click(function() {
+        jqchat("#weemo-alert").hide();
+        location.href=downloadUrl;
+      });  
+
       jqchat("#weemo-alert-dismiss").click(function() {
         weemoExtension.setCookie("isDismiss", "true", 365);
         jqchat("#weemo-alert").hide();
