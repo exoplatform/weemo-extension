@@ -129,11 +129,11 @@ public class VideoCallAdministration {
        videoCallModel.setDisableVideoCall(disableVideoCall);
      }     
      if(weemoKey == null) weemoKey = "";
-     videoCallModel.setWeemoKey(weemoKey);
-     videoCallModel.setAuthId(authId);
-     videoCallModel.setAuthSecret(authSecret);
-     videoCallModel.setCustomerCertificatePassphrase(customerCertificatePassphrase);
-     videoCallModel.setVideoCallPermissions(videoCallPermissions);
+     videoCallModel.setWeemoKey(weemoKey.trim());
+     videoCallModel.setAuthId(authId.trim());
+     videoCallModel.setAuthSecret(authSecret.trim());
+     videoCallModel.setCustomerCertificatePassphrase(customerCertificatePassphrase.trim());
+     videoCallModel.setVideoCallPermissions(videoCallPermissions.trim());
      videoCallModel.setDomainId(PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID));
      videoCallModel.setProfileId(PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE));
      if(p12Cert != null) {
