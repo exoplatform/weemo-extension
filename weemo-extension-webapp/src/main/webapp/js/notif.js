@@ -228,7 +228,6 @@ WeemoExtension.prototype.showWeemoInstaller = function() {
   }
   var isDismiss = weemoExtension.getCookie('isDismiss');
   if(!weemoExtension.isConnected) {
-    console.log(document.cookie.split(';'));
     if ((typeof(isDismiss) == "undefined" && isDismiss == null) || !isDismiss ) {
       var uiToolbarContainer = jqchat("#UIToolbarContainer");
       var height = uiToolbarContainer.outerHeight() - jqchat(".alert").css("marginTop").replace('px', '');
@@ -442,11 +441,12 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
 
       $uiElement.append(out);
       jqchat(".weemoCallOverlay").on("click", function() {
-        if (!jqchat(this).hasClass("disabled")) {
+        if (!jqchat(this).hasClass("disabled") && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
+        && weemoExtension.tokenKey.length > 0) {
           var targetUser = jqchat(this).attr("data-username");
           var targetFullname = jqchat(this).attr("data-fullname");
           weemoExtension.createWeemoCall(targetUser, targetFullname);
-        } else {
+        } else if(!jqchat(this).hasClass("disabled")) {
           if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
             eXo.ecm.VideoCalls.showInstallInterceptor();
           } else if(weemoExtension.isTurnOffForUser == "true") {
@@ -456,8 +456,7 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
       });
 
       function cbGetStatus(targetUser, activity) { 
-	if (activity !== "offline" && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
-        && weemoExtension.tokenKey.length > 0) {
+	if (activity !== "offline") {
           jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
         }
       }      
@@ -493,18 +492,18 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
   jqchat(h3Elem).append(html);
 
   function cbGetProfileStatus(targetUser, activity) {
-    if (activity !== "offline" && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
-        && weemoExtension.tokenKey.length > 0) {
+    if (activity !== "offline") {
       jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
     }
   }
 
   jqchat(".weemoCallOverlay").on("click", function() {
-        if (!jqchat(this).hasClass("disabled")) {
+        if (!jqchat(this).hasClass("disabled") && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
+        && weemoExtension.tokenKey.length > 0) {
           var targetUser = jqchat(this).attr("data-username");
           var targetFullname = jqchat(this).attr("data-fullname");
           weemoExtension.createWeemoCall(targetUser, targetFullname);
-        } else {
+        } else if(!jqchat(this).hasClass("disabled")) {
           if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
             eXo.ecm.VideoCalls.showInstallInterceptor();
           } else if(weemoExtension.isTurnOffForUser == "true") {
@@ -545,8 +544,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
       jqchat(nextElem).html(html);
 
       function cbGetConnectionStatus(targetUser, activity) {
-        if (activity !== "offline" && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
-	&& weemoExtension.tokenKey.length > 0) {
+        if (activity !== "offline") {
          jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
         }
       }
@@ -558,11 +556,12 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
 
 
   jqchat(".weemoCallOverlay").on("click", function() {
-        if (!jqchat(this).hasClass("disabled")) {
+        if (!jqchat(this).hasClass("disabled") && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
+        && weemoExtension.tokenKey.length > 0) {
           var targetUser = jqchat(this).attr("data-username");
           var targetFullname = jqchat(this).attr("data-fullname");
           weemoExtension.createWeemoCall(targetUser, targetFullname);
-        } else {
+        } else if(!jqchat(this).hasClass("disabled")) {
           if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
             eXo.ecm.VideoCalls.showInstallInterceptor();
           } else if(weemoExtension.isTurnOffForUser == "true") {
