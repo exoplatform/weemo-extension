@@ -197,7 +197,7 @@
 							
 									<a class="actionIcon" link="@{VideoCallAdministration.openUserPermission()}" href="javascript:void(0);" onClick="eXo.ecm.VideoCallsUtils.openUserPermission(this, 'userSelector');" rel="tooltip" data-placement="bottom" data-original-title="&{exoplatform.videocall.administration.selectUser}"><i class="uiIconSelectUser uiIconLightGray"></i></a>
 								
-									<a class="actionIcon" link="@{VideoCallAdministration.openGroupPermission()}" href="javascript:void(0);" onClick="eXo.ecm.VideoCallsUtils.openGroupPermission(this, 'groupSelector');"  rel="tooltip" data-placement="bottom" data-original-title="&{exoplatform.videocall.administration.selectMembership}"><i class="uiIconSelectMember uiIconLightGray"></i></a>
+									<a class="actionIcon" link="@{VideoCallAdministration.openGroupPermission()}" href="javascript:void(0);" onClick="eXo.ecm.VideoCallsUtils.openGroupPermission(this, 'groupSelector');"  rel="tooltip" data-placement="bottom" data-original-title="&{exoplatform.videocall.administration.selectGroup}"><i class="uiIconGroup uiIconLightGray"></i></a>
 								
 							
 							     <button type="button" onClick="eXo.ecm.VideoCallsUtils.addPermissions();" class="btn">&{exoplatform.videocall.action.add}</button>
@@ -342,7 +342,7 @@
 				<div class="span6">
 					<div class="uiBox noRounded childGoup">
 						<h6 class="title">
-                            &{exoplatform.videocall.administration.selectMembership}
+                            &{exoplatform.videocall.administration.selectChildGroup}
 						</h6>
 						<div class="uiContentBox">
 							<ul>
@@ -388,7 +388,7 @@
   </div><!-- /.modal-dialog -->
 </div>
 
-<div id="videocalls-label" type="hidden" noLabel="&{exoplatform.videocall.administration.swither.no}" yesLabel="&{exoplatform.videocall.administration.swither.yes}" noFileLabel="&{exoplatform.videocall.administration.noFile}" uploadLabel="&{exoplatform.videocall.administration.upload}"></div>
+<div id="videocalls-label" type="hidden" selectThisGroup="&{exoplatform.videocall.administration.selectThisGroup}" noLabel="&{exoplatform.videocall.administration.swither.no}" yesLabel="&{exoplatform.videocall.administration.swither.yes}" noFileLabel="&{exoplatform.videocall.administration.noFile}" uploadLabel="&{exoplatform.videocall.administration.upload}"></div>
 
 <script type="text/javascript">   
     

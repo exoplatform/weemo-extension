@@ -254,11 +254,13 @@
       dataType: "json",
       context: this,
       success: function(data){	
+        
         $('#groupSelector').appendTo("body");	
 	gj('#groupSelector').modal('show');
         $(".modal-backdrop").remove();
 	var memberships = data.memberships;
-        var groups = data.groups;        
+        var groups = data.groups;   
+        console.log(groups);     
         var groupSelector = $("#UIGroupMemberSelector");
         $("#UIGroupMemberSelector .nodeGroup").remove();
         var treeContainer = $("#UIGroupMemberSelector .treeContainer");
@@ -302,12 +304,13 @@
       }
     }); 
   };
-
+ 
   // Add a group into the permission field.
   Utils.prototype.selectGroupPermision = function(elem)
   {
     var ajaxLink = $(elem).attr("ajaxLink");
     var groupId = $(elem).attr("groupId");
+    var groupTitle = $(elem).attr("title");
     var parentId = "";
     var arrGroups = "";
     if(groupId && groupId.length > 0) {
@@ -328,64 +331,118 @@
       context: this,
       success: function(data) {	
         $('#groupSelector').appendTo("body");	
-	gj('#groupSelector').modal('show');
+	    gj('#groupSelector').modal('show');
         $(".modal-backdrop").remove();
-	var memberships = data.memberships;
+	    var memberships = data.memberships;
         var groups = data.groups;        
+        console.log(groups);
         var groupSelector = $("#UIGroupMemberSelector");
         var treeContainer = $("#UIGroupMemberSelector .treeContainer");
         $("#UIGroupMemberSelector .nodeGroup").remove();
         var nodeGroup = $('<ul/>', {
-	    'class':'nodeGroup'
-	});
+			'class':'nodeGroup'
+		});
         $(treeContainer).append(nodeGroup);
+        $("#UIGroupMemberSelector .uiContentBox").find("ul").remove();
         $.each(groups, function(index, obj){
           var node = $('<li/>', {
-	    'class':'node'
-	  });
+			'class':'node'
+		  });
           $(nodeGroup).append(node);
           var aCSSClass = "uiIconNode";
-          var nodeChildGroup = null;
+          var nodeChildGroup = null;          
           // Check the current selected group
           if(groupId && obj.group.toUpperCase() === groupId.toUpperCase()) {
-            var currentIcon = $(elem).attr("class");
+            var currentIcon = $(elem).attr("class");            
             if(currentIcon.indexOf("collapseIcon")>=0) {
               aCSSClass = aCSSClass + " expandIcon";
-	    } else {
-	      aCSSClass = aCSSClass + " collapseIcon";
-	    }
+			} else {
+			  aCSSClass = aCSSClass + " collapseIcon";
+			}
             aCSSClass = aCSSClass + " nodeSelected";
             var children = $.parseJSON(obj.children);
-            nodeChildGroup = $('<ul/>', {
-              'class':'nodeGroup'
-	    });
+			nodeChildGroup = $('<ul/>', {
+				  'class':'nodeGroup'
+			});	  
             // Check if current selected have chidren or not
-            if(children && currentIcon.indexOf("collapseIcon")>=0) {
+            if(children) {
+              // Build child groups for left panel
+              if(currentIcon.indexOf("collapseIcon")>=0) {
+				  $.each(children, function(index, child){
+					var childNode = $('<li/>', {
+					  'class':'node'
+					});
+					$(nodeChildGroup).append(childNode);
+					Map[child.group.substring(child.group.lastIndexOf("/")+1)] = child.label;
+					var aChild = $('<a/>', {
+					  'class':'uiIconNode collapseIcon',
+					  'href':'javascript:void(0);',
+					  'onClick':'eXo.ecm.VideoCallsUtils.selectGroupPermision(this);',
+					  'groupId':child.group,
+					  'ajaxLink':ajaxLink,
+					  'title':child.label
+					});
+					var spanChild = $('<span/>', {
+					  'text':child.label
+					});
+					$(childNode).append(aChild);
+					var itemChild = $('<i/>', {
+					  'class':'uiIconGroup uiIconLightGray'
+					});
+					$(aChild).append(itemChild);    
+					$(aChild).append(spanChild);                
+				  }); 
+			  }
+              // Build child groups for right panel	      
+              var contentBox = $("#UIGroupMemberSelector .uiContentBox:first");
+              var ulElem = $('<ul/>', {});
+              $(contentBox).append(ulElem);  
               $.each(children, function(index, child){
-		var childNode = $('<li/>', {
-		  'class':'node'
-		});
-		$(nodeChildGroup).append(childNode);
-                Map[child.group.substring(child.group.lastIndexOf("/")+1)] = child.label;
-                var aChild = $('<a/>', {
-		  'class':'uiIconNode collapseIcon',
-		  'href':'javascript:void(0);',
-		  'onClick':'eXo.ecm.VideoCallsUtils.selectGroupPermision(this);',
-		  'groupId':child.group,
-		  'ajaxLink':ajaxLink,
-		  'title':child.label
-		});
-		var spanChild = $('<span/>', {
-		  'text':child.label
-		});
-		$(childNode).append(aChild);
-		var itemChild = $('<i/>', {
-		  'class':'uiIconGroup uiIconLightGray'
-		});
-		$(aChild).append(itemChild);    
-		$(aChild).append(spanChild);                
-              });              
-            }
+                 var li = $('<li/>', {});
+				 var span = $('<span/>', {
+				   'class':'uiIconMiniArrowRight'
+				 });
+  
+                 var a = $('<a/>', {
+					'class':'ItemIcon',
+                   'href':'javascript:void(0);',
+                   'onClick':'eXo.ecm.VideoCallsUtils.selectMembership(this);',
+                   'rel':'tooltip',
+                   'data-placement':'bottom',
+                   'membership':child.group,
+                   'membershipLabel':child.label,
+                   'text':child.label,
+                   'title':child.label
+				 });
+                 $(li).append(span);
+				 $(li).append(a);
+				 $(ulElem).append(li);				   
+
+              });             
+            } else {
+			  var contentBox = $("#UIGroupMemberSelector .uiContentBox:first");
+              var ulElem = $('<ul/>', {});
+              $(contentBox).append(ulElem);
+              var li = $('<li/>', {});
+		      var span = $('<span/>', {
+				'class':'uiIconMiniArrowRight'
+			  });
+			  var selectChildGroupLabel = $("#videocalls-label").attr("selectThisGroup");
+		      var a = $('<a/>', {
+				'class':'ItemIcon',
+				'href':'javascript:void(0);',
+				'onClick':'eXo.ecm.VideoCallsUtils.selectMembership(this);',
+				'rel':'tooltip',
+				'data-placement':'bottom',
+				'membership':groupId,
+				'membershipLabel':groupTitle,
+				'text':selectChildGroupLabel,
+				'title':groupTitle
+			  });
+              $(li).append(span);
+              $(li).append(a);
+              $(ulElem).append(li);
+			}
           } else {
             aCSSClass = "uiIconNode collapseIcon";
           }
@@ -418,41 +475,7 @@
         } else {
           $(upLevelElement).removeAttr('groupId');
         }
-        //Build memberships
-        $("#UIGroupMemberSelector .uiContentBox").find("ul").remove();
-        var contentBox = $("#UIGroupMemberSelector .uiContentBox:first");
-    
-        var arrMemberships = memberships.split(",");
-        if(arrMemberships.length > 0) {          
-          var ulElem = $('<ul/>', {});
-          $(contentBox).append(ulElem);    
-          for(var i=0; i < arrMemberships.length; i++) {
-            var membershipLabel = "";
-            if(arrMemberships[i] === "*") {
-	      membershipLabel = "Any ";
-	    } else {
-	      membershipLabel = eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i] + " ");
-	    }
-            var li = $('<li/>', {});
-            var span = $('<span/>', {
-	    'class':'uiIconMiniArrowRight'
-	    });
-            var a = $('<a/>', {
-	      'class':'ItemIcon',
-              'href':'javascript:void(0);',
-              'onClick':'eXo.ecm.VideoCallsUtils.selectMembership(this);',
-              'rel':'tooltip',
-              'data-placement':'bottom',
-              'membership':arrMemberships[i] + ":" +groupId,
-              'membershipLabel':membershipLabel + "in " + eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(groupId.substring(groupId.lastIndexOf("/")+1)),
-              'text':eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i]),
-              'title':eXo.ecm.VideoCallsUtils.capitaliseFirstLetter(arrMemberships[i])
-	    });
-            $(li).append(span);
-	    $(li).append(a);
-	    $(ulElem).append(li);
-          }
-        }
+       
         //Build breadcumb
         $("#UIGroupMemberSelector .breadcrumb").remove();
         var uiBreadCumb = $("#UIGroupMemberSelector .uiGrayLightBox:first");
@@ -501,7 +524,7 @@
   // Select a membership add fill it into permission field.
   Utils.prototype.selectMembership = function(elem)
   {
-    var membership = $(elem).attr("membership");   
+    var membership = "*:" + $(elem).attr("membership");   
     var membershipLabel = $(elem).attr("membershipLabel");    
     $("#userOrGroup").val(membership);
     $("#txtUserOrGroup").val(membershipLabel);
@@ -804,3 +827,5 @@
   
 
 })(gj, bts_alert, bts_modal, bts_popover);
+
+
