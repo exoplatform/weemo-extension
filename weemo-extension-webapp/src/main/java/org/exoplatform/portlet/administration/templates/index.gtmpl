@@ -518,7 +518,7 @@
       });
 	  
 	  //Validate before submit form
-	  if ($("#chkTurnOff").is(':checked')) {
+	  if ($("#chkTurnOff").not(':checked')) {
 	  
 		  $("#videoCallsPermissionForm").submit(function () {
 		    var weemoKey = $.trim($('#weemoKey').val());

@@ -152,9 +152,10 @@ public class VideoCallService {
         jcrContent.setProperty("jcr:lastModified",new GregorianCalendar());
         jcrContent.setProperty("jcr:mimeType",mimetype);
         if(jcrContent.canAddMixin(VIDEO_CERT_MIXIN_NAME)) {
-          jcrContent.addMixin(VIDEO_CERT_MIXIN_NAME);
-          jcrContent.setProperty("exo:videoCallCertificateFileName", videoCallModel.getP12CertName());
+          jcrContent.addMixin(VIDEO_CERT_MIXIN_NAME);          
         }
+        jcrContent.setProperty("exo:videoCallCertificateFileName", videoCallModel.getP12CertName());
+        
       } else if(videoCallNode.hasNode(VIDEO_P12_CERT_NODE_NAME)){
         Node p12CertNode = videoCallNode.getNode(VIDEO_P12_CERT_NODE_NAME);
         if(p12CertNode.hasNode(NodetypeConstant.JCR_CONTENT)) {
@@ -185,9 +186,9 @@ public class VideoCallService {
         jcrContent.setProperty("jcr:lastModified",new GregorianCalendar());
         jcrContent.setProperty("jcr:mimeType",mimetype);
         if(jcrContent.canAddMixin(VIDEO_CERT_MIXIN_NAME)) {
-          jcrContent.addMixin(VIDEO_CERT_MIXIN_NAME);
-          jcrContent.setProperty("exo:videoCallCertificateFileName", videoCallModel.getPemCertName());
+          jcrContent.addMixin(VIDEO_CERT_MIXIN_NAME);          
         }
+        jcrContent.setProperty("exo:videoCallCertificateFileName", videoCallModel.getPemCertName());
       } else if(videoCallNode.hasNode(VIDEO_PEM_CERT_NODE_NAME)){
         Node pemCertNode = videoCallNode.getNode(VIDEO_PEM_CERT_NODE_NAME);
         if(pemCertNode.hasNode(NodetypeConstant.JCR_CONTENT)) {
