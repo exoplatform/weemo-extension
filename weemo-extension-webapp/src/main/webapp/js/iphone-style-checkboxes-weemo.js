@@ -135,7 +135,7 @@
       } else {
         this.container.removeClass(this.disabledClass);
       }
-      new_left = this.elem.prop('checked') ? this.rightSide : 1;
+      new_left = this.elem.prop('value') == "false" ? this.rightSide : 1;
       this.handle.animate({
         left: new_left
       }, this.duration);
