@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import juzu.*;
+import juzu.impl.request.Request;
 import juzu.plugin.ajax.Ajax;
+import juzu.request.HttpContext;
 import juzu.request.RenderContext;
 import juzu.template.Template;
 
@@ -30,6 +33,8 @@ import org.exoplatform.utils.videocall.PropertyManager;
 import org.exoplatform.webui.core.UIPageIterator;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.util.Locale;
+
 
 public class VideoCallAdministration {
 
@@ -114,13 +119,16 @@ public class VideoCallAdministration {
               .set("pemCertName", pemCertName)
               .render();
     videoCalls.setDisplaySuccessMsg(false);
-  }  
+  } 
   
   @Action
   @Route("/save")
   public Response save(String disableVideoCall, String weemoKey, String authId, String authSecret, String customerCertificatePassphrase,
                        String videoCallPermissions, org.apache.commons.fileupload.FileItem p12Cert,
-                       org.apache.commons.fileupload.FileItem pemCert) throws Exception{
+                       org.apache.commons.fileupload.FileItem pemCert, HttpContext context) throws Exception{
+    if(context.getMethod().equals(Method.GET)) {
+      return VideoCallAdministration_.index();
+    }
     VideoCallService videoCallService = new VideoCallService();
     VideoCallModel videoCallModel = new VideoCallModel();
      if(StringUtils.isEmpty(disableVideoCall)) {
@@ -313,6 +321,10 @@ public class VideoCallAdministration {
   
   public String getListOfPermissions(String videoPermissions) throws Exception {
     String result = "";
+    Request request = Request.getCurrent();
+    Locale locale = request.getContext().getUserContext().getLocale();
+    ResourceBundle resoureBundle = request.getContext().getApplicationContext().resolveBundle(locale);
+    
     StringBuffer sb = new StringBuffer();
     if(videoPermissions != null && videoPermissions.length() > 0) {
       String[] arrPermissions = videoPermissions.split(",");
@@ -324,17 +336,17 @@ public class VideoCallAdministration {
         if(permissionId.indexOf(":") > 0) {
           String membership = permissionId.split(":")[0].trim();
           String memebershipLabel = membership;
-          if(memebershipLabel.equalsIgnoreCase("*")) memebershipLabel = "All";
           String groupId = permissionId.split(":")[1];
           Group group = organizationService_.getGroupHandler().findGroupById(groupId);
-          sb.append(",").append(capitalize(memebershipLabel) + " " + group.getLabel());
+          sb.append(",").append(capitalize(memebershipLabel) + " " + resoureBundle.getString("exoplatform.videocall.administration.permission.in") + " " + group.getLabel()).append(" (").append(permissionId).
+          append(")");
         } else {
           User user = organizationService_.getUserHandler().findUserByName(permissionId.trim());
           if(user != null) {
             if(StringUtils.isEmpty(user.getDisplayName())) {
               user.setDisplayName(user.getFirstName() + " " + user.getLastName());
             }         
-            sb.append(",").append(user.getDisplayName());
+            sb.append(",").append(user.getDisplayName()).append(" (").append(user.getUserName()).append(")");
           }
         }
       }
