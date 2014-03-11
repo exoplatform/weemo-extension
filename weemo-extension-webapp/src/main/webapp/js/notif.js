@@ -523,23 +523,22 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
 
 WeemoExtension.prototype.attachWeemoToConnections = function() {
   if (window.location.href.indexOf("/portal/intranet/connexions")==-1) return;
-
+	  
   var $uiPeople = jqchat('.uiTabInPage').first();
   if ($uiPeople.html() === undefined) {
     setTimeout(jqchat.proxy(this.attachWeemoToConnections, this), 250);
     return;
   }
 
-  
-
   jqchat(".contentBox", ".uiTabInPage").each(function() {
+	  
     var $uiUsername = jqchat(this).children(".spaceTitle").children("a").first();
     var username = $uiUsername.attr("href");
     username = username.substring(username.lastIndexOf("/")+1);
     var fullname = $uiUsername.html();
 
-    var $uiActionWeemo = jqchat(".weemoCallOverlay", this).first();
-    if ($uiActionWeemo !== undefined && $uiActionWeemo.html() == undefined && weemoExtension.isSupport) {
+    var $uiActionWeemo = jqchat(".weemoCallOverlay", jqchat(this).next()).first();
+    if ($uiActionWeemo == undefined || $uiActionWeemo !== undefined && $uiActionWeemo.html() == undefined && weemoExtension.isSupport) {
       var nextElem = jqchat(this).next();
       var callLabel = jqchat("#weemo-status").attr("call-label");
       var makeCallLabel = jqchat("#weemo-status").attr("make-call-label");
@@ -548,7 +547,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
       html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
       html += jqchat(nextElem).html();
       jqchat(nextElem).html(html);
-
+      
       function cbGetConnectionStatus(targetUser, activity) {
         if (activity !== "offline") {
          jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
@@ -557,7 +556,6 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
 
       weemoExtension.getStatus(username, cbGetConnectionStatus);
     }
-
   });
 
 
@@ -577,6 +575,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
       });
 
 
+  setTimeout(function() { weemoExtension.attachWeemoToConnections() }, 500);
 };
 
 /**
