@@ -5,6 +5,8 @@
   data-token-key="<%=tokenKey%>"
   data-weemo-turnoff="<%=turnOffVideoCall%>"
   data-weemo-turnoff-user="<%=turnOffVideoCallForUser%>"
+  call-label="&{exoplatform.videocall.Call}"
+  make-call-label="&{exoplatform.videocall.makeCall}"
   style="display: none;"> 
 </div>
 

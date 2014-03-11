@@ -434,10 +434,12 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
       $uiElement = $uiAction;
     }
     if (username !== "" && $uiElement.has(".weemoCallOverlay").size()===0 && weemoExtension.isSupport) {
-      var out = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' disabled" title="Make a Video Call"';
+      var callLabel = jqchat("#weemo-status").attr("call-label");
+      var makeCallLabel = jqchat("#weemo-status").attr("make-call-label");
+      var out = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' disabled" title="'+makeCallLabel+'"';
       out += ' data-fullname="'+fullname+'"';
       out += ' data-username="'+username+'" style="margin-left:5px;'+addStyle+'">';
-      out += '<i class="uiIconWeemoVideoCalls uiIconLightGray"></i> Call</a>';
+      out += '<i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
 
       $uiElement.append(out);
       jqchat(".weemoCallOverlay").on("click", function() {
@@ -484,10 +486,12 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
   fullName = fullName.substring(0, fullName.indexOf("<"));
   var userName = window.location.href;
   userName = userName.substring(userName.lastIndexOf("/")+1, userName.length);
-  
-  var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+userName.replace('.', '-')+' disabled"   id="weemoCall-'+userName.replace('.', '-')+'" title="Make a Video Call"';
+
+  var callLabel = jqchat("#weemo-status").attr("call-label");
+  var makeCallLabel = jqchat("#weemo-status").attr("make-call-label");
+  var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+userName.replace('.', '-')+' disabled"   id="weemoCall-'+userName.replace('.', '-')+'" title="'+makeCallLabel+'"';
   html += ' data-username="'+userName+'" data-fullname="'+fullName+'"';
-  html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> Call</a>';
+  html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
 
   jqchat(h3Elem).append(html);
 
@@ -537,9 +541,11 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
     var $uiActionWeemo = jqchat(".weemoCallOverlay", this).first();
     if ($uiActionWeemo !== undefined && $uiActionWeemo.html() == undefined && weemoExtension.isSupport) {
       var nextElem = jqchat(this).next();
-      var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' pull-right disabled" id="weemoCall-'+username.replace('.', '-')+'" title="Make a Video Call"';
+      var callLabel = jqchat("#weemo-status").attr("call-label");
+      var makeCallLabel = jqchat("#weemo-status").attr("make-call-label");
+      var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' pull-right disabled" id="weemoCall-'+username.replace('.', '-')+'" title="'+makeCallLabel+'"';
       html += ' data-username="'+username+'" data-fullname="'+fullname+'"';
-      html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> Call</a>';
+      html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
       html += jqchat(nextElem).html();
       jqchat(nextElem).html(html);
 

@@ -149,6 +149,7 @@
       permissions = permissions.substring(0, permissions.length-1);
       permissionsLabel = permissionsLabel.trim();
       permissionsLabel = permissionsLabel.substring(0, permissionsLabel.length-1);
+      permissionsLabel = permissionsLabel + " (" + permissions + ")" 
       $("#userOrGroup").val(permissions);
       $("#txtUserOrGroup").val(permissionsLabel);
       gj('#userSelector').modal('hide');
@@ -525,7 +526,9 @@
   Utils.prototype.selectMembership = function(elem)
   {
     var membership = "*:" + $(elem).attr("membership");   
-    var membershipLabel = $(elem).attr("membershipLabel");    
+    var membershipLabel = $(elem).attr("membershipLabel");
+    var permissionInLabel = $("#videocalls-label").attr("permissionIn");
+    membershipLabel = "* " + permissionInLabel + " " + membershipLabel + " (" + membership + ")";
     $("#userOrGroup").val(membership);
     $("#txtUserOrGroup").val(membershipLabel);
     gj('#groupSelector').modal('hide');
@@ -572,10 +575,8 @@
         "class":"left"
       });
       var divPermission = $('<div/>', {
-        "data-placement":"bottom",
-	"rel":"tooltip",
         "permission":arrPermissions[i],
-	"data-original-title":arrPermissionsLabel[i],
+	"title":arrPermissionsLabel[i],
 	"text":arrPermissionsLabel[i],
         "class":"Text"
       });
@@ -616,7 +617,7 @@
         "class":"actionIcon"
       });
       var iconDelete = $('<i/>', {
-        "class":"uiIconDelete"
+        "class":"uiIconDelete uiIconLightGray"
       });
       $(aAction).append(iconDelete); 
       $(tdAction).append(aAction);

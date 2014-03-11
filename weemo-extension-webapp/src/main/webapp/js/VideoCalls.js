@@ -14,9 +14,10 @@
     var peopleName = gj(peopleInfo).find(".peopleName:first");
     var fullName = gj(peopleName).find("a:first").html();
     gj(popElem).popover({html:true,template: '<div class="popover"><div class="arrow"></div><div class="inner"><h3 class="popover-title" style="display:none;"></h3><div class="popover-content" style="padding: 0px;"><p></p></div></div></div>',content:function (){ 
-  
+    var callLabel = gj("#weemo-status").attr("call-label");
+    var makeCallLabel = gj("#weemo-status").attr("make-call-label");
 
-  return '<div id="tiptip_content" style="border: none; box-shadown: none;"><table id="tipName"><tbody><tr><td style="width: 50px;"><a target="_parent" href="/portal/intranet/activities/"'+userName+'><img src="/social-resources/skin/images/ShareImages/UserAvtDefault.png"></a></td><td><a target="_parent" href="/portal/intranet/activities/'+userName+'">'+fullName+'</a></td></tr></tbody></table><div class="connectAction"><a type="button" class="btn weemoCallOverlay weemoCall-'+userName+' disabled" title="Make a Video Call" data-fullname="'+fullName+'" data-username="'+userName+'" style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> Call</a></div></div>';
+  return '<div id="tiptip_content" style="border: none; box-shadown: none;"><table id="tipName"><tbody><tr><td style="width: 50px;"><a target="_parent" href="/portal/intranet/activities/"'+userName+'><img src="/social-resources/skin/images/ShareImages/UserAvtDefault.png"></a></td><td><a target="_parent" href="/portal/intranet/activities/'+userName+'">'+fullName+'</a></td></tr></tbody></table><div class="connectAction"><a type="button" class="btn weemoCallOverlay weemoCall-'+userName+' disabled" title="'+makeCallLabel+'" data-fullname="'+fullName+'" data-username="'+userName+'" style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a></div></div>';
             }});
     gj(popElem).popover('show');
 
