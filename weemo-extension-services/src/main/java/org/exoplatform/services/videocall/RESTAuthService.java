@@ -42,18 +42,18 @@ public class RESTAuthService implements ResourceContainer{
   @GET
   @Path("/auth/")
   @RolesAllowed("users")
-  public Response auth(@Context HttpServletRequest servletRequest) {
+  public Response auth() {
     authService = new AuthService(); 
-    String content = authService.authenticate(servletRequest, "basic");    
+    String content = authService.authenticate(null, "basic");    
     return Response.ok(content, MediaType.APPLICATION_JSON).build();    
   }
   
   @GET
   @Path("/auth/{profileId}/")
   @RolesAllowed("users")
-  public Response auth(@Context HttpServletRequest servletRequest, @PathParam("profileId") String profileId) {
+  public Response auth(@PathParam("profileId") String profileId) {
     authService = new AuthService(); 
-    String content = authService.authenticate(servletRequest, profileId);    
+    String content = authService.authenticate(null, profileId);    
     return Response.ok(content, MediaType.APPLICATION_JSON).build();    
   }
 }

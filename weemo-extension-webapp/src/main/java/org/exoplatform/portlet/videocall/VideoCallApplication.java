@@ -65,20 +65,25 @@ public class VideoCallApplication {
     remoteUser_ = renderContext.getSecurityContext().getRemoteUser();   
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
     if(videoCallModel == null) videoCallModel = new VideoCallModel();
-    String weemoKey = videoCallModel.getWeemoKey();
-    String tokenKey = videoCallService_.getTokenKey(); 
+    String weemoKey = videoCallModel.getWeemoKey();    
+    String tokenKey = null;
+    if(httpSession.getAttribute("tokenKey") != null) {
+      tokenKey = httpSession.getAttribute("tokenKey").toString();
+    } else {
+      tokenKey = videoCallService_.getTokenKey();
+    }
     String videoCallVersion = PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEOCALL_VERSION);    
     boolean turnOffVideoCallForUser = videoCallService_.isTurnOffVideoCallForUser();
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
     if(tokenKey == null) {
-      HttpServletRequest request = Util.getPortalRequestContext().getRequest();    
       String profile_id = videoCallModel.getProfileId();      
       AuthService authService = new AuthService();      
-      String content = authService.authenticate(request, profile_id);      
+      String content = authService.authenticate(null, profile_id);      
       if(!StringUtils.isEmpty(content)) {
         JSONObject json = new JSONObject(content);
         tokenKey = json.get("token").toString();
         httpSession.setAttribute("tokenKey", tokenKey);
+        videoCallService_.setTokenKey(tokenKey);
       } else {
         tokenKey = ""; 
         videoCallService_.setTokenKey("");

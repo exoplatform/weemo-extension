@@ -708,6 +708,23 @@
     });
   }
   
+  // Test Weemo connection with parametters getted from VideoCalls Profile
+  Utils.prototype.authWeemoConnection = function(elem) {
+    var authLink = $(elem).attr("linkAuth");
+    var formVideoAdmin = $("#videoCallsPermissionForm");
+    $(formVideoAdmin).attr("action",authLink);
+    $(formVideoAdmin).submit();
+  }
+
+  // Save VideoCalls Profile
+  Utils.prototype.saveVideoCallsProfile = function(elem) {
+    var authLink = $(elem).attr("linkSave");
+    var formVideoAdmin = $("#videoCallsPermissionForm");
+    $(formVideoAdmin).attr("action",authLink);
+    $(formVideoAdmin).submit();
+  }
+  
+
   // Show message when connect to Weemo successfull
   Utils.prototype.showTestWeemoSuccess = function() {
     var testWeemoElem = $("#videocalls-alert-test-connection-error");

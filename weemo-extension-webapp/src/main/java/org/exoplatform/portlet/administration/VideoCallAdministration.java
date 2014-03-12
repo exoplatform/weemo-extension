@@ -1,5 +1,6 @@
 package org.exoplatform.portlet.administration;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,6 +18,10 @@ import juzu.template.Template;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.portlet.PortletPreferences;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.services.organization.Group;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,12 +32,17 @@ import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.Query;
 import org.exoplatform.services.organization.User;
 import org.exoplatform.services.organization.idm.ExtGroup;
+import org.exoplatform.services.videocall.AuthService;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.utils.videocall.PropertyManager;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.core.UIPageIterator;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.ibm.icu.impl.ICUBinary.Authenticate;
+
 import java.util.Locale;
 
 
@@ -60,6 +70,8 @@ public class VideoCallAdministration {
   public static String FIRST_NAME = "firstName";
   
   public static String EMAIL = "email";
+  
+  public static String MODEL_FROM_AUTH = "VideoCallsAuth";
 
   @Inject
   Provider<PortletPreferences> providerPreferences;
@@ -85,8 +97,20 @@ public class VideoCallAdministration {
     String pemCertName = "";
     String videoPermissions = "";
     boolean turnOffVideoCall = true;
+    boolean isFromAuth = false;
     
-    VideoCallModel videoModel = videoCallService_.getVideoCallProfile();
+    VideoCallModel videoModel = null;
+    PortalRequestContext requestContext = Util.getPortalRequestContext();
+    HttpSession httpSession = requestContext.getRequest().getSession();
+    if(httpSession.getAttribute(MODEL_FROM_AUTH) != null) {
+      videoModel = (VideoCallModel) httpSession.getAttribute(MODEL_FROM_AUTH);
+      isFromAuth = true;
+      httpSession.removeAttribute(MODEL_FROM_AUTH);
+    } else {
+      videoModel = videoCallService_.getVideoCallProfile();
+      isFromAuth = false;
+    }
+    
     if(videoModel != null) {
       weemoKey = videoModel.getWeemoKey();
       passPhrase = videoModel.getCustomerCertificatePassphrase();
@@ -110,7 +134,9 @@ public class VideoCallAdministration {
     
     index.with().set("turnOffVideoCall", turnOffVideoCall)
               .set("isDisplaySuccessMsg", videoCalls.isDisplaySuccessMsg())
+              .set("isDisplayAuthSuccessMsg", videoCalls.isDisplayAuthSuccessMsg())
               .set("weemoKey", weemoKey)
+              .set("isFromAuth", isFromAuth)
               .set("customerCertificatePassphrase", passPhrase)
               .set("authId", authId)
               .set("authSecret", authSecret)
@@ -119,6 +145,8 @@ public class VideoCallAdministration {
               .set("pemCertName", pemCertName)
               .render();
     videoCalls.setDisplaySuccessMsg(false);
+    videoCalls.setAuthDisplaySuccessMsg(false);
+    
   } 
   
   @Action
@@ -166,6 +194,74 @@ public class VideoCallAdministration {
      videoCallService.saveVideoCallProfile(videoCallModel);
      videoCalls.setDisplaySuccessMsg(true);     
      return VideoCallAdministration_.index();
+  }
+  
+  @Action
+  @Route("/auth")
+  public Response auth(String disableVideoCall, String weemoKey, String authId, String authSecret, String customerCertificatePassphrase,
+                       String videoCallPermissions, org.apache.commons.fileupload.FileItem p12Cert,
+                       org.apache.commons.fileupload.FileItem pemCert, HttpContext context) throws Exception {
+    PortalRequestContext requestContext = Util.getPortalRequestContext();
+    HttpSession httpSession = requestContext.getRequest().getSession();
+    
+    if(context.getMethod().equals(Method.GET)) {
+      httpSession.removeAttribute(MODEL_FROM_AUTH);
+      return VideoCallAdministration_.index();
+    }
+    VideoCallModel videoCallModel = new VideoCallModel();
+    VideoCallService videoCallService = new VideoCallService();
+    String p12CertName = "";
+    String pemCertName = "";
+    
+    InputStream isP12 = null;
+    InputStream isPem = null;
+    
+    if(weemoKey == null) weemoKey = "";
+    if(authId == null) authId = "";
+    if(authSecret == null) authSecret = "";
+    if(customerCertificatePassphrase == null) customerCertificatePassphrase = "";
+    if(videoCallPermissions == null) videoCallPermissions = "";
+    
+    VideoCallModel profile = videoCallService.getVideoCallProfile();
+    if(p12Cert == null) {
+      isP12 = videoCallService.getP12CertInputStream();
+      p12CertName = profile.getP12CertName();
+    } else {
+      isP12 = p12Cert.getInputStream();
+      p12CertName = p12Cert.getName();
+    }
+    if(pemCert == null) {
+      isPem = videoCallService.getPemCertInputStream();
+      pemCertName = profile.getPemCertName();
+    } else {
+      isPem = pemCert.getInputStream();
+      pemCertName = pemCert.getName();
+    }
+    
+    videoCallModel.setWeemoKey(weemoKey);
+    videoCallModel.setDisableVideoCall(disableVideoCall);
+    videoCallModel.setAuthId(authId.trim());
+    videoCallModel.setAuthSecret(authSecret.trim());
+    videoCallModel.setCustomerCertificatePassphrase(customerCertificatePassphrase.trim());
+    videoCallModel.setP12Cert(isP12);
+    videoCallModel.setPemCert(isPem);
+    videoCallModel.setP12CertName(p12CertName);
+    videoCallModel.setPemCertName(pemCertName);
+    videoCallModel.setVideoCallPermissions(videoCallPermissions.trim());
+    videoCallModel.setDomainId(PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID));
+    videoCallModel.setProfileId(PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE));
+    
+    
+    AuthService authService = new AuthService();
+    String content = authService.authenticate(videoCallModel, "basic");   
+    if(content != null && content.length() > 0) {
+      videoCalls.setAuthDisplaySuccessMsg(true);  
+    } else {
+      videoCalls.setAuthDisplaySuccessMsg(false);  
+    }   
+    httpSession.setAttribute(MODEL_FROM_AUTH, videoCallModel);
+    return VideoCallAdministration_.index();
+    
   }
   
   @Ajax

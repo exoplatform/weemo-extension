@@ -130,7 +130,7 @@
 					</div>
 			  	</div>
 			  </div>
-			  <div class="actionTestWeemo"><button type="button" onClick="eXo.ecm.VideoCallsUtils.testWeemoConnection();" class="btn" > &{exoplatform.videocall.testWeemoConnection} </button></div>	  
+			  <div class="actionTestWeemo"><button type="button" linkAuth="@{VideoCallAdministration.auth()}" onClick="eXo.ecm.VideoCallsUtils.authWeemoConnection(this);" class="btn" > &{exoplatform.videocall.testWeemoConnection} </button></div>	  
 			  
 			  
 			<div class="UIViewPermissionContainer" id="UIViewPermissionContainer" style="padding-bottom: 20px;">
@@ -181,6 +181,8 @@
 					
 				  <input type="hidden" id="videoCallPermissions" name="videoCallPermissions" value="<%=videoCallPermissions%>">
 				  <input type="hidden" id="isDisplaySuccessMsg" name="isDisplaySuccessMsg" value="<%=isDisplaySuccessMsg%>">
+				  <input type="hidden" id="isDisplayAuthSuccessMsg" name="isDisplayAuthSuccessMsg" value="<%=isDisplayAuthSuccessMsg%>">
+				  <input type="hidden" id="isFromAuth" name="isFromAuth" value="<%=isFromAuth%>">
 				  </tbody>
 				</table> 
 				<!--End UIGrid-->
@@ -218,7 +220,7 @@
 			  
 			  
 			  <div class="uiAction">				
-			    <button type="submit" class="btn">&{exoplatform.videocall.action.save}</button>
+			    <button type="button" linkSave="@{VideoCallAdministration.save()}" onClick="eXo.ecm.VideoCallsUtils.saveVideoCallsProfile(this);" class="btn">&{exoplatform.videocall.action.save}</button>
   			  </div>
 		  </form>
 
@@ -486,6 +488,41 @@
 	      $("#videocalls-alert").hide();
 	    }, 5000);
 	  }
+	  var isFromAuth = $("#isFromAuth").val();
+	  var isDisplayAuthSuccessMsg = $("#isDisplayAuthSuccessMsg").val();
+	  if(isFromAuth === 'true' && isDisplayAuthSuccessMsg === 'true') {
+	    var testWeemoElem = $("#videocalls-alert-test-connection-error");
+	    var successTestConnMsg = $(testWeemoElem).attr("successTestConnMsg");
+	    var icon = $('<i/>', {
+	      'class':'uiIconSuccess'
+	    });
+	    $(testWeemoElem).empty();
+	    $(testWeemoElem).removeClass("alert-error videoCallsAlertError");
+	    $(testWeemoElem).addClass("alert-success videoCallsAlertSuccess");    
+	    $(testWeemoElem).append(icon);  
+	    $(testWeemoElem).append(successTestConnMsg);
+	    $(testWeemoElem).show();
+	    setTimeout(function() {
+	      $(testWeemoElem).hide();
+	    }, 5000);
+	  } else if(isFromAuth === 'true') {
+	    var testWeemoElem = $("#videocalls-alert-test-connection-error");
+	    var errorTestConnMsg = $(testWeemoElem).attr("errorTestConnMsg");
+	    var icon = $('<i/>', {
+	      'class':'uiIconError'
+	    });
+	    $(testWeemoElem).empty();    
+	    $(testWeemoElem).removeClass("alert-success videoCallsAlertSuccess");
+	    $(testWeemoElem).addClass("alert-error videoCallsAlertError");
+	    $(testWeemoElem).append(icon);  
+	    $(testWeemoElem).append(errorTestConnMsg);
+	    $(testWeemoElem).show();
+	    setTimeout(function() {
+	      $(testWeemoElem).hide();
+	    }, 5000);
+	  }
+	  
+	  
 	  var controlsP12 = $("#p12Cert").closest(".controls");
 	  var inputP12 = $(controlsP12).find("input:first");
 	  var buttonP12 = $(controlsP12).find("button:first");

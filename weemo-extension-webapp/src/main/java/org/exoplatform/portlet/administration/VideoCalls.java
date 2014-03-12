@@ -26,6 +26,7 @@ import java.io.Serializable;
 public class VideoCalls implements Serializable {
   
   private boolean displaySuccessMsg = false;
+  private boolean displayAuthSuccessMsg = false;
  
   public void setDisplaySuccessMsg(boolean displaySuccessMsg) {
     this.displaySuccessMsg = displaySuccessMsg;
@@ -33,5 +34,13 @@ public class VideoCalls implements Serializable {
   
   public boolean isDisplaySuccessMsg() {
     return displaySuccessMsg;
+  }
+  
+  public void setAuthDisplaySuccessMsg(boolean displayAuthSuccessMsg) {
+    this.displayAuthSuccessMsg = displayAuthSuccessMsg;
+  }
+  
+  public boolean isDisplayAuthSuccessMsg() {
+    return displayAuthSuccessMsg;
   }
 }

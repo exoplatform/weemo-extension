@@ -75,32 +75,20 @@ public class AuthService {
   private static final Log LOG = ExoLogger.getLogger(AuthService.class.getName());
   
   public AuthService() {
-    authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);
-    VideoCallService videoCallService = new VideoCallService();
-    VideoCallModel videoCallModel = videoCallService.getVideoCallProfile();
-    if(videoCallModel != null) {
-      domain_id = videoCallModel.getDomainId();      
-      clientId = videoCallModel.getAuthId();
-      clientSecret = videoCallModel.getAuthSecret();
-      caFile = videoCallService.getPemCertInputStream();
-      p12File = videoCallService.getP12CertInputStream();
-      passphrase = videoCallModel.getCustomerCertificatePassphrase();
-    } else {
-      domain_id = PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID);
-      clientId = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_KEY_AUTH);
-      clientSecret = PropertyManager.getProperty(PropertyManager.PROPERTY_CLIENT_SECRET_AUTH);
-      caFile = videoCallService.getPemCertInputStream();
-      p12File = videoCallService.getP12CertInputStream();
-      passphrase = PropertyManager.getProperty(PropertyManager.PROPERTY_PASSPHRASE);
-    }
+    authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);    
   }
   
-  
-  public String authenticate(HttpServletRequest servletRequest, String profile_id) {
+  public String authenticate(VideoCallModel videoCallModel, String profile_id) {
     VideoCallService videoCallService = new VideoCallService();
-    caFile = videoCallService.getPemCertInputStream();
-    p12File = videoCallService.getP12CertInputStream();
-    VideoCallModel videoCallModel = videoCallService.getVideoCallProfile();
+    if(videoCallModel == null) {
+      caFile = videoCallService.getPemCertInputStream();
+      p12File = videoCallService.getP12CertInputStream();
+      videoCallModel = videoCallService.getVideoCallProfile();
+    } else {
+      caFile = videoCallModel.getPemCert();
+      p12File = videoCallModel.getP12Cert();
+    }  
+    
     if(videoCallModel != null) {
       domain_id = videoCallModel.getDomainId();      
       clientId = videoCallModel.getAuthId();

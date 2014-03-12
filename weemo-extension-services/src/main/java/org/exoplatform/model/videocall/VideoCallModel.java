@@ -17,12 +17,14 @@
 package org.exoplatform.model.videocall;
 
 import java.io.InputStream;
+import java.io.Serializable;
 
 import juzu.Mapped;
 
 @Mapped
-public class VideoCallModel {
-  
+public class VideoCallModel implements Serializable {
+
+  private static final long serialVersionUID = 1L;
   private String disableVideoCall = null;
   private String weemoKey = "";
   private String customerCertificatePassphrase = "";
