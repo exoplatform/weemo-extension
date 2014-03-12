@@ -155,7 +155,9 @@ public class VideoCallAdministration {
                        String videoCallPermissions, org.apache.commons.fileupload.FileItem p12Cert,
                        org.apache.commons.fileupload.FileItem pemCert, HttpContext context) throws Exception{
     if(context.getMethod().equals(Method.GET)) {
+      videoCalls.setDisplaySuccessMsg(false);
       return VideoCallAdministration_.index();
+      
     }
     VideoCallService videoCallService = new VideoCallService();
     VideoCallModel videoCallModel = new VideoCallModel();

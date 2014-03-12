@@ -718,9 +718,9 @@
 
   // Save VideoCalls Profile
   Utils.prototype.saveVideoCallsProfile = function(elem) {
-    var authLink = $(elem).attr("linkSave");
+    var saveLink = $(elem).attr("linkSave");
     var formVideoAdmin = $("#videoCallsPermissionForm");
-    $(formVideoAdmin).attr("action",authLink);
+    $(formVideoAdmin).attr("action",saveLink);
     $(formVideoAdmin).submit();
   }
   

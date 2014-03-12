@@ -39,11 +39,7 @@ function WeemoExtension() {
       switch(message) {
         case 'connectedWeemoDriver':          
           weemoExtension.connectedWeemoDriver = true;
-          var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver"); 
-          if(isNotInstallWeemoDriver == 'true') {
-            jqchat("#weemo-alert").hide();
-            weemoExtension.setCookie("isNotInstallWeemoDriver", "false", 365);
-          }
+	  weemoExtension.setInstallWeemoDriver();          
           this.authenticate();
           break;       
         case 'loggedasotheruser':
@@ -150,13 +146,13 @@ function WeemoExtension() {
       var wsUri = "wss://localhost:34679";
       var protocol = "weemodriver-protocol";
       if(typeof MozWebSocket == 'function') WebSocket = MozWebSocket;
-      var websock = new WebSocket(wsUri, protocol);
-      websock.onclose = function(evt) { 	      
-        weemoExtension.setNotInstallWeemoDriver();
-      };
+      var websock = new WebSocket(wsUri, protocol);     
       websock.onerror = function(evt) {
         weemoExtension.setNotInstallWeemoDriver();
-      };
+      };   
+      websock.onopen = function(evt) {
+        weemoExtension.setInstallWeemoDriver();
+      };  
     }
   }
   
@@ -179,9 +175,17 @@ WeemoExtension.prototype.setNotInstallWeemoDriver = function() {
   var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");      
   if(!isNotInstallWeemoDriver || 0 === isNotInstallWeemoDriver.length) {
     weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
-    weemoExtension.setCookie("downloadUrl", "https://download.weemo.com/file/release/3", 365);
-    weemoExtension.showWeemoInstaller();
+    weemoExtension.setCookie("downloadUrl", "https://download.weemo.com/file/release/3", 365);    
   }
+  weemoExtension.showWeemoInstaller();
+};
+
+WeemoExtension.prototype.setInstallWeemoDriver = function() {
+	var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver"); 
+        if(isNotInstallWeemoDriver == 'true') {          
+          weemoExtension.setCookie("isNotInstallWeemoDriver", "false", 365);
+        }
+	jqchat("#weemo-alert").hide();
 }
 
 WeemoExtension.prototype.initOptions = function(options) {
@@ -189,6 +193,22 @@ WeemoExtension.prototype.initOptions = function(options) {
   this.jzGetState = options.urlGetState;
   this.weemoIntervalNotif = options.notificationInterval;
   this.getStateURL = this.jzGetState;
+};
+
+WeemoExtension.prototype.checkWeemoDriver = function() {
+    var platform = navigator.platform;
+    if (platform.indexOf("Linux") < 0) {
+      var wsUri = "wss://localhost:34679";
+      var protocol = "weemodriver-protocol";
+      if(typeof MozWebSocket == 'function') WebSocket = MozWebSocket;
+      var websock = new WebSocket(wsUri, protocol);     
+      websock.onerror = function(evt) {
+        weemoExtension.setNotInstallWeemoDriver();
+      };   
+      websock.onopen = function(evt) {
+        weemoExtension.setInstallWeemoDriver();
+      };  
+    }
 };
 
 WeemoExtension.prototype.log = function() {
@@ -634,6 +654,10 @@ var weemoExtension = new WeemoExtension();
     weemoExtension.isTurnOffForUser = $notificationApplication.attr("data-weemo-turnoff-user");
 
     var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
+
+    var checkWeemoDriverEvent = window.clearInterval(checkWeemoDriverEvent);
+    checkWeemoDriverEvent = setInterval($.proxy(weemoExtension.checkWeemoDriver, weemoExtension), 3*1000);
+    weemoExtension.checkWeemoDriver();
 
     weemoExtension.videoCallVersion = $notificationApplication.attr("videoCallVersion");
     if(weemoExtension.videoCallVersion.length > 0) {

@@ -220,7 +220,7 @@
 			  
 			  
 			  <div class="uiAction">				
-			    <button type="button" linkSave="@{VideoCallAdministration.save()}" onClick="eXo.ecm.VideoCallsUtils.saveVideoCallsProfile(this);" class="btn">&{exoplatform.videocall.action.save}</button>
+			    <button type="button" id="btnVideoCallsSaveProfile" linkSave="@{VideoCallAdministration.save()}" onClick="eXo.ecm.VideoCallsUtils.saveVideoCallsProfile(this);" class="btn">&{exoplatform.videocall.action.save}</button>
   			  </div>
 		  </form>
 
@@ -397,6 +397,11 @@
 <script type="text/javascript">   
     
     $( document ).ready(function() {
+    
+      //Reset action link for admin form
+      var saveLink = $("#btnVideoCallsSaveProfile").attr("linkSave");
+      var formVideoAdmin = $("#videoCallsPermissionForm");
+      $(formVideoAdmin).attr("action",saveLink);
     
 	  $("#chkTurnOff").change(function() {
 	    if ($("#chkTurnOff").is(':checked')) {
