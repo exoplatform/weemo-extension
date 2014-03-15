@@ -35,6 +35,8 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import org.exoplatform.services.organization.Group;
+import org.exoplatform.services.organization.User;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -44,17 +46,12 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import juzu.impl.request.Request;
-
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.model.videocall.VideoCallModel;
-import org.exoplatform.portal.application.PortalRequestContext;
-import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.utils.videocall.PropertyManager;
 import org.json.JSONObject;
@@ -71,12 +68,76 @@ public class AuthService {
   private InputStream p12File = null;
   private String passphrase = null;
   private String domain_id = null;  
+  public final static String ANY = "any";
+  public final static String ROOT = "root";
+  OrganizationService orgService;
   
   private static final Log LOG = ExoLogger.getLogger(AuthService.class.getName());
   
   public AuthService() {
-    authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);    
+    authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);  
+    PortalContainer container = PortalContainer.getInstance();
+    orgService = (OrganizationService) container.getComponentInstanceOfType(OrganizationService.class);
   }
+  
+  public JSONObject verifyPermission(String entry) throws Exception {
+    IDType idType;
+    JSONObject json = new JSONObject();
+    if (entry.startsWith("/")) {
+      idType = IDType.GROUP;
+    } else if (entry.contains(":")) {
+      idType = IDType.MEMBERSHIP;
+    } else {
+      idType = IDType.USER;
+    }
+    boolean isExistEntry = false;
+    
+    if (idType == IDType.USER) {
+      if (ANY.equalsIgnoreCase(entry) || ROOT.equalsIgnoreCase(entry)) {
+        isExistEntry = true;
+      }
+      isExistEntry = orgService.getUserHandler().findUserByName(entry) != null;
+      json.put("isExist", isExistEntry);
+      if(isExistEntry) {
+        User user = orgService.getUserHandler().findUserByName(entry);
+        String userName = user.getDisplayName();
+        if(userName == null) {
+          userName = user.getFirstName() + " " + user.getLastName();
+        }
+        json.put("displayName", userName);
+        json.put("type", "USER");
+      }
+      return json;
+    }
+
+    if (idType == IDType.GROUP) {
+      isExistEntry = orgService.getGroupHandler().findGroupById(entry) != null;
+      json.put("isExist", isExistEntry);
+      if(isExistEntry) {
+        json.put("displayName", orgService.getGroupHandler().findGroupById(entry).getLabel());
+        json.put("type", "GROUP");
+      }
+    }
+
+    String[] membership = entry.split(":");
+    Group group = orgService.getGroupHandler().findGroupById(membership[1]);
+    if (group == null) {
+      isExistEntry = false;
+    } else {
+      if ("*".equals(membership[0])) {
+        isExistEntry = true;
+      } else {
+        isExistEntry =  orgService.getMembershipTypeHandler().findMembershipType(membership[0]) != null;
+      }
+    }   
+    json.put("isExist", isExistEntry);
+    if(isExistEntry) {
+      json.put("displayName", orgService.getGroupHandler().findGroupById(membership[1]).getLabel());
+      json.put("type", "MEMBERSHIP");
+    }
+    return json;
+  }
+  
   
   public String authenticate(VideoCallModel videoCallModel, String profile_id) {
     VideoCallService videoCallService = new VideoCallService();

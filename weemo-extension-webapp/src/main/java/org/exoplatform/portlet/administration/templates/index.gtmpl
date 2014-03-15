@@ -392,6 +392,29 @@
   </div><!-- /.modal-dialog -->
 </div>
 
+
+<!--Permission Notification Modal -->
+<div id="permissionNotify" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+		<div class="popupHeader clearfix modal-header">
+			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="&{exoplatform.videocall.administration.close}" ></button>
+			<span class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.permission.warningTitle}</span>
+		</div>
+
+		<div class="PopupContent popupContent modal-body">    
+			<i class="uiVideoCallIconWarning"></i>&nbsp;<span notExist="&{exoplatform.videocall.user.notExist}" alreadyInList="&{exoplatform.videocall.user.alreadyInList}"></span>
+			<div class="uiAction uiActionBorder">
+				<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.permissions.okButton}</button>
+			</div>
+		</div>
+		
+      </div>
+		
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
 <div id="videocalls-label" type="hidden" permissionIn="&{exoplatform.videocall.administration.permission.in}" selectThisGroup="&{exoplatform.videocall.administration.selectThisGroup}" noLabel="&{exoplatform.videocall.administration.swither.no}" yesLabel="&{exoplatform.videocall.administration.swither.yes}" noFileLabel="&{exoplatform.videocall.administration.noFile}" uploadLabel="&{exoplatform.videocall.administration.upload}"></div>
 
 <script type="text/javascript">   

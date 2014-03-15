@@ -139,7 +139,7 @@
         var tdElem = $(this).parent().next();
         var spanElem = $(tdElem).find('span:first');
         permissions = permissions.concat($(this).attr("name").concat(", "));   
-        permissionsLabel = permissionsLabel.concat($(this).val().concat(", "));     
+        permissionsLabel = permissionsLabel.concat($(this).val().concat(" (").concat($(this).attr("name")).concat(")").concat(", "));     
       }
     });
     if(!isSelected) {
@@ -149,7 +149,7 @@
       permissions = permissions.substring(0, permissions.length-1);
       permissionsLabel = permissionsLabel.trim();
       permissionsLabel = permissionsLabel.substring(0, permissionsLabel.length-1);
-      permissionsLabel = permissionsLabel + " (" + permissions + ")" 
+      //permissionsLabel = permissionsLabel + " (" + permissions + ")" 
       $("#userOrGroup").val(permissions);
       $("#txtUserOrGroup").val(permissionsLabel);
       gj('#userSelector').modal('hide');
@@ -540,12 +540,13 @@
     if(!permissions || permissions.length==0) return;
     var permissionsLabel = $("#txtUserOrGroup").val();  
     var arrPermissions = permissions.split(",");
+    var arrPermissionsNotExist = [];
+    var arrPermissionsAlreadyInList = [];
     var arrPermissionsLabel = permissionsLabel.split(",");
     var tbody = $("#UIViewPermissionContainer").find("tbody:first");
     if(arrPermissions.length > 0) {
       $(tbody).find(".empty").remove();
     }
-
     
     //Get list of permissions
     var permissionsMap = {};
@@ -566,65 +567,138 @@
       }
     }
     
+    var verifyUserLink = "/rest/weemo/verify/";
+    
     
     for(var i=0; i < arrPermissions.length; i++) {
-      if(permissionsMap[arrPermissions[i]]) continue;
-      var tr = $('<tr/>', {});
-      //td for permission
-      var tdPermission = $('<td/>', {
-        "class":"left"
-      });
-      var divPermission = $('<div/>', {
-        "permission":arrPermissions[i],
-	"title":arrPermissionsLabel[i],
-	"text":arrPermissionsLabel[i],
-        "class":"Text"
-      });
-      $(tdPermission).append(divPermission); 
-      $(tr).append(tdPermission); 
-      //td for switcher icon
-      var tdIcon = $('<td/>', {
-        "class":"center"
-      });
-      var divIcon = $('<div/>', {        
-        "class":"spaceRole"
-      });
-      var yesLabel = $("#videocalls-label").attr("yesLabel");
-      var noLabel = $("#videocalls-label").attr("noLabel");
-      var inputIcon = $('<input/>', { 
-        "type":"checkbox",
-        "id":"enableVideoCalls",
-        "name":"enableVideoCalls",
-        "value":"true",
-        "data-yes":yesLabel,
-        "data-no":noLabel,
-        "checked":"checked",
-        "style":"visibility: hidden;",       
-        "class":"yesno"
-      });
-      $(divIcon).append(inputIcon); 
-      $(tdIcon).append(divIcon);
-      $(tr).append(tdIcon); 
-      // td for action
-      var tdAction = $('<td/>', {
-        "class":"center"
-      });
-      var aAction = $('<a/>', {
-        "data-original-title":"Delete",
-	"data-placement":"bottom",
-	"rel":"tooltip",
-	"onclick":"eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);",
-        "class":"actionIcon"
-      });
-      var iconDelete = $('<i/>', {
-        "class":"uiIconDelete uiIconLightGray"
-      });
-      $(aAction).append(iconDelete); 
-      $(tdAction).append(aAction);
-      $(tr).append(tdAction);       
-      $(tbody).append(tr);      
+      if(permissionsMap[$.trim(arrPermissions[i])]) {
+        arrPermissionsAlreadyInList.push($.trim(arrPermissions[i]));
+        continue;
+      }
+
+      $.ajax({
+        url: verifyUserLink, 
+        dataType: "json",   
+        context: this,
+        data: {
+          "permissionId": $.trim(arrPermissions[i])
+        },
+        async: false,
+        success: function(data){
+          var validUser = data.isExist; 
+          console.log(data);        
+          if(validUser == true) {
+              var displayName = data.displayName;
+              var type = data.type;
+              if(type == "USER") {
+                displayName = displayName.concat(" (").concat($.trim(arrPermissions[i])).concat(")");
+              } else {
+                var permissionInLabel = $("#videocalls-label").attr("permissionIn");
+                displayName = "* ".concat(permissionInLabel).concat(" ").concat(displayName).concat(" (").concat($.trim(arrPermissions[i])).concat(")");
+              }
+              var tr = $('<tr/>', {});
+	      //td for permission
+	      var tdPermission = $('<td/>', {
+		"class":"left"
+	      });
+	      var divPermission = $('<div/>', {
+		"permission":arrPermissions[i],
+		"title":displayName,
+		"text":displayName,
+		"class":"Text"
+	      });
+	      $(tdPermission).append(divPermission); 
+	      $(tr).append(tdPermission); 
+	      //td for switcher icon
+	      var tdIcon = $('<td/>', {
+		"class":"center"
+	      });
+	      var divIcon = $('<div/>', {        
+		"class":"spaceRole"
+	      });
+	      var yesLabel = $("#videocalls-label").attr("yesLabel");
+	      var noLabel = $("#videocalls-label").attr("noLabel");
+	      var inputIcon = $('<input/>', { 
+		"type":"checkbox",
+		"id":"enableVideoCalls",
+		"name":"enableVideoCalls",
+		"value":"true",
+		"data-yes":yesLabel,
+		"data-no":noLabel,
+		"checked":"checked",
+		"style":"visibility: hidden;",       
+		"class":"yesno"
+	      });
+	      $(divIcon).append(inputIcon); 
+	      $(tdIcon).append(divIcon);
+	      $(tr).append(tdIcon); 
+	      // td for action
+	      var tdAction = $('<td/>', {
+		"class":"center"
+	      });
+	      var aAction = $('<a/>', {
+		"data-original-title":"Delete",
+		"data-placement":"bottom",
+		"rel":"tooltip",
+		"onclick":"eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);",
+		"class":"actionIcon"
+	      });
+	      var iconDelete = $('<i/>', {
+		"class":"uiIconDelete uiIconLightGray"
+	      });
+	      $(aAction).append(iconDelete); 
+	      $(tdAction).append(aAction);
+	      $(tr).append(tdAction);       
+	      $(tbody).append(tr);
+          } else {
+            arrPermissionsNotExist.push($.trim(arrPermissions[i]));
+          }
+        },
+        error: function(){
+      
+        }
+      });           
     }
+    var warningNotExist = "";
+    var warningAlreadyInList = "";
+    var warningContent = "";
     
+    var notifyElem = $("#permissionNotify");
+    var popupContent = $(notifyElem).find(".PopupContent:first");
+    var spanElem = $(popupContent).find("span:first");
+
+    if(arrPermissionsNotExist.length>0) {
+      var temp = "";
+      for (var i = 0; i < arrPermissionsNotExist.length; i++) {
+        temp = temp.concat(arrPermissionsNotExist[i]).concat(",");
+      }
+      if(temp.length > 1) {
+        temp = temp.substring(0, temp.length-1);
+      }
+      temp = "<strong>"+temp+"</strong>";
+      warningNotExist = warningNotExist.concat(temp).concat(" ").concat($(spanElem).attr("notExist"));
+    }
+
+    if(arrPermissionsAlreadyInList.length>0) {      
+      var temp = "";
+      for (var i = 0; i < arrPermissionsAlreadyInList.length; i++) {
+        temp = temp.concat(arrPermissionsAlreadyInList[i]).concat(",");
+      }
+      if(temp.length > 1) {
+        temp = temp.substring(0, temp.length-1);
+      }
+      temp = "<strong>"+temp+"</strong>";
+      warningAlreadyInList = warningAlreadyInList.concat(temp).concat(" ").concat($(spanElem).attr("alreadyInList"));
+    }
+    warningContent = warningContent.concat(warningNotExist);
+    if(warningNotExist.length > 0) warningContent = warningContent.concat("<br/>");
+    warningContent = warningContent.concat(warningAlreadyInList);
+
+    if(warningContent.length > 0) {
+      $(spanElem).html(warningContent);
+      gj('#permissionNotify').modal('show');
+      $(".modal-backdrop").remove();
+    }
     eXo.ecm.VideoCallsUtils.reloadSwitcherButton();
     
     $("#userOrGroup").val("");
@@ -853,6 +927,7 @@
 		  }
 		  permissionData = permissionData.substring(1);
 		}
+
 		$("#videoCallPermissions").val(permissionData);   
 		
     }

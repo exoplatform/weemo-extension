@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
@@ -46,6 +47,15 @@ public class RESTAuthService implements ResourceContainer{
     authService = new AuthService(); 
     String content = authService.authenticate(null, "basic");    
     return Response.ok(content, MediaType.APPLICATION_JSON).build();    
+  }
+  
+  @GET
+  @Path("/verify/")
+  @RolesAllowed("users")
+  public Response verifyPermission(@QueryParam("permissionId") String permissionId) throws Exception {
+    authService = new AuthService(); 
+    JSONObject json = authService.verifyPermission(permissionId);     
+    return Response.ok(json.toString(), MediaType.APPLICATION_JSON).build();    
   }
   
   @GET
