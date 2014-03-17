@@ -631,7 +631,32 @@
 	      });
 	      $(divIcon).append(inputIcon); 
 	      $(tdIcon).append(divIcon);
-	      $(tr).append(tdIcon); 
+	      $(tr).append(tdIcon);
+	      
+	      
+	      $(divIcon).click(function()
+		  {
+		    var input = $(divIcon).find("input");
+		    var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
+		    input.attr("value", remembermeOpt);
+		  });
+    	  var yeslabel;
+    	  var nolabel;
+    	  $(divIcon).children('input:checkbox').each(function () {
+	        yeslabel = $(divIcon).data("yes");
+	        nolabel = $(divIcon).data("no");
+	        $(divIcon).iphoneStyle({
+	                checkedLabel:yeslabel,
+	                uncheckedLabel:nolabel});
+
+	        $(divIcon).change(function()
+	        {
+	            $(divIcon).closest("div.spaceRole").trigger("click");
+	        });
+    	  });	      
+	      
+	      
+	      
 	      // td for action
 	      var tdAction = $('<td/>', {
 		"class":"center"
@@ -739,7 +764,7 @@
       {
 	var input = $(this).find("#enableVideoCalls");
 	var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
-	input.attr("value", remembermeOpt);
+	//input.attr("value", remembermeOpt);
       });
       var yeslabel;
       var nolabel;
