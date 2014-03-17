@@ -102,11 +102,13 @@ button.close{
 
 .modal {   
     width: auto;
-    -webkit-transform: translate(-50%);
-    transform: translate(-50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    top: 50%;
     position: absolute;
     margin-left: auto;
     min-width: 560px;
+    margin-top: 0px;
 }
 
 .connectAction .btn{

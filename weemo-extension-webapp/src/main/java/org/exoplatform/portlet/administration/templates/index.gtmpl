@@ -228,7 +228,7 @@
 
 
 <!--User Selector Modal -->
-<div id="userSelector" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div id="userSelector" class="uiPopup modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
 
@@ -312,7 +312,7 @@
 </div>
 
 <!--Group Selector Modal -->
-<div id="groupSelector" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div id="groupSelector" class="uiPopup modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
 	  <div class="popupHeader clearfix modal-header">
@@ -370,7 +370,7 @@
 
 
 <!--Delete Confirmation Modal -->
-<div id="deleteCofirmation" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div id="deleteCofirmation" class="uiPopup modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
 		<div class="popupHeader clearfix modal-header">
@@ -394,7 +394,7 @@
 
 
 <!--Permission Notification Modal -->
-<div id="permissionNotify" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div id="permissionNotify" class="uiPopup modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
 		<div class="popupHeader clearfix modal-header">
