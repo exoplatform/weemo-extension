@@ -72,7 +72,6 @@ function WeemoExtension() {
       weemoExtension.showWeemoInstaller();
       if (navigator.platform !== "Linux") {
         jqchat("#weemo-alert-download").click(function() {
-          weemoExtension.setCookie("isDismiss", "true", 365);
           jqchat("#weemo-alert").hide();
           location.href=downloadUrl;
         });   
@@ -257,7 +256,6 @@ WeemoExtension.prototype.showWeemoInstaller = function() {
       jqchat("#weemo-alert").show();   
       var downloadUrl = weemoExtension.getCookie("downloadUrl");
       jqchat("#weemo-alert-download").click(function() {
-        weemoExtension.setCookie("isDismiss", "true", 365);
         jqchat("#weemo-alert").hide();
         location.href=downloadUrl;
       });  
