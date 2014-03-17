@@ -492,7 +492,7 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
 
 WeemoExtension.prototype.attachWeemoToProfile = function() {
   if (window.location.href.indexOf("/portal/intranet/profile")==-1) return;
-  
+
   var headerSecion = jqchat("#UIHeaderSection");
   if(headerSecion.html() === undefined) {
     setTimeout(jqchat.proxy(this.attachWeemoToProfile, this), 250);
@@ -500,43 +500,43 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
   }
   
   var infoSection = jqchat("UIBasicInfoSection");
-  var h3Elem = jqchat(headerSecion).find("h3:first");
+  var $h3Elem = jqchat(headerSecion).find("h3:first");
   var buttonInvite = jqchat(headerSecion).find("button:first");
-  var fullName = jqchat(h3Elem).html();
+  var fullName = $h3Elem.html();
   fullName = fullName.substring(0, fullName.indexOf("<"));
   var userName = window.location.href;
   userName = userName.substring(userName.lastIndexOf("/")+1, userName.length);
+  if (userName !== "" && $h3Elem.has(".weemoCallOverlay").size()===0 && weemoExtension.isSupport) {
+	  var callLabel = jqchat("#weemo-status").attr("call-label");
+	  var makeCallLabel = jqchat("#weemo-status").attr("make-call-label");
+	  var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+userName.replace('.', '-')+' disabled"   id="weemoCall-'+userName.replace('.', '-')+'" title="'+makeCallLabel+'"';
+	  html += ' data-username="'+userName+'" data-fullname="'+fullName+'"';
+	  html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
 
-  var callLabel = jqchat("#weemo-status").attr("call-label");
-  var makeCallLabel = jqchat("#weemo-status").attr("make-call-label");
-  var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+userName.replace('.', '-')+' disabled"   id="weemoCall-'+userName.replace('.', '-')+'" title="'+makeCallLabel+'"';
-  html += ' data-username="'+userName+'" data-fullname="'+fullName+'"';
-  html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
+  	  $(h3Elem).append(html);
 
-  jqchat(h3Elem).append(html);
+	  function cbGetProfileStatus(targetUser, activity) {
+	    if (activity !== "offline") {
+	      jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
+	    }
+	  }
 
-  function cbGetProfileStatus(targetUser, activity) {
-    if (activity !== "offline") {
-      jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
-    }
-  }
+	  jqchat(".weemoCallOverlay").on("click", function() {
+		if (!jqchat(this).hasClass("disabled") && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
+		&& weemoExtension.tokenKey.length > 0) {
+		  var targetUser = jqchat(this).attr("data-username");
+		  var targetFullname = jqchat(this).attr("data-fullname");
+		  weemoExtension.createWeemoCall(targetUser, targetFullname);
+		} else if(!jqchat(this).hasClass("disabled")) {
+		  if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
+		    eXo.ecm.VideoCalls.showInstallInterceptor();
+		  } else if(weemoExtension.isTurnOffForUser == "true") {
+		    eXo.ecm.VideoCalls.showPermissionInterceptor();
+		  }
+		}
+	      });
 
-  jqchat(".weemoCallOverlay").on("click", function() {
-        if (!jqchat(this).hasClass("disabled") && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
-        && weemoExtension.tokenKey.length > 0) {
-          var targetUser = jqchat(this).attr("data-username");
-          var targetFullname = jqchat(this).attr("data-fullname");
-          weemoExtension.createWeemoCall(targetUser, targetFullname);
-        } else if(!jqchat(this).hasClass("disabled")) {
-          if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
-            eXo.ecm.VideoCalls.showInstallInterceptor();
-          } else if(weemoExtension.isTurnOffForUser == "true") {
-            eXo.ecm.VideoCalls.showPermissionInterceptor();
-          }
-        }
-      });
-
-
+	}
 };
 
 
@@ -651,6 +651,7 @@ var weemoExtension = new WeemoExtension();
 
     weemoExtension.isTurnOff = $notificationApplication.attr("data-weemo-turnoff");
     if(weemoExtension.isTurnOff == "true") return;
+    if(navigator.platform.indexOf("Linux") >= 0) return;
     weemoExtension.isTurnOffForUser = $notificationApplication.attr("data-weemo-turnoff-user");
 
     var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");

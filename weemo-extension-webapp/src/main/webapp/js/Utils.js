@@ -143,7 +143,12 @@
       }
     });
     if(!isSelected) {
-      $(".alert").show(permissions);
+      var userSelector = $("#userSelector");
+      var alertElem = $(userSelector).find(".alert:first");
+      $(alertElem).show(permissions);
+      setTimeout(function() {
+        $(alertElem).hide();
+      }, 5000);
     } else {
       permissions = permissions.trim();
       permissions = permissions.substring(0, permissions.length-1);

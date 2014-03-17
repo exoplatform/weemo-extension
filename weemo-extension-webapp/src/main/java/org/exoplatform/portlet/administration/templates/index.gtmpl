@@ -237,8 +237,7 @@
 		<span id="userModalTitle" class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.administration.userSelector}</span>
       </div>
       <div class="PopupContent popupContent modal-body">
-        <div class="alert alert-warning alert-dismissable" style="display:none; left: 30%; position: absolute; top: 27px;">
-          <button style="right: -9px; top: 0px;" type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <div class="alert fade in" style="display:none; left: 30%; position: absolute; top: 27px;">
           <i class="uiIconWarning"></i> &{exoplatform.videocall.permissions.empty.alertMessage}
         </div>
         <form class="UIForm" id="UIUserSelector" action="" method="post"><div><input type="hidden" name="formOp" value=""><input type="hidden" name="gtn:csrf" value="A64A2D967F00010111B72C96CA121B53"></div>
