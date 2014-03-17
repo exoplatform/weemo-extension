@@ -786,7 +786,13 @@
   Utils.prototype.authWeemoConnection = function(elem) {
     var authLink = $(elem).attr("linkAuth");
     var formVideoAdmin = $("#videoCallsPermissionForm");
-    var authId = $.trim($('#authId').val());
+ 
+	var weemoKey = $.trim($('#weemoKey').val());
+	if (weemoKey  === '') {	      
+	  eXo.ecm.VideoCallsUtils.displayErrorAlert($('#weemoKey').attr('label'));
+	  return false;
+	}
+    	var authId = $.trim($('#authId').val());
     
 	if (authId  === '') {	      
 	  eXo.ecm.VideoCallsUtils.displayErrorAlert($('#authId').attr('label'));
@@ -836,7 +842,29 @@
 		eXo.ecm.VideoCallsUtils.displayErrorAlert(label);
 		return false;
 	  } 
-	} 	  
+	} 
+
+        //Get list of permissions
+	var permissionData = "";
+	var uiViewPermissionList = $("#UIViewPermissionList");
+	if($(uiViewPermissionList).find(".empty").length>0) {
+	  permissionData = null;
+	} else {	      
+	  var tbody = $(uiViewPermissionList).find("tbody:first");
+	  if($(tbody).find("tr").length>0) {
+		$(tbody).find("tr").each(function(i) {
+		  if($(this).find("td").length>0) {
+			var tdPermission = $(this).find("td")[0];
+			var tdOnOff = $(this).find("td")[1];
+			var value = $(tdOnOff).find("input:first").val();
+			permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value;
+		  }
+		});
+	  }
+	  permissionData = permissionData.substring(1);
+	}
+
+	$("#videoCallPermissions").val(permissionData); 	  
 	
 	         
     $(formVideoAdmin).attr("action",authLink);

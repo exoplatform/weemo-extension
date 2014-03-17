@@ -1,11 +1,14 @@
 package org.exoplatform.portlet.administration;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 import juzu.*;
@@ -39,6 +42,7 @@ import org.exoplatform.utils.videocall.PropertyManager;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.core.UIPageIterator;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ibm.icu.impl.ICUBinary.Authenticate;
@@ -209,7 +213,8 @@ public class VideoCallAdministration {
     if(context.getMethod().equals(Method.GET)) {
       httpSession.removeAttribute(MODEL_FROM_AUTH);
       return VideoCallAdministration_.index();
-    }
+    }   
+    
     VideoCallModel videoCallModel = new VideoCallModel();
     VideoCallService videoCallService = new VideoCallService();
     String p12CertName = "";
@@ -252,8 +257,28 @@ public class VideoCallAdministration {
     videoCallModel.setVideoCallPermissions(videoCallPermissions.trim());
     videoCallModel.setDomainId(PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID));
     videoCallModel.setProfileId(PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE));
+    videoCallModel.setVideoCallPermissions(videoCallPermissions);
     
-    
+    //Check weemo key is right or not
+    URL url = new URL("https://download.weemo.com/js/webappid/"+weemoKey+"/env/ppr");
+    InputStream in = url.openStream();
+    Scanner scan = new Scanner(in);
+    StringBuffer sb = new StringBuffer();
+    while (scan.hasNext())
+    {
+        String str = scan.nextLine();
+        sb.append(str);
+    }
+    scan.close();
+    try {
+      JSONObject json = new JSONObject(sb.toString());      
+      videoCalls.setAuthDisplaySuccessMsg(false);
+      httpSession.setAttribute(MODEL_FROM_AUTH, videoCallModel);
+      return VideoCallAdministration_.index();
+    } catch(JSONException ex) {
+      //Do nothing in case the weemo key is right      
+    }
+    //Check for other parametters in case weemoKey is right
     AuthService authService = new AuthService();
     String content = authService.authenticate(videoCallModel, "basic");   
     if(content != null && content.length() > 0) {
@@ -456,6 +481,6 @@ public class VideoCallAdministration {
   public static String capitalize(String s) {
     if (s.length() == 0) return s;
     return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
-  }
+  } 
   
 }
