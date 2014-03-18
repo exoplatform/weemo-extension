@@ -27,13 +27,10 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpSession;
 
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.model.videocall.VideoCallModel;
-import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.config.UserACL;
-import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.ExoCache;
 import org.exoplatform.services.cms.mimetype.DMSMimeTypeResolver;

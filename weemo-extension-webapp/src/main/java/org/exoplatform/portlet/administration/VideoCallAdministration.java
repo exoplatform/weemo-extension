@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.Group;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,7 +61,7 @@ public class VideoCallAdministration {
   @Inject
   VideoCalls videoCalls;
 
-  Logger log = Logger.getLogger("VideoCallAdministration");
+  Log log = ExoLogger.getLogger("VideoCallAdministration");
 
   OrganizationService organizationService_;
 
@@ -477,7 +479,9 @@ public class VideoCallAdministration {
         if(sb.length() >= 1) result = sb.substring(1);      
       }
     } catch(Exception ex) {
-      ex.printStackTrace();
+      if (log.isErrorEnabled()) {
+        log.error("getListOfPermissions() failed because of ", ex);
+      }
     }
     return result;
   }
