@@ -6,22 +6,24 @@
   function VideoCalls() {} ;
 
   
-  VideoCalls.prototype.showPopover = function (element) { 
-    var userName = gj(element).find("a:first").attr("href");
+  VideoCalls.prototype.showPopover = function (element,place) { 
+	var userElem = gj(element).find("a:first");
+    var userName = gj(userElem).attr("href");
     var popElem = gj(element).find(".avatarXSmall:first");
     userName = userName.substring(userName.lastIndexOf("/") + 1, userName.length);
     var peopleInfo = gj(element).next();
     var peopleName = gj(peopleInfo).find(".peopleName:first");
+    var peopleLink = gj(peopleName).find("a:first");
     var fullName = gj(peopleName).find("a:first").html();
-    gj(popElem).popover({html:true,template: '<div class="popover"><div class="arrow"></div><div class="inner"><h3 class="popover-title" style="display:none;"></h3><div class="popover-content" style="padding: 0px;"><p></p></div></div></div>',content:function (){ 
-    var callLabel = gj("#weemo-status").attr("call-label");
-    var makeCallLabel = gj("#weemo-status").attr("make-call-label");
-
-  return '<div id="tiptip_content" style="border: none; box-shadown: none;"><table id="tipName"><tbody><tr><td style="width: 50px;"><a target="_parent" href="/portal/intranet/activities/"'+userName+'><img src="/social-resources/skin/images/ShareImages/UserAvtDefault.png"></a></td><td><a target="_parent" href="/portal/intranet/activities/'+userName+'">'+fullName+'</a></td></tr></tbody></table><div class="connectAction"><a type="button" class="btn weemoCallOverlay weemoCall-'+userName+' disabled" title="'+makeCallLabel+'" data-fullname="'+fullName+'" data-username="'+userName+'" style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a></div></div>';
-            }});
-    gj(popElem).popover('show');
-
-   
+    var realPopElem = place ? peopleLink: popElem;
+    gj(realPopElem).popover({container:'.peoplePicture', placement: 'left', html:true,template: '<div class="popover left"><div class="arrow"></div><div class="inner"><h3 class="popover-title" style="display:none;"></h3><div class="popover-content" style="padding: 0px;"><p></p></div></div></div>',
+    					 content:function (){ 
+						    var callLabel = gj("#weemo-status").attr("call-label");
+						    var makeCallLabel = gj("#weemo-status").attr("make-call-label");
+						    return '<div id="tiptip_content" style="border: none; box-shadown: none;"><table id="tipName"><tbody><tr><td style="width: 50px;"><a target="_parent" href="/portal/intranet/activities/"'+userName+'><img src="/social-resources/skin/images/ShareImages/UserAvtDefault.png"></a></td><td><a target="_parent" href="/portal/intranet/activities/'+userName+'">'+fullName+'</a></td></tr></tbody></table><div class="connectAction"><a type="button" class="btn weemoCallOverlay weemoCall-'+userName+' disabled" title="'+makeCallLabel+'" data-fullname="'+fullName+'" data-username="'+userName+'" style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a></div></div>';
+    					 }
+    					});
+    gj(realPopElem).popover('show');
 
     weemoExtension.getStatus(userName, cbGetSuggestionStatus);
     
@@ -83,15 +85,32 @@
 	       var peoplePicture = gj(this).find(".peoplePicture:first");
 	       gj(peoplePicture).mouseenter(function() {
                  var popElem = gj(peoplePicture).find(".avatarXSmall:first");
-		 gj(popElem).attr("data-toggle","popover");		
-		 gj(popElem).attr("data-placement","left");
-		 eXo.ecm.VideoCalls.showPopover(peoplePicture);      
+				 gj(popElem).attr("data-toggle","popover");		
+				 gj(popElem).attr("data-placement","left");
+				 eXo.ecm.VideoCalls.showPopover(peoplePicture);      
 	       });       
 
 	       gj(peoplePicture).mouseleave(function() {
                  var popElem = gj(peoplePicture).find(".avatarXSmall:first");
-		 eXo.ecm.VideoCalls.hidePopover(popElem);
+                 eXo.ecm.VideoCalls.hidePopover(popElem);
 	       });
+	       //-----------
+	       var peopleInfo = gj(this).find(".peopleInfo:first");
+	       var nameDiv = gj(peopleInfo).find(".peopleName:first");
+	       var nameLink = gj(peopleInfo).find("a:first");
+	       
+	       gj(nameDiv).mouseenter(function() {
+               var popElem = nameDiv;
+				 gj(popElem).attr("data-toggle","popover");		
+				 gj(popElem).attr("data-placement","left");
+				 eXo.ecm.VideoCalls.showPopover(peoplePicture, true);      
+	       });       
+
+	       gj(nameDiv).mouseleave(function() {
+               var popElem = nameLink.parentNode;
+               eXo.ecm.VideoCalls.hidePopover(nameLink);
+	       });
+	       
 
 	     });
 
