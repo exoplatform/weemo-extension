@@ -28,7 +28,7 @@
 	   '<div class="modal-dialog">' +
 	    '<div class="modal-content">' + 
 		 '<div class="popupHeader clearfix modal-header">' + 
-			'<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" data-original-title="Close"></button>' +
+			'<button type="button" style="right:-5px;top:0px" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" data-original-title="Close"></button>' +
 				'<span class="PopupTitle popupTitle modal-title"><strong>Data error:</strong></span>' +
 			'</div>' + 
 
