@@ -25,6 +25,22 @@ function WeemoExtension() {
   this.isTurnOff = false;
   this.connectedWeemoDriver = false;
   this.videoCallVersion = "";
+
+  //This block code for fix the issue PLF-5688
+  var platform = navigator.platform;
+  if (platform.indexOf("Linux") < 0) {
+    var wsUri = "wss://localhost:34679";
+    var protocol = "weemodriver-protocol";
+    if(typeof MozWebSocket == 'function') WebSocket = MozWebSocket;
+    var websock = new WebSocket(wsUri, protocol);     
+    websock.onerror = function(evt) {
+      weemoExtension.setNotInstallWeemoDriver();
+    };   
+    websock.onopen = function(evt) {
+      weemoExtension.setInstallWeemoDriver();
+    };  
+  }
+
   try {
     this.weemo = new Weemo("", "", "internal", "ppr/");
     /**
@@ -139,21 +155,7 @@ function WeemoExtension() {
     this.weemo = undefined;
     this.isValidWeemoKey = false;
     jqchat(".btn-weemo-conf").css('display', 'none');
-    jqchat(".btn-weemo").addClass('disabled');
-    //This block code for fix the issue PLF-5688
-    var platform = navigator.platform;
-    if (platform.indexOf("Linux") < 0) {
-      var wsUri = "wss://localhost:34679";
-      var protocol = "weemodriver-protocol";
-      if(typeof MozWebSocket == 'function') WebSocket = MozWebSocket;
-      var websock = new WebSocket(wsUri, protocol);     
-      websock.onerror = function(evt) {
-        weemoExtension.setNotInstallWeemoDriver();
-      };   
-      websock.onopen = function(evt) {
-        weemoExtension.setInstallWeemoDriver();
-      };  
-    }
+    jqchat(".btn-weemo").addClass('disabled');    
   }
   
      
@@ -203,7 +205,8 @@ WeemoExtension.prototype.checkWeemoDriver = function() {
       if(typeof MozWebSocket == 'function') WebSocket = MozWebSocket;
       var websock = new WebSocket(wsUri, protocol);     
       websock.onerror = function(evt) {
-        weemoExtension.setNotInstallWeemoDriver();
+        //Comment bellow code line to fix the issue PLF-5744
+        //weemoExtension.setNotInstallWeemoDriver();
       };   
       websock.onopen = function(evt) {
         weemoExtension.setInstallWeemoDriver();
