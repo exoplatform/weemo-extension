@@ -22,9 +22,35 @@
   };
 
   // Display warning message when have some field is blank
-  Utils.prototype.displayErrorAlert = function(title) {    
+  Utils.prototype.displayErrorAlert = function(titles) {
+	  var title = 
+	  '<div id="errorMessages" class="uiPopup modal in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="">' + 
+	   '<div class="modal-dialog">' +
+	    '<div class="modal-content">' + 
+		 '<div class="popupHeader clearfix modal-header">' + 
+			'<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" data-original-title="Close"></button>' +
+				'<span class="PopupTitle popupTitle modal-title"><strong>Data error:</strong></span>' +
+			'</div>' + 
+
+			'<div class="PopupContent popupContent modal-body">' +
+			 '<i class="uiIconError"/><strong>' + titles.length + "  errors:</strong><br/>";
+	  
+	    		for (var i = 0; i < titles.length; i++) {
+	    			title += '<p> -   ' + titles[i] + $(alertElem).attr("errorMsg") + '</p>'
+	    			console.log(title);
+	    		}
+			
+			title += 
+				'<div class="uiAction uiActionBorder">' +
+					'<button type="button" class="btn btn-primary">OK</button>' +
+				'</div>' +
+			'</div>' +
+			'</div><!-- /.modal-content -->' +
+	      '</div>' +
+	  '</div>';
+	  
     var alertElem = $("#videocalls-alert-error");
-    var successMsg = title + " " + $(alertElem).attr("errorMsg");
+    var successMsg = title;
     var icon = $('<i/>', {
       'class':'uiIconError'
     });
@@ -33,9 +59,9 @@
   
     $(alertElem).append(successMsg);
     $("#videocalls-alert-error").show();
-    setTimeout(function() {
-      $("#videocalls-alert-error").hide();
-    }, 5000);
+    $('button', alertElem).click(function() {
+    	alertElem.hide();
+    })
   };
 
   // Open User Selector popup
@@ -814,31 +840,28 @@
   
   // Test Weemo connection with parametters getted from VideoCalls Profile
   Utils.prototype.authWeemoConnection = function(elem) {
+	var errMessages = [];
     var authLink = $(elem).attr("linkAuth");
     var formVideoAdmin = $("#videoCallsPermissionForm");
  
 	var weemoKey = $.trim($('#weemoKey').val());
 	if (weemoKey  === '') {	      
-	  eXo.ecm.VideoCallsUtils.displayErrorAlert($('#weemoKey').attr('label'));
-	  return false;
+	  errMessages.push($('#weemoKey').attr('label')); 
 	}
     	var authId = $.trim($('#authId').val());
     
 	if (authId  === '') {	      
-	  eXo.ecm.VideoCallsUtils.displayErrorAlert($('#authId').attr('label'));
-	  return false;
+		errMessages.push($('#authId').attr('label'));
 	}
 		
 	var authSecret = $.trim($('#authSecret').val());
 	if (authSecret  === '') {	      
-	  eXo.ecm.VideoCallsUtils.displayErrorAlert($('#authSecret').attr('label'));
-	  return false;
+	  errMessages.push($('#authSecret').attr('label'));
 	}
 		
 	var customerCertificatePassphrase = $.trim($('#customerCertificatePassphrase').val());
 	if (customerCertificatePassphrase  === '') {	      
-	  eXo.ecm.VideoCallsUtils.displayErrorAlert($('#customerCertificatePassphrase').attr('label'));
-	  return false;
+	  errMessages.push($('#customerCertificatePassphrase').attr('label'));
 	}    
 		
 	var p12Cert = $("#p12Cert");
@@ -852,8 +875,7 @@
 		if(label.indexOf(":") > 0) {
 		  label = label.substring(0,label.indexOf(":"));
 		}
-		eXo.ecm.VideoCallsUtils.displayErrorAlert(label);
-		return false;
+		errMessages.push(label);
 	  } 
 	}
 		
@@ -869,10 +891,14 @@
 		if(label.indexOf(":") > 0) {
 		  label = label.substring(0,label.indexOf(":"));
 		}
-		eXo.ecm.VideoCallsUtils.displayErrorAlert(label);
-		return false;
+		errMessages.push(label);
 	  } 
 	} 
+	
+	if (errMessages.length > 0) {
+		eXo.ecm.VideoCallsUtils.displayErrorAlert(errMessages);
+		return false;			
+	}	
 
         //Get list of permissions
 	var permissionData = "";
@@ -903,6 +929,7 @@
 
   // Save VideoCalls Profile
   Utils.prototype.saveVideoCallsProfile = function(elem) {
+	var errMessage = [];
     var saveLink = $(elem).attr("linkSave");
     var formVideoAdmin = $("#videoCallsPermissionForm");
     $(formVideoAdmin).attr("action",saveLink);
@@ -911,26 +938,22 @@
 
 		var weemoKey = $.trim($('#weemoKey').val());
 		if (weemoKey  === '') {	      
-		  eXo.ecm.VideoCallsUtils.displayErrorAlert($('#weemoKey').attr('label'));
-		  return false;
+		  errMessages.push($('#weemoKey').attr('label'));
 		}
 	        
 		var authId = $.trim($('#authId').val());
 		if (authId  === '') {	      
-		  eXo.ecm.VideoCallsUtils.displayErrorAlert($('#authId').attr('label'));
-		  return false;
+		  errMessages.push($('#authId').attr('label'));
 		}
 	        
 		var authSecret = $.trim($('#authSecret').val());
 		if (authSecret  === '') {	      
-		  eXo.ecm.VideoCallsUtils.displayErrorAlert($('#authSecret').attr('label'));
-		  return false;
+			errMessages.push($('#authSecret').attr('label'));
 		}
 	        
 		var customerCertificatePassphrase = $.trim($('#customerCertificatePassphrase').val());
 		if (customerCertificatePassphrase  === '') {	      
-		  eXo.ecm.VideoCallsUtils.displayErrorAlert($('#customerCertificatePassphrase').attr('label'));
-		  return false;
+		  errMessages.push($('#customerCertificatePassphrase').attr('label'));
 		}    
 	        
 		var p12Cert = $("#p12Cert");
@@ -944,8 +967,7 @@
 			if(label.indexOf(":") > 0) {
 			  label = label.substring(0,label.indexOf(":"));
 			}
-			eXo.ecm.VideoCallsUtils.displayErrorAlert(label);
-			return false;
+			errMessages.push(label);
 		  } 
 		}
 		    
@@ -961,10 +983,14 @@
 			if(label.indexOf(":") > 0) {
 			  label = label.substring(0,label.indexOf(":"));
 			}
-			eXo.ecm.VideoCallsUtils.displayErrorAlert(label);
-			return false;
+			errMessages.push(label);
 		  } 
-		} 	           
+		}
+		
+		if (errMessages.length > 0) {
+			eXo.ecm.VideoCallsUtils.displayErrorAlert(errMessages);
+			return false;			
+		}
 	        
 		//Get list of permissions
 		var permissionData = "";
