@@ -929,7 +929,7 @@
 
   // Save VideoCalls Profile
   Utils.prototype.saveVideoCallsProfile = function(elem) {
-	var errMessage = [];
+	var errMessages = [];
     var saveLink = $(elem).attr("linkSave");
     var formVideoAdmin = $("#videoCallsPermissionForm");
     $(formVideoAdmin).attr("action",saveLink);
