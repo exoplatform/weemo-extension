@@ -442,38 +442,42 @@ public class VideoCallAdministration {
     return objGroup.toString();
   }
   
-  public String getListOfPermissions(String videoPermissions) throws Exception {
+  public String getListOfPermissions(String videoPermissions) {
     String result = "";
     Request request = Request.getCurrent();
     Locale locale = request.getContext().getUserContext().getLocale();
     ResourceBundle resoureBundle = request.getContext().getApplicationContext().resolveBundle(locale);
     
     StringBuffer sb = new StringBuffer();
-    if(videoPermissions != null && videoPermissions.length() > 0) {
-      String[] arrPermissions = videoPermissions.split(",");
-      for (String string : arrPermissions) {
-        if(string.split("#").length < 2) continue;
-        String permissionId = string.split("#")[0];
-        String enableVideoCalls = string.split("#")[1];
-        sb.append("#").append(permissionId).append(",").append(enableVideoCalls);
-        if(permissionId.indexOf(":") > 0) {
-          String membership = permissionId.split(":")[0].trim();
-          String memebershipLabel = membership;
-          String groupId = permissionId.split(":")[1];
-          Group group = organizationService_.getGroupHandler().findGroupById(groupId);
-          sb.append(",").append(capitalize(memebershipLabel) + " " + resoureBundle.getString("exoplatform.videocall.administration.permission.in") + " " + group.getLabel()).append(" (").append(permissionId).
-          append(")");
-        } else {
-          User user = organizationService_.getUserHandler().findUserByName(permissionId.trim());
-          if(user != null) {
-            if(StringUtils.isEmpty(user.getDisplayName())) {
-              user.setDisplayName(user.getFirstName() + " " + user.getLastName());
-            }         
-            sb.append(",").append(user.getDisplayName()).append(" (").append(user.getUserName()).append(")");
+    try {
+      if(videoPermissions != null && videoPermissions.length() > 0) {
+        String[] arrPermissions = videoPermissions.split(",");
+        for (String string : arrPermissions) {
+          if(string.split("#").length < 2) continue;
+          String permissionId = string.split("#")[0];
+          String enableVideoCalls = string.split("#")[1];
+          sb.append("#").append(permissionId).append(",").append(enableVideoCalls);
+          if(permissionId.indexOf(":") > 0) {
+            String membership = permissionId.split(":")[0].trim();
+            String memebershipLabel = membership;
+            String groupId = permissionId.split(":")[1];
+            Group group = organizationService_.getGroupHandler().findGroupById(groupId);
+            sb.append(",").append(capitalize(memebershipLabel) + " " + resoureBundle.getString("exoplatform.videocall.administration.permission.in") + " " + group.getLabel()).append(" (").append(permissionId).
+            append(")");
+          } else {
+            User user = organizationService_.getUserHandler().findUserByName(permissionId.trim());
+            if(user != null) {
+              if(StringUtils.isEmpty(user.getDisplayName())) {
+                user.setDisplayName(user.getFirstName() + " " + user.getLastName());
+              }         
+              sb.append(",").append(user.getDisplayName()).append(" (").append(user.getUserName()).append(")");
+            }
           }
         }
+        if(sb.length() >= 1) result = sb.substring(1);      
       }
-      if(sb.length() >= 1) result = sb.substring(1);      
+    } catch(Exception ex) {
+      ex.printStackTrace();
     }
     return result;
   }
