@@ -90,7 +90,6 @@ public class PropertyManager {
       overridePropertyIfNotSet(PROPERTY_PASSPHRASE, "");
       overridePropertyIfNotSet(PROPERTY_CLIENT_SECRET_AUTH, "");
       overridePropertyIfNotSet(PROPERTY_DEFAULT_PERMISSION, "*:/platform/users#true");
-      overridePropertyIfNotSet(PROPERTY_VIDEOCALL_VERSION, "");
       overridePropertyIfNotSet(PROPERTY_CA_FILE, "weemo.pem");
       overridePropertyIfNotSet(PROPERTY_P12_FILE, "client.p12");
       

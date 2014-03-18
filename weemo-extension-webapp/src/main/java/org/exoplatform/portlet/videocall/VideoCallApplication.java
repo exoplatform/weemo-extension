@@ -1,5 +1,9 @@
 package org.exoplatform.portlet.videocall;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import juzu.*;
@@ -72,7 +76,19 @@ public class VideoCallApplication {
     } else {
       tokenKey = videoCallService_.getTokenKey();
     }
-    String videoCallVersion = PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEOCALL_VERSION);    
+    //Load videocalls version
+    InputStream isProperties = null;
+    isProperties = videoCallService_.getClass().getResourceAsStream("/extension.properties");
+    
+    String videoCallVersion = null;
+    if(isProperties != null) {
+      Properties properties = new Properties();
+      properties.load(isProperties);
+      videoCallVersion = properties.getProperty(PropertyManager.PROPERTY_VIDEOCALL_VERSION);
+    }
+    if(videoCallVersion == null) {
+      videoCallVersion = "";
+    }
     boolean turnOffVideoCallForUser = videoCallService_.isTurnOffVideoCallForUser();
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
     if(tokenKey == null) {
