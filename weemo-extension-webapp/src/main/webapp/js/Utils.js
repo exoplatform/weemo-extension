@@ -23,6 +23,7 @@
 
   // Display warning message when have some field is blank
   Utils.prototype.displayErrorAlert = function(titles) {
+	  var alertElem = $("#videocalls-alert-error");
 	  var title = 
 	  '<div id="errorMessages" class="uiPopup modal in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="">' + 
 	   '<div class="modal-dialog">' +
@@ -49,7 +50,6 @@
 	      '</div>' +
 	  '</div>';
 	  
-    var alertElem = $("#videocalls-alert-error");
     var successMsg = title;
     var icon = $('<i/>', {
       'class':'uiIconError'
