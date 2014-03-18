@@ -205,7 +205,6 @@ WeemoExtension.prototype.checkWeemoDriver = function() {
       if(typeof MozWebSocket == 'function') WebSocket = MozWebSocket;
       var websock = new WebSocket(wsUri, protocol);     
       websock.onerror = function(evt) {
-        //Comment bellow code line to fix the issue PLF-5744
         //weemoExtension.setNotInstallWeemoDriver();
       };   
       websock.onopen = function(evt) {
@@ -415,8 +414,12 @@ WeemoExtension.prototype.getStatus = function(targetUser, callback) {
     success: function(data){
       if (typeof callback === "function") {
         var obj = jQuery.parseJSON(data);
-        var acticity = obj.activity;
-        callback(targetUser, acticity);
+        if(obj != null) {
+          var acticity = obj.activity;
+          callback(targetUser, acticity);
+        } else {
+          callback(targetUser, "offline");
+        }
       }
     },
     error: function(){
@@ -516,13 +519,15 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
 	  html += ' data-username="'+userName+'" data-fullname="'+fullName+'"';
 	  html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
 
-  	  $(h3Elem).append(html);
+  	  $h3Elem.append(html);
 
 	  function cbGetProfileStatus(targetUser, activity) {
 	    if (activity !== "offline") {
 	      jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
 	    }
 	  }
+
+	  weemoExtension.getStatus(userName, cbGetProfileStatus);
 
 	  jqchat(".weemoCallOverlay").on("click", function() {
 		if (!jqchat(this).hasClass("disabled") && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
@@ -537,7 +542,7 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
 		    eXo.ecm.VideoCalls.showPermissionInterceptor();
 		  }
 		}
-	      });
+	      });	
 
 	}
 };
