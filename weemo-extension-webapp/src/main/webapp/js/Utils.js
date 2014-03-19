@@ -25,40 +25,38 @@
   Utils.prototype.displayErrorAlert = function(titles) {
 	  var alertElem = $("#videocalls-alert-error");
 	  var title = 
-	  '<div id="errorMessages" class="uiPopup modal in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="">' + 
-	   '<div class="modal-dialog">' +
-	    '<div class="modal-content">' + 
-		 '<div class="popupHeader clearfix modal-header">' + 
-			'<button type="button" style="right:-5px;top:0px" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" data-original-title="Close"></button>' +
-				'<span class="PopupTitle popupTitle modal-title"><strong>Data error:</strong></span>' +
-			'</div>' + 
-
-			'<div class="PopupContent popupContent modal-body">' +
-			 '<i class="uiIconError"/><strong>' + titles.length + "  errors:</strong><br/>";
-	  
-	    		for (var i = 0; i < titles.length; i++) {
-	    			title += '<p> -   ' + titles[i] + $(alertElem).attr("errorMsg") + '</p>'
-	    		}
-			
-			title += 
-				'<div class="uiAction uiActionBorder">' +
-					'<button type="button" class="btn btn-primary">OK</button>' +
-				'</div>' +
-			'</div>' +
-			'</div><!-- /.modal-content -->' +
-	      '</div>' +
-	  '</div>';
+	  '<div style="width: 550px; display: block; visibility: visible; position: relative;" id="" class="UIPopupWindow UIDragObject uiPopup">'+
+		'<div class="popupHeader ClearFix">'+
+			'<a title="Close Window" class="uiIconClose pull-right closeAction"></a>'+
+			'<span class="PopupTitle popupTitle">'+
+			 	$(alertElem).attr("alert") + 
+			'</span>'+
+		'</div>'+
+		'<div class="PopupContent popupContent">'+
+		  '<ul class="multipleMessage popupMessage resizable">' +
+	    '<li>'+
+	        '<a class="" href="#error5" data-toggle="collapse">'+
+	            '<i class="uiIconArrowDown"></i><span class="errorIcon"> ' + titles.length + ' ' + $(alertElem).attr("err") + ' </span>'+
+	        '</a>'+
+	        '<ul class="collapse in" id="error5">';
+				for (var i = 0; i < titles.length; i++) {
+					title += '<li>- ' + titles[i] + $(alertElem).attr("errorMsg") + '</li>';
+				}
+	        title += '</ul>'+
+	    '</li>'+
+	'</ul>'+
+		  '<div class="uiAction uiActionBorder">'+
+		  '<a class="btn closeAction">OK</a>'+
+		  '</div>'+
+	    '</div>'+
+	  '</div>;' 
 	  
     var successMsg = title;
-    var icon = $('<i/>', {
-      'class':'uiIconError'
-    });
     $(alertElem).empty();
-    $(alertElem).append(icon);
   
     $(alertElem).append(successMsg);
     $("#videocalls-alert-error").show();
-    $('button', alertElem).click(function() {
+    $('a.closeAction', alertElem).click(function() {
     	alertElem.hide();
     })
   };

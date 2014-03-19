@@ -15,7 +15,8 @@
    <div id="videocalls-alert-test-connection-error" successTestConnMsg="&{exoplatform.videocall.test.successMessage}" errorTestConnMsg="&{exoplatform.videocall.test.errorMessage}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-error videoCallsAlertError">
    </div>
    
-   <div id="videocalls-alert-error" errorMsg="&{exoplatform.videocall.save.error}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-error videoCallsAlertError">
+   <div id="videocalls-alert-error" errorMsg="&{exoplatform.videocall.save.error}" style="left: 38%; position: absolute; top: 172px; z-index:1000;display:none;"
+        alert="&{exoplatform.videocall.test.alert}" err="&{exoplatform.videocall.test.err}">
    </div>
    
    <h3 >&{exoplatform.videocall.administration.title}</h3> 
