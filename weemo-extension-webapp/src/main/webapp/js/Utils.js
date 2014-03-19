@@ -38,7 +38,6 @@
 	  
 	    		for (var i = 0; i < titles.length; i++) {
 	    			title += '<p> -   ' + titles[i] + $(alertElem).attr("errorMsg") + '</p>'
-	    			console.log(title);
 	    		}
 			
 			title += 
@@ -292,7 +291,6 @@
         $(".modal-backdrop").remove();
 	var memberships = data.memberships;
         var groups = data.groups;   
-        console.log(groups);     
         var groupSelector = $("#UIGroupMemberSelector");
         $("#UIGroupMemberSelector .nodeGroup").remove();
         var treeContainer = $("#UIGroupMemberSelector .treeContainer");
@@ -367,7 +365,7 @@
         $(".modal-backdrop").remove();
 	    var memberships = data.memberships;
         var groups = data.groups;        
-        console.log(groups);
+
         var groupSelector = $("#UIGroupMemberSelector");
         var treeContainer = $("#UIGroupMemberSelector .treeContainer");
         $("#UIGroupMemberSelector .nodeGroup").remove();
@@ -617,7 +615,7 @@
         async: false,
         success: function(data){
           var validUser = data.isExist; 
-          console.log(data);        
+
           if(validUser == true) {
               var displayName = data.displayName;
               var type = data.type;
@@ -769,10 +767,13 @@
       $(elem).closest('tr').remove();
       gj('#deleteCofirmation').modal('hide');
     });
-
-    $('#deleteCofirmation').on('hidden', function () {
+    
+    var cancelButton = $(deleteButton).next();
+    $(cancelButton).click(function() {
       $(deleteButton).unbind( "click" );
     });
+
+   
     var tr = $(elem).closest('tr');
     var td = $(tr).find("td:first");
     var div = $(td).find("div:first");

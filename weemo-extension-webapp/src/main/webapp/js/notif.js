@@ -347,7 +347,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
   if (this.weemoKey!=="" && this.weemo !== undefined) {
     jqchat(".btn-weemo-conf").css('display', 'none');
 
-    this.weemo.setDebugLevel(1); // Activate debug in JavaScript console
+    this.weemo.setDebugLevel(0); // Activate debug in JavaScript console
     this.weemo.setWebAppId(this.weemoKey);
     this.weemo.setToken(this.tokenKey); 
     this.weemo.initialize(); 
@@ -671,8 +671,8 @@ var weemoExtension = new WeemoExtension();
     weemoExtension.videoCallVersion = $notificationApplication.attr("videoCallVersion");
     if(weemoExtension.videoCallVersion.length > 0) {
       var oldVersion = weemoExtension.getCookie("videoCallVersion");
-      console.log(weemoExtension.videoCallVersion + " = " + oldVersion);
-      console.log(document.cookie);
+      //console.log(weemoExtension.videoCallVersion + " = " + oldVersion);
+      //console.log(document.cookie);
 
       if(weemoExtension.videoCallVersion  > oldVersion) {
         if(isNotInstallWeemoDriver == 'true') {
