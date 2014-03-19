@@ -131,7 +131,7 @@
 					</div>
 			  	</div>
 			  </div>
-			  <div class="actionTestWeemo"><button type="button" linkAuth="@{VideoCallAdministration.auth()}" onClick="eXo.ecm.VideoCallsUtils.authWeemoConnection(this);" class="btn" > &{exoplatform.videocall.testWeemoConnection} </button></div>	  
+			  <div class="actionTestWeemo"><button id="authButton" type="button" linkAuth="@{VideoCallAdministration.auth()}" onClick="eXo.ecm.VideoCallsUtils.authWeemoConnection(this);" class="btn" > &{exoplatform.videocall.testWeemoConnection} </button></div>	  
 			  
 			  
 			<div class="UIViewPermissionContainer" id="UIViewPermissionContainer" style="padding-bottom: 20px;">
@@ -431,11 +431,13 @@
 	      $("#disableVideoCall").val("true");
 	      $("#videoCallsPermissionForm input[type=text]").attr("disabled",true);
 	      $("#videoCallsPermissionForm input[type=password]").attr("disabled",true);
+	      $("#authButton").attr("disabled",true);
 	      
 	    } else {
 	      $("#disableVideoCall").val("false");	  
 	      $("#videoCallsPermissionForm input[type=text]").attr("disabled",false);
-	      $("#videoCallsPermissionForm input[type=password]").attr("disabled",false);    
+	      $("#videoCallsPermissionForm input[type=password]").attr("disabled",false);   
+	      $("#authButton").attr("disabled",false); 
 	    }
 	  });
 	  

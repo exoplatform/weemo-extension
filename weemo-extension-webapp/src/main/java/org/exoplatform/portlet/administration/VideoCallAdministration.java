@@ -262,23 +262,29 @@ public class VideoCallAdministration {
     videoCallModel.setVideoCallPermissions(videoCallPermissions);
     
     //Check weemo key is right or not
-    URL url = new URL("https://download.weemo.com/js/webappid/"+weemoKey+"/env/ppr");
-    InputStream in = url.openStream();
-    Scanner scan = new Scanner(in);
-    StringBuffer sb = new StringBuffer();
-    while (scan.hasNext())
-    {
-        String str = scan.nextLine();
-        sb.append(str);
-    }
-    scan.close();
-    try {
-      JSONObject json = new JSONObject(sb.toString());      
+    if(StringUtils.isEmpty(weemoKey)) {
       videoCalls.setAuthDisplaySuccessMsg(false);
       httpSession.setAttribute(MODEL_FROM_AUTH, videoCallModel);
       return VideoCallAdministration_.index();
-    } catch(JSONException ex) {
-      //Do nothing in case the weemo key is right      
+    } else {
+      URL url = new URL("https://download.weemo.com/js/webappid/"+weemoKey+"/env/ppr");
+      InputStream in = url.openStream();
+      Scanner scan = new Scanner(in);
+      StringBuffer sb = new StringBuffer();
+      while (scan.hasNext())
+      {
+          String str = scan.nextLine();
+          sb.append(str);
+      }
+      scan.close();
+      try {
+        JSONObject json = new JSONObject(sb.toString());      
+        videoCalls.setAuthDisplaySuccessMsg(false);
+        httpSession.setAttribute(MODEL_FROM_AUTH, videoCallModel);
+        return VideoCallAdministration_.index();
+      } catch(JSONException ex) {
+        //Do nothing in case the weemo key is right      
+      }
     }
     //Check for other parametters in case weemoKey is right
     AuthService authService = new AuthService();
