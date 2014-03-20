@@ -27,13 +27,13 @@
 			  <div class="control-group">			    
 				<span class="uiCheckbox">
 				  <input id="chkTurnOff" class="checkbox" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">				  
-				  <span>&{exoplatform.videocall.turnoff}</span>
-				  <div style="display:inline-block;" onmouseover="(function(elm) {eXo.ecm.VideoCallsUtils.showPopover(elm);})(this)"
+				  <span>&{exoplatform.videocall.turnoff}</span>				  
+				</span>				    
+				<div style="display:inline-block;" onmouseover="(function(elm) {eXo.ecm.VideoCallsUtils.showPopover(elm);})(this)"
 					onmouseout="(function(elm) {eXo.ecm.VideoCallsUtils.hidePopover(elm);})(this)" data-toggle="popover" data-placement="right" data-content="&{exoplatform.videocall.turnoff.help}">
 					  <i class="uiIconQuestion uiIconLightGray"></i>			
-				  </div>
-				  <input type="hidden" id="disableVideoCall" name="disableVideoCall" value="false">
-				</span>				    
+				</div>
+				<input type="hidden" id="disableVideoCall" name="disableVideoCall" value="false">
 			  </div>
 			  <h4 class="titleWithBorder">Weemo</h4>
 			  <div class="row">
