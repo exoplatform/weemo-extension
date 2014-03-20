@@ -26,7 +26,7 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
 
 
 <!--Install Interceptor Modal -->
-<div id="install-interceptor" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div id="install-interceptor" class="uiPopup modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
   <div class="modal-dialog modal-vertical-centered">
     <div class="modal-content">
 		<div class="popupHeader clearfix modal-header">
@@ -49,7 +49,7 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
 </div>
 
 <!--Permission Interceptor Modal -->
-<div id="permission-interceptor" class="uiPopup modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div id="permission-interceptor" class="uiPopup modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
 		<div class="popupHeader clearfix modal-header">
