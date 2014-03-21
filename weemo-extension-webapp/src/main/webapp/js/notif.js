@@ -512,7 +512,7 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
   fullName = fullName.substring(0, fullName.indexOf("<"));
   var userName = window.location.href;
   userName = userName.substring(userName.lastIndexOf("/")+1, userName.length);
-  if (userName !== "" && $h3Elem.has(".weemoCallOverlay").size()===0 && weemoExtension.isSupport) {
+  if (userName != weemoExtension.username && userName !== "" && $h3Elem.has(".weemoCallOverlay").size()===0 && weemoExtension.isSupport) {
 	  var callLabel = jqchat("#weemo-status").attr("call-label");
 	  var makeCallLabel = jqchat("#weemo-status").attr("make-call-label");
 	  var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+userName.replace('.', '-')+' disabled"   id="weemoCall-'+userName.replace('.', '-')+'" title="'+makeCallLabel+'"';
