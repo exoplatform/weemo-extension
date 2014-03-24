@@ -267,7 +267,7 @@ public class VideoCallAdministration {
       httpSession.setAttribute(MODEL_FROM_AUTH, videoCallModel);
       return VideoCallAdministration_.index();
     } else {
-      URL url = new URL("https://download.weemo.com/js/webappid/"+weemoKey+"/env/ppr");
+      URL url = new URL("https://cjs.weemo.com/js/webappid/"+weemoKey+"/env/ppr");
       InputStream in = url.openStream();
       Scanner scan = new Scanner(in);
       StringBuffer sb = new StringBuffer();
