@@ -619,20 +619,20 @@
               var type = data.type;
               if(type == "USER") {
                 displayName = displayName.concat(" (").concat($.trim(arrPermissions[i])).concat(")");
-              } else {
-                var permissionInLabel = $("#videocalls-label").attr("permissionIn");
-                displayName = "* ".concat(permissionInLabel).concat(" ").concat(displayName).concat(" (").concat($.trim(arrPermissions[i])).concat(")");
-              }
-              var tr = $('<tr/>', {});
+          } else {
+            var permissionInLabel = $("#videocalls-label").attr("permissionIn");
+            displayName = "* ".concat(permissionInLabel).concat(" ").concat(displayName).concat(" (").concat($.trim(arrPermissions[i])).concat(")");
+          }
+          var tr = $('<tr/>', {});
 	      //td for permission
 	      var tdPermission = $('<td/>', {
-		"class":"left"
+		    "class":"left"
 	      });
 	      var divPermission = $('<div/>', {
-		"permission":arrPermissions[i],
-		"title":displayName,
-		"text":displayName,
-		"class":"Text"
+		    "permission":arrPermissions[i],
+		    "title":displayName,
+		    "text":displayName,
+		    "class":"Text"
 	      });
 	      $(tdPermission).append(divPermission); 
 	      $(tr).append(tdPermission); 
@@ -764,6 +764,33 @@
     $(deleteButton).click(function() {
       $(elem).closest('tr').remove();
       gj('#deleteCofirmation').modal('hide');
+      // Display empty notification when have no permission in the list      
+      var uiViewPermissionList = $("#UIViewPermissionList");
+      var tbody = $(uiViewPermissionList).find("tbody:first");
+      var isEmpty = true;
+      if($(tbody).find("tr").length>0) {
+        $(tbody).find("tr").each(function(i) {
+          if($(this).find("td").length>0) {
+			isEmpty = false;            
+          } 
+        });
+      }
+      if(isEmpty == true) {
+		  var tr = $('<tr/>', {});
+		  var tdPermission = $('<td/>', {
+		    "class":"empty center",
+		    "colspan":"3"
+	      });
+	      var emptyLabel = $("#videocalls-label").attr("permissionEmpty");
+	      var divPermission = $('<div/>', {		    
+		    "title":emptyLabel,
+		    "text":emptyLabel,
+		    "class":"Text"
+	      });
+	      $(tdPermission).append(divPermission); 
+	      $(tr).append(tdPermission); 
+	      $(tbody).append(tr); 
+	  }      
     });
     
     var cancelButton = $(deleteButton).next();
@@ -1138,6 +1165,8 @@
   
 
 })(gj, bts_alert, bts_modal, bts_popover);
+
+
 
 
 
