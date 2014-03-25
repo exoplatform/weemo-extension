@@ -415,7 +415,7 @@
   </div><!-- /.modal-dialog -->
 </div>
 
-<div id="videocalls-label" type="hidden" permissionIn="&{exoplatform.videocall.administration.permission.in}" selectThisGroup="&{exoplatform.videocall.administration.selectThisGroup}" noLabel="&{exoplatform.videocall.administration.swither.no}" yesLabel="&{exoplatform.videocall.administration.swither.yes}" noFileLabel="&{exoplatform.videocall.administration.noFile}" uploadLabel="&{exoplatform.videocall.administration.upload}"></div>
+<div id="videocalls-label" type="hidden" permissionEmpty="&{exoplatform.videocall.permissions.empty.message}" permissionIn="&{exoplatform.videocall.administration.permission.in}" selectThisGroup="&{exoplatform.videocall.administration.selectThisGroup}" noLabel="&{exoplatform.videocall.administration.swither.no}" yesLabel="&{exoplatform.videocall.administration.swither.yes}" noFileLabel="&{exoplatform.videocall.administration.noFile}" uploadLabel="&{exoplatform.videocall.administration.upload}"></div>
 
 <script type="text/javascript">   
     
