@@ -549,6 +549,7 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
 	  weemoExtension.getStatus(userName, cbGetProfileStatus);	
 
 	}
+	setTimeout(function() { weemoExtension.attachWeemoToProfile() }, 250);
 };
 
 
@@ -606,7 +607,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
         }
       });
 
-
+  setTimeout(function() { weemoExtension.attachWeemoToConnections() }, 500);
 };
 
 /**
@@ -706,6 +707,7 @@ var weemoExtension = new WeemoExtension();
   });
 
 })(jqchat);
+
 
 
 
