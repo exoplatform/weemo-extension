@@ -606,7 +606,7 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
         }
       });
 
-
+  setTimeout(function() { weemoExtension.attachWeemoToConnections() }, 500);
 };
 
 /**
