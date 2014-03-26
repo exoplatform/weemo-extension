@@ -549,6 +549,7 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
 	  weemoExtension.getStatus(userName, cbGetProfileStatus);	
 
 	}
+	setTimeout(function() { weemoExtension.attachWeemoToProfile() }, 250);
 };
 
 
@@ -706,6 +707,7 @@ var weemoExtension = new WeemoExtension();
   });
 
 })(jqchat);
+
 
 
 
