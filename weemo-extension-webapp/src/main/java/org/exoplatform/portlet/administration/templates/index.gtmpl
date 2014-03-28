@@ -9,10 +9,10 @@
 <div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" >
    
    
-   <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-success videoCallsAlertSuccess">
+   <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" style="left: 50%; position: absolute; top: 42px; display:none;" class="alert alert-success videoCallsAlertSuccess">
    </div>
    
-   <div id="videocalls-alert-test-connection-error" successTestConnMsg="&{exoplatform.videocall.test.successMessage}" errorTestConnMsg="&{exoplatform.videocall.test.errorMessage}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-error videoCallsAlertError">
+   <div id="videocalls-alert-test-connection-error" successTestConnMsg="&{exoplatform.videocall.test.successMessage}" errorTestConnMsg="&{exoplatform.videocall.test.errorMessage}" style="left: 50%; position: absolute; top: 161px; display:none;" class="alert alert-error videoCallsAlertError">
    </div>
    
    <div id="videocalls-alert-error" errorMsg="&{exoplatform.videocall.save.error}" style="left: 38%; position: absolute; top: 172px; z-index:1000;display:none;"
