@@ -36,7 +36,8 @@
 		  '<ul class="multipleMessage popupMessage resizable">' +
 	    '<li>'+
 	        '<a class="" href="#error5" data-toggle="collapse">'+
-	            '<i class="uiIconArrowDown"></i><span class="errorIcon"> ' + titles.length + ' ' + $(alertElem).attr("err") + ' </span>'+
+	            '<i id="popupArrow" class="uiIconArrowDown"></i><span class="errorIcon"> ' + titles.length + ' ' + 
+	            (titles.length == 1 ? $(alertElem).attr("err") : $(alertElem).attr("errs")) + ' </span>'+
 	        '</a>'+
 	        '<ul class="collapse in" id="error5">';
 				for (var i = 0; i < titles.length; i++) {
@@ -49,7 +50,7 @@
 		  '<a class="btn closeAction">OK</a>'+
 		  '</div>'+
 	    '</div>'+
-	  '</div>;' 
+	  '</div>'; 
 	  
     var successMsg = title;
     $(alertElem).empty();
@@ -59,6 +60,10 @@
     $('a.closeAction', alertElem).click(function() {
     	alertElem.hide();
     })
+    $("#popupArrow", alertElem).click(function() {
+    	var clazz = $(this).attr("class");
+    	$(this).attr("class", clazz=='uiIconArrowDown' ? 'uiIconArrowRight' : 'uiIconArrowDown');    	
+    });
   };
 
   // Open User Selector popup
