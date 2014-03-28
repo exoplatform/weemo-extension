@@ -28,7 +28,7 @@
 	  '<div style="width: 550px; display: block; visibility: visible; position: relative;" id="" class="UIPopupWindow UIDragObject uiPopup">'+
 		'<div class="popupHeader ClearFix">'+
 			'<a title="Close Window" class="uiIconClose pull-right closeAction"></a>'+
-			'<span class="PopupTitle popupTitle">'+
+			'<span class="PopupTitle popupTitle" style="cursor: auto;">'+
 			 	$(alertElem).attr("alert") + 
 			'</span>'+
 		'</div>'+

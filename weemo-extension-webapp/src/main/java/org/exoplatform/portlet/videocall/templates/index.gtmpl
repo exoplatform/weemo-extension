@@ -31,7 +31,7 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
     <div class="modal-content">
 		<div class="popupHeader clearfix modal-header">
 			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
-			<span id="groupModalTitle" class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.installKey.title}</span>
+			<span id="groupModalTitle" class="PopupTitle popupTitle modal-title" style="cursor: auto;">&{exoplatform.videocall.installKey.title}</span>
 		</div>
 
 		<div class="PopupContent popupContent modal-body">    
@@ -54,7 +54,7 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
     <div class="modal-content">
 		<div class="popupHeader clearfix modal-header">
 			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
-			<span id="groupModalTitle" class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.permissions.title}</span>
+			<span id="groupModalTitle" class="PopupTitle popupTitle modal-title" style="cursor: auto;">&{exoplatform.videocall.permissions.title}</span>
 		</div>
 
 		<div class="PopupContent popupContent modal-body">    
