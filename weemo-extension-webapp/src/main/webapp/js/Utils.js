@@ -35,7 +35,7 @@
 		'<div class="PopupContent popupContent">'+
 		  '<ul class="multipleMessage popupMessage resizable">' +
 	    '<li>'+
-	        '<a class="" href="#error5" data-toggle="collapse">'+
+	        '<a id="popupLabel" class="" href="#error5" data-toggle="collapse">'+
 	            '<i id="popupArrow" class="uiIconArrowDown"></i><span class="errorIcon"> ' + titles.length + ' ' + 
 	            (titles.length == 1 ? $(alertElem).attr("err") : $(alertElem).attr("errs")) + ' </span>'+
 	        '</a>'+
@@ -60,9 +60,10 @@
     $('a.closeAction', alertElem).click(function() {
     	alertElem.hide();
     })
-    $("#popupArrow", alertElem).click(function() {
-    	var clazz = $(this).attr("class");
-    	$(this).attr("class", clazz=='uiIconArrowDown' ? 'uiIconArrowRight' : 'uiIconArrowDown');    	
+    $("#popupLabel", alertElem).click(function() {
+    	var icon = $("#popupArrow", this);
+    	var clazz = icon.attr("class");
+    	icon.attr("class", clazz=='uiIconArrowDown' ? 'uiIconArrowRight' : 'uiIconArrowDown');    	
     });
   };
 
