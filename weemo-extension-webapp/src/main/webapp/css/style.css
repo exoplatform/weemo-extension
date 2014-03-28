@@ -114,3 +114,16 @@ button.close{
 .connectAction .btn{
 	margin-top: 5px;
 }
+.confirmationVideoCallIcon {
+  	background: url(/eXoResources/skin/images/PopupMessage/icons.png) no-repeat;
+	padding-left: 20px;
+	line-height: 16px;
+	height: 16px;
+	color: #333333;
+
+
+	background-position: left -50px;
+	font-weight: normal;
+	display: block;
+	margin: 10px 10px 20px;
+}

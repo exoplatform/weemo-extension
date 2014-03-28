@@ -379,7 +379,7 @@
 		</div>
 
 		<div class="PopupContent popupContent modal-body">    
-			<span msg="&{exoplatform.videocall.administration.deleteConfirm}"></span>
+			<span msg="&{exoplatform.videocall.administration.deleteConfirm}" class="confirmationVideoCallIcon"></span>
 			<div class="uiAction uiActionBorder">
 				<button type="button" class="btn btn-primary" >&{exoplatform.videocall.administration.confirmYes}</button>
 				<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.administration.confirmNo}</button>
