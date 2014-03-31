@@ -9,14 +9,14 @@
 <div id="videoCallAdminPortlet" class="uiVideoCallAdminPortlet" >
    
    
-   <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-success videoCallsAlertSuccess">
+   <div id="videocalls-alert" successMsg="&{exoplatform.videocall.save.message}" style="left: 50%; position: absolute; top: 42px; display:none;" class="alert alert-success videoCallsAlertSuccess">
    </div>
    
-   <div id="videocalls-alert-test-connection-error" successTestConnMsg="&{exoplatform.videocall.test.successMessage}" errorTestConnMsg="&{exoplatform.videocall.test.errorMessage}" style="left: 50%; position: absolute; top: 172px; display:none;" class="alert alert-error videoCallsAlertError">
+   <div id="videocalls-alert-test-connection-error" successTestConnMsg="&{exoplatform.videocall.test.successMessage}" errorTestConnMsg="&{exoplatform.videocall.test.errorMessage}" style="left: 50%; position: absolute; top: 161px; display:none;" class="alert alert-error videoCallsAlertError">
    </div>
    
    <div id="videocalls-alert-error" errorMsg="&{exoplatform.videocall.save.error}" style="left: 38%; position: absolute; top: 172px; z-index:1000;display:none;"
-        alert="&{exoplatform.videocall.test.alert}" err="&{exoplatform.videocall.test.err}">
+        alert="&{exoplatform.videocall.test.alert}" err="&{exoplatform.videocall.test.err}" errs="&{exoplatform.videocall.test.errs}">
    </div>
    
    <h3 >&{exoplatform.videocall.administration.title}</h3> 
@@ -235,7 +235,7 @@
 
       <div class="popupHeader clearfix modal-header">
 		<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="&{exoplatform.videocall.administration.close}" ></button>
-		<span id="userModalTitle" class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.administration.userSelector}</span>
+		<span id="userModalTitle" class="PopupTitle popupTitle modal-title" style="cursor: auto;">&{exoplatform.videocall.administration.userSelector}</span>
       </div>
       <div class="PopupContent popupContent modal-body">
         <div class="alert fade in" style="display:none; left: 30%; position: absolute; top: 27px;">
@@ -317,7 +317,7 @@
     <div class="modal-content">
 	  <div class="popupHeader clearfix modal-header">
 		<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="&{exoplatform.videocall.administration.close}" ></button>
-		<span class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.administration.groupSelector}</span>
+		<span class="PopupTitle popupTitle modal-title" style="cursor: auto;">&{exoplatform.videocall.administration.groupSelector}</span>
       </div>
 
       <div class="PopupContent popupContent modal-body">        
@@ -375,11 +375,11 @@
     <div class="modal-content">
 		<div class="popupHeader clearfix modal-header">
 			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="&{exoplatform.videocall.administration.close}" ></button>
-			<span class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.administration.deleteConfirmTitle}</span>
+			<span class="PopupTitle popupTitle modal-title" style="cursor: auto;">&{exoplatform.videocall.administration.deleteConfirmTitle}</span>
 		</div>
 
 		<div class="PopupContent popupContent modal-body">    
-			<span msg="&{exoplatform.videocall.administration.deleteConfirm}"></span>
+			<span msg="&{exoplatform.videocall.administration.deleteConfirm}" class="confirmationVideoCallIcon"></span>
 			<div class="uiAction uiActionBorder">
 				<button type="button" class="btn btn-primary" >&{exoplatform.videocall.administration.confirmYes}</button>
 				<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.administration.confirmNo}</button>
@@ -399,7 +399,7 @@
     <div class="modal-content">
 		<div class="popupHeader clearfix modal-header">
 			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="&{exoplatform.videocall.administration.close}" ></button>
-			<span class="PopupTitle popupTitle modal-title">&{exoplatform.videocall.permission.warningTitle}</span>
+			<span class="PopupTitle popupTitle modal-title" style="cursor: auto;">&{exoplatform.videocall.permission.warningTitle}</span>
 		</div>
 
 		<div class="PopupContent popupContent modal-body">    

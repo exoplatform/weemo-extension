@@ -28,15 +28,16 @@
 	  '<div style="width: 550px; display: block; visibility: visible; position: relative;" id="" class="UIPopupWindow UIDragObject uiPopup">'+
 		'<div class="popupHeader ClearFix">'+
 			'<a title="Close Window" class="uiIconClose pull-right closeAction"></a>'+
-			'<span class="PopupTitle popupTitle">'+
+			'<span class="PopupTitle popupTitle" style="cursor: auto;">'+
 			 	$(alertElem).attr("alert") + 
 			'</span>'+
 		'</div>'+
 		'<div class="PopupContent popupContent">'+
 		  '<ul class="multipleMessage popupMessage resizable">' +
 	    '<li>'+
-	        '<a class="" href="#error5" data-toggle="collapse">'+
-	            '<i class="uiIconArrowDown"></i><span class="errorIcon"> ' + titles.length + ' ' + $(alertElem).attr("err") + ' </span>'+
+	        '<a id="popupLabel" class="" href="#error5" data-toggle="collapse">'+
+	            '<i id="popupArrow" class="uiIconArrowDown"></i><span class="errorIcon"> ' + titles.length + ' ' + 
+	            (titles.length == 1 ? $(alertElem).attr("err") : $(alertElem).attr("errs")) + ' </span>'+
 	        '</a>'+
 	        '<ul class="collapse in" id="error5">';
 				for (var i = 0; i < titles.length; i++) {
@@ -49,7 +50,7 @@
 		  '<a class="btn closeAction">OK</a>'+
 		  '</div>'+
 	    '</div>'+
-	  '</div>;' 
+	  '</div>'; 
 	  
     var successMsg = title;
     $(alertElem).empty();
@@ -59,6 +60,11 @@
     $('a.closeAction', alertElem).click(function() {
     	alertElem.hide();
     })
+    $("#popupLabel", alertElem).click(function() {
+    	var icon = $("#popupArrow", this);
+    	var clazz = icon.attr("class");
+    	icon.attr("class", clazz=='uiIconArrowDown' ? 'uiIconArrowRight' : 'uiIconArrowDown');    	
+    });
   };
 
   // Open User Selector popup
