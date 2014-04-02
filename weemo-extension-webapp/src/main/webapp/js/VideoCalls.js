@@ -15,6 +15,7 @@
     var peopleName = gj(peopleInfo).find(".peopleName:first");
     var peopleLink = gj(peopleName).find("a:first");
     var fullName = gj(peopleName).find("a:first").html();
+
     var realPopElem = place ? peopleLink: popElem;
     gj(realPopElem).popover({placement: 'left', html:true,template: '<div class="popover left" style="width: 240px;"><div class="arrow"></div><div class="inner"><h3 class="popover-title" style="display:none;"></h3><div class="popover-content" style="padding: 0px;"><p></p></div></div></div>',
     					 content:function (){ 
@@ -24,6 +25,7 @@
     					 }
     					});
     gj(realPopElem).popover('show');
+
 
     weemoExtension.getStatus(userName, cbGetSuggestionStatus);
     

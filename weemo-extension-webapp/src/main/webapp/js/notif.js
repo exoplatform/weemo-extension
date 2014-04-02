@@ -513,6 +513,7 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
   fullName = fullName.substring(0, fullName.indexOf("<"));
   var userName = window.location.href;
   userName = userName.substring(userName.lastIndexOf("/")+1, userName.length);
+
   if (userName != weemoExtension.username && userName !== "" && $h3Elem.has(".weemoCallOverlay").size()===0 && weemoExtension.isSupport) {
 	  var callLabel = jqchat("#weemo-status").attr("call-label");
 	  var makeCallLabel = jqchat("#weemo-status").attr("make-call-label");
@@ -550,6 +551,7 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
 
 	}
 	setTimeout(function() { weemoExtension.attachWeemoToProfile() }, 250);
+
 };
 
 
@@ -573,9 +575,11 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
     var $uiActionWeemo = jqchat(".weemoCallOverlay", jqchat(this).next()).first();
     if ($uiActionWeemo == undefined || $uiActionWeemo !== undefined && $uiActionWeemo.html() == undefined && weemoExtension.isSupport) {
       var nextElem = jqchat(this).next();
+
       var callLabel = jqchat("#weemo-status").attr("call-label");
       var makeCallLabel = jqchat("#weemo-status").attr("make-call-label");
       var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' pull-right disabled" id="weemoCall-'+username.replace('.', '-')+'" title="'+makeCallLabel+'"';
+
       html += ' data-username="'+username+'" data-fullname="'+fullname+'"';
       html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
       html += jqchat(nextElem).html();
