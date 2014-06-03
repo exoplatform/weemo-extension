@@ -42,7 +42,7 @@ function WeemoExtension() {
   }
 
   try {
-    this.weemo = new Weemo("", "", "internal", "ppr/");
+    this.weemo = new Weemo("", "", "internal", "");
     /**
      * Weemo Driver On Connection Javascript Handler
      *
