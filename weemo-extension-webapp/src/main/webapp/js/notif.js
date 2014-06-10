@@ -38,7 +38,7 @@ function WeemoExtension() {
     };   
     websock.onopen = function(evt) {
       weemoExtension.setInstallWeemoDriver();
-    };  
+    };
   }
 
   try {
@@ -672,8 +672,8 @@ var weemoExtension = new WeemoExtension();
 
     var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
 
-    var checkWeemoDriverEvent = window.clearInterval(checkWeemoDriverEvent);
-    checkWeemoDriverEvent = setInterval($.proxy(weemoExtension.checkWeemoDriver, weemoExtension), 3*1000);
+//    var checkWeemoDriverEvent = window.clearInterval(checkWeemoDriverEvent);
+//    checkWeemoDriverEvent = setInterval($.proxy(weemoExtension.checkWeemoDriver, weemoExtension), 3*1000);
     weemoExtension.checkWeemoDriver();
 
     weemoExtension.videoCallVersion = $notificationApplication.attr("videoCallVersion");
