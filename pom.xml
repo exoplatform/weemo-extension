@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.exoplatform.addons.weemo</groupId>
   <artifactId>weemo-extension</artifactId>
-  <version>1.0.x-SNAPSHOT</version>
+  <version>1.0-M1</version>
   <packaging>pom</packaging>
   <name>Video Calls Addon</name>
   <description>Video Calls Addon obtained via integration with Weemo</description>
@@ -25,6 +25,7 @@
     <connection>scm:git:git://github.com/exo-addons/weemo-extension.git</connection>
     <developerConnection>scm:git:git@github.com:exo-addons/weemo-extension.git</developerConnection>
     <url>https://github.com/exo-addons/weemo-extension</url>
+    <tag>1.0-M1</tag>
   </scm>
   <properties>
     <!-- 3rd party libraries versions -->
