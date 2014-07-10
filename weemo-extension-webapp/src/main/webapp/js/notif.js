@@ -722,7 +722,15 @@ WeemoExtension.prototype.displayVideoCallOnChatApp = function() {
       weemoExtension.joinWeemoCall(chatApplication.targetUser, chatApplication.targetFullname, chatMessage);
   });
 
-  setTimeout(function() { weemoExtension.displayVideoCallOnChatApp() }, 500);
+  function cbGetConnectionStatus(targetUser, activity) {
+    if (activity === "offline" || activity === "invisible") {
+      jqchat(".btn-weemo").addClass("disabled");
+    }
+  }
+
+  weemoExtension.getStatus(chatApplication.targetUser, cbGetConnectionStatus);
+
+  setTimeout(function() { weemoExtension.displayVideoCallOnChatApp() }, 2000);
 };
 
 WeemoExtension.prototype.displayVideoCallOnTopNav = function() {
