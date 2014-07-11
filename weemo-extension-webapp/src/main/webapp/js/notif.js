@@ -294,6 +294,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
         case 'sipOk':
           weemoExtension.isConnected = true;
           weemoExtension.changeStatus("Green");
+          jqchat(".btn-weemo").removeClass('disabled');
 
           var fn = jqchat(".label-user").text();
           var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
@@ -474,28 +475,32 @@ WeemoExtension.prototype.joinWeemoCall = function(chatMessage) {
  * @param targetUser
  */
 WeemoExtension.prototype.getStatus = function(targetUser, callback) {
-  var refreshURL = this.getStateURL + targetUser + "/";
-  jqchat.ajax({
-    url: refreshURL, 
-    dataType: "text",   
-    context: this,
-    success: function(data){
-      if (typeof callback === "function") {
-        var obj = jQuery.parseJSON(data);
-        if(obj != null) {
-          var acticity = obj.activity;
-          callback(targetUser, acticity);
-        } else {
+  if (typeof chatNotification !== 'undefined') {
+    chatNotification.getStatus(targetUser, callback);
+  } else {
+    var refreshURL = this.getStateURL + targetUser + "/";
+    jqchat.ajax({
+      url: refreshURL,
+      dataType: "text",
+      context: this,
+      success: function(data){
+        if (typeof callback === "function") {
+          var obj = jQuery.parseJSON(data);
+          if(obj != null) {
+            var acticity = obj.activity;
+            callback(targetUser, acticity);
+          } else {
+            callback(targetUser, "offline");
+          }
+        }
+      },
+      error: function(){
+        if (typeof callback === "function") {
           callback(targetUser, "offline");
         }
       }
-    },
-    error: function(){
-      if (typeof callback === "function") {
-        callback(targetUser, "offline");
-      }
-    }
-  });
+    });
+  }
 };
 
 WeemoExtension.prototype.attachWeemoToPopups = function() {
@@ -699,10 +704,6 @@ WeemoExtension.prototype.displayVideoCallOnChatApp = function() {
 
   jqchat(".room-detail-button").show();
 
-  if (weemoExtension.isConnected) {
-    jqchat(".btn-weemo").removeClass('disabled');
-  }
-
   var chatMessage = {
     "url" : chatApplication.jzChatSend,
     "user" : chatApplication.username,
@@ -725,6 +726,8 @@ WeemoExtension.prototype.displayVideoCallOnChatApp = function() {
   function cbGetConnectionStatus(targetUser, activity) {
     if (activity === "offline" || activity === "invisible") {
       jqchat(".btn-weemo").addClass("disabled");
+    } else if (weemoExtension.isConnected) {
+      jqchat(".btn-weemo").removeClass("disabled");
     }
   }
 
