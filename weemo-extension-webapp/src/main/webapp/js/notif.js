@@ -56,7 +56,7 @@ function WeemoExtension() {
   this.callObj;
 
   this.callOwner = jzGetParam("callOwner", false);
-  this.callActive = jzGetParam("callActive", false);
+  this.callActive = jzGetParam("callActive", "false").toLowerCase() === "true";
   this.callType = jzGetParam("callType", "");
 
   this.uidToCall = jzGetParam("uidToCall", "");
@@ -294,7 +294,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
         case 'sipOk':
           weemoExtension.isConnected = true;
           weemoExtension.changeStatus("Green");
-          jqchat(".btn-weemo").removeClass('disabled');
 
           var fn = jqchat(".label-user").text();
           var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
@@ -385,6 +384,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
           optionsWeemo.type = "call-off";
         }
         else if (status==="proceeding") {
+          weemoExtension.setCallActive(false);
           optionsWeemo.type = "call-proceed";
         }
 
@@ -726,7 +726,7 @@ WeemoExtension.prototype.displayVideoCallOnChatApp = function() {
   function cbGetConnectionStatus(targetUser, activity) {
     if (activity === "offline" || activity === "invisible") {
       jqchat(".btn-weemo").addClass("disabled");
-    } else if (weemoExtension.isConnected) {
+    } else if (weemoExtension.isConnected && weemoExtension.callActive === false) {
       jqchat(".btn-weemo").removeClass("disabled");
     }
   }
@@ -821,15 +821,15 @@ var weemoExtension = new WeemoExtension();
       if(weemoExtension.videoCallVersion  > oldVersion) {
         if(isNotInstallWeemoDriver == 'true') {
           weemoExtension.removeCookie("isDismiss");
-	  weemoExtension.showWeemoInstaller();
-    	}        
+          weemoExtension.showWeemoInstaller();
+      }
         weemoExtension.setCookie("videoCallVersion", weemoExtension.videoCallVersion, 365);
       }
     }
 
    
     if(isNotInstallWeemoDriver == 'true') {
-	weemoExtension.showWeemoInstaller();
+      weemoExtension.showWeemoInstaller();
     }
     // WEEMO : GETTING AND SETTING KEY
     var weemoKey = $notificationApplication.attr("data-weemo-key");
