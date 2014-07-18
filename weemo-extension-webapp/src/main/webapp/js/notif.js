@@ -538,7 +538,7 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
     var strWeemoLink = '<a type="button" class="btn weemoCallOverlay weemoCall-'+username.replace('.', '-')+' disabled" title="'+makeCallLabel+'"';
     strWeemoLink += ' data-fullname="'+fullname+'"';
     strWeemoLink += ' data-username="'+username+'" style="margin-left:5px;'+addStyle+'">';
-    strWeemoLink += '<i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
+    strWeemoLink += '<i class="uiIconWeemoVideoCalls uiIconWeemoLightGray"></i> '+callLabel+'</a>';
 
     var $btnChat = jqchat(".chatPopupOverlay", $uiElement);
     if ($btnChat.length > 0) {
