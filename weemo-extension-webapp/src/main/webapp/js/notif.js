@@ -42,7 +42,7 @@ function WeemoExtension() {
   }
 
   try {
-    this.weemo = new Weemo("", "", "internal", "");
+    this.weemo = new Weemo('', '', 'internal', '', '1');
 
   } catch (err) {
     console.log("WEEMO NOT AVAILABLE YET " + err);
@@ -263,10 +263,17 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
   if (this.weemoKey!=="" && this.weemo !== undefined) {
     jqchat(".btn-weemo-conf").css('display', 'none');
 
-    this.weemo.setDebugLevel(0); // Activate debug in JavaScript console
+    this.weemo.setDebugLevel(4); // Activate debug in JavaScript console
     this.weemo.setWebAppId(this.weemoKey);
-    this.weemo.setToken(this.tokenKey); 
+    this.weemo.setToken("weemo"+$uid); // Set user unique identifier
     this.weemo.initialize();
+    var fn = jqchat(".label-user").text();
+    var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
+    if (fullname!=="") {
+      this.weemo.setDisplayName(fullname); // Configure the display name
+    } else if (fn!=="") {
+      this.weemo.setDisplayName(fn); // Configure the display name
+    }
     this.changeStatus("Red");
 
     /**
@@ -282,7 +289,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
         case 'connectedWeemoDriver':
           weemoExtension.connectedWeemoDriver = true;
           weemoExtension.setInstallWeemoDriver();
-          this.authenticate();
+          //this.authenticate();
           weemoExtension.changeStatus("Blue");
           break;
         case 'loggedasotheruser':
@@ -365,8 +372,11 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
 
         if (status==="active" && weemoExtension.callActive) return; //Call already active, no need to push a new message
-        if (status==="terminated" && (!weemoExtension.callActive || weemoExtension.callType==="attendee")) return; //Terminate a non started call or a joined call, no message needed
-
+        if (status==="terminated" && (!weemoExtension.callActive || weemoExtension.callType==="attendee"))  //Terminate a non started call or a joined call, no message needed
+        {
+          weemoExtension.setCallActive(false);
+          return;
+        }
 
         if (weemoExtension.callType==="attendee" && status==="active") {
           weemoExtension.setCallActive(true);
@@ -430,6 +440,8 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
  *
  */
 WeemoExtension.prototype.createWeemoCall = function(targetUser, targetFullname, chatMessage) {
+
+
   if (this.weemoKey!=="") {
 
     if (chatMessage !== undefined) {
@@ -713,21 +725,34 @@ WeemoExtension.prototype.displayVideoCallOnChatApp = function() {
     "token" : chatApplication.token
   };
 
-  jqchat(".btn-weemo").unbind("click").bind("click", function() {
+  jqchat(".btn-weemo").unbind("click").one("click", function() {
     if (!jqchat(this).hasClass("disabled"))
+      console.log("targetUser : "+chatApplication.targetUser);
+      console.log("targetFullname   : "+chatApplication.targetFullname);
       weemoExtension.createWeemoCall(chatApplication.targetUser, chatApplication.targetFullname, chatMessage);
   });
 
-  jqchat(".btn-weemo-conf").unbind("click").bind("click", function() {
+  jqchat(".btn-weemo-conf").unbind("click").one("click", function() {
     if (!jqchat(this).hasClass("disabled"))
       weemoExtension.joinWeemoCall(chatApplication.targetUser, chatApplication.targetFullname, chatMessage);
   });
 
   function cbGetConnectionStatus(targetUser, activity) {
-    if (activity === "offline" || activity === "invisible") {
-      jqchat(".btn-weemo").addClass("disabled");
-    } else if (weemoExtension.isConnected && weemoExtension.callActive === false) {
-      jqchat(".btn-weemo").removeClass("disabled");
+    if (targetUser.indexOf("space-")===-1 && targetUser.indexOf("team-")===-1) {
+      jqchat(".btn-weemo-conf").css("display", "none");
+      jqchat(".btn-weemo").css("display", "block");
+      if (activity === "offline" || activity === "invisible") {
+        jqchat(".btn-weemo").addClass("disabled");
+      } else if (weemoExtension.isConnected && weemoExtension.callActive === false) {
+        jqchat(".btn-weemo").removeClass("disabled");
+      }
+    } else {
+      if (weemoExtension.isConnected && weemoExtension.callActive === false) {
+       jqchat(".btn-weemo").removeClass("disabled");
+      } else {
+        jqchat(".btn-weemo-conf").addClass("disabled");
+        jqchat(".btn-weemo").addClass("disabled");
+      }
     }
   }
 
