@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.exoplatform.addons.weemo</groupId>
   <artifactId>weemo-extension</artifactId>
-  <version>1.0.x-SNAPSHOT</version>
+  <version>1.0.x-addon-container-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Video Calls Addon</name>
   <description>Video Calls Addon obtained via integration with Weemo</description>
