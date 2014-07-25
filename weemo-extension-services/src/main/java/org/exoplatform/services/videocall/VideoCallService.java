@@ -444,30 +444,45 @@ public class VideoCallService {
    * @return false if VideoCals is turn on.
    */
   public boolean isTurnOffVideoCallForUser() throws Exception {
+    return isTurnOffVideoCallForUser(false);
+  }
+
+  /**
+   * Check if VideoCalls is turn off or not for current user.
+   * @param isGroupCall true: check for Video Group call; false: check for 1:1 call
+   * @return true if VideoCalls is turn off.
+   * @return false if VideoCals is turn on.
+   */
+  public boolean isTurnOffVideoCallForUser(boolean isGroupCall) throws Exception {
     boolean isTurnOff = true;
     VideoCallModel videoCallModel = null;
     if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
-      videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);      
+      videoCallModel = videoProfileCache.get(VIDEO_PROFILE_KEY);
     } else {
       videoCallModel = getVideoCallProfile();
     }
     if(videoCallModel == null) return true;
-    String str = videoCallModel.getDisableVideoCall();    
+    String str = videoCallModel.getDisableVideoCall();
     if(Boolean.valueOf(str)) {
-      return true; 
+      return true;
     } else {
       String videoCallsPermissions = videoCallModel.getVideoCallPermissions();
       if(StringUtils.isEmpty(videoCallsPermissions)) return true;
-      
+
       String userId = ConversationState.getCurrent().getIdentity().getUserId();
       //Put list of permission into a map
       HashMap<String, String> permissionsMap = new HashMap<String, String>();
       String[] arrs = videoCallsPermissions.split(",");
       ArrayList<String> memberships = new ArrayList();
       for (String string : arrs) {
-        if(string.split("#").length < 2) continue;
+        if(string.split("#").length < 3) continue;
         String permission = string.split("#")[0];
-        String value = string.split("#")[1];    
+        String value;
+        if (isGroupCall) {
+         value = string.split("#")[2];
+        } else {
+         value = string.split("#")[1];
+        }
         permissionsMap.put(permission, value);
         if(permission.contains(":")) {
           memberships.add(permission);
@@ -484,10 +499,9 @@ public class VideoCallService {
             boolean value = Boolean.valueOf(permissionsMap.get(string));
             if(value) return !value;
           }
-        }       
+        }
       }
-    }    
+    }
     return isTurnOff;
   }
-
 }

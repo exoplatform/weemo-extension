@@ -592,8 +592,11 @@
         $(tbody).find("tr").each(function(i) {
           if($(this).find("td").length>0) {
             var tdPermission = $(this).find("td")[0];
-	    var tdOnOff = $(this).find("td")[1];
+            var tdOnOff = $(this).find("td")[1];
             var value = $(tdOnOff).find("input:first").val();
+            var tdGroupCallOnOff = $(this).find("td")[2];
+            var valueGroupCallOnOff = $(tdGroupCallOnOff).find("input:first").val();
+
             permissionsMap[$(tdPermission).find("div:first").attr("permission").trim()] = value;
           }
         });
@@ -646,9 +649,15 @@
 	      var tdIcon = $('<td/>', {
 		"class":"center"
 	      });
+        var tdGroupIcon = $('<td/>', {
+          "class":"center"
+        });
 	      var divIcon = $('<div/>', {        
 		"class":"spaceRole"
 	      });
+        var divGroupIcon = $('<div/>', {
+          "class":"spaceRole"
+        });
 	      var yesLabel = $("#videocalls-label").attr("yesLabel");
 	      var noLabel = $("#videocalls-label").attr("noLabel");
 	      var inputIcon = $('<input/>', { 
@@ -662,10 +671,26 @@
 		"style":"visibility: hidden;",       
 		"class":"yesno"
 	      });
-	      $(divIcon).append(inputIcon); 
-	      $(tdIcon).append(divIcon);
+        var inputGroupIcon = $('<input/>', {
+          "type":"checkbox",
+          "id":"enableVideoCalls",
+          "name":"enableVideoCalls",
+          "value":"true",
+          "data-yes":yesLabel,
+          "data-no":noLabel,
+          "checked":"checked",
+          "style":"visibility: hidden;",
+          "class":"yesno"
+        });
+	      $(divIcon).append(inputIcon);
+        $(divGroupIcon).append(inputGroupIcon);
+
+        $(tdIcon).append(divIcon);
+        $(tdGroupIcon).append(divGroupIcon);
+
 	      $(tr).append(tdIcon);
-	      
+        $(tr).append(tdGroupIcon);
+
 	      
 	      $(divIcon).click(function()
 		  {
@@ -673,8 +698,17 @@
 		    var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
 		    input.attr("value", remembermeOpt);
 		  });
+
+        $(divGroupIcon).click(function()
+        {
+          var input = $(divGroupIcon).find("input");
+          var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
+          input.attr("value", remembermeOpt);
+        });
+
     	  var yeslabel;
     	  var nolabel;
+
     	  $(divIcon).children('input:checkbox').each(function () {
 	        yeslabel = $(divIcon).data("yes");
 	        nolabel = $(divIcon).data("no");
@@ -686,11 +720,26 @@
 	        {
 	            $(divIcon).closest("div.spaceRole").trigger("click");
 	        });
-    	  });	      
-	      
-	      
-	      
-	      // td for action
+    	  });
+
+        var yesGrouplabel;
+        var noGrouplabel;
+        $(divGroupIcon).children('input:checkbox').each(function () {
+          yesGrouplabel = $(divGroupIcon).data("yes");
+          noGrouplabel = $(divGroupIcon).data("no");
+          $(divGroupIcon).iphoneStyle({
+            checkedLabel:yesGrouplabel,
+            uncheckedLabel:noGrouplabel});
+
+          $(divGroupIcon).change(function()
+          {
+            $(divGroupIcon).closest("div.spaceRole").trigger("click");
+          });
+        });
+
+
+
+            // td for action
 	      var tdAction = $('<td/>', {
 		"class":"center"
 	      });
@@ -785,7 +834,7 @@
 		  var tr = $('<tr/>', {});
 		  var tdPermission = $('<td/>', {
 		    "class":"empty center",
-		    "colspan":"3"
+		    "colspan":"4"
 	      });
 	      var emptyLabel = $("#videocalls-label").attr("permissionEmpty");
 	      var divPermission = $('<div/>', {		    
@@ -945,7 +994,9 @@
 			var tdPermission = $(this).find("td")[0];
 			var tdOnOff = $(this).find("td")[1];
 			var value = $(tdOnOff).find("input:first").val();
-			permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value;
+      var tdGroupOnOff = $(this).find("td")[2];
+      var valueGroupOnOff = $(tdGroupOnOff).find("input:first").val();
+      permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value + "#" + valueGroupOnOff;
 		  }
 		});
 	  }
@@ -1037,7 +1088,9 @@
 				var tdPermission = $(this).find("td")[0];
 				var tdOnOff = $(this).find("td")[1];
 				var value = $(tdOnOff).find("input:first").val();
-				permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value;
+        var tdGroupOnOff = $(this).find("td")[2];
+        var valueGroupOnOff = $(tdGroupOnOff).find("input:first").val();
+        permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value + "#" + valueGroupOnOff;
 			  }
 			});
 		  }

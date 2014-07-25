@@ -22,6 +22,7 @@ function WeemoExtension() {
   this.weemoKey = "";
   this.isValidWeemoKey = true;
   this.isTurnOffForUser = false;
+  this.isTurnOffForGroupCall = 'false';
   this.isTurnOff = false;
   this.connectedWeemoDriver = false;
   this.videoCallVersion = "";
@@ -714,49 +715,51 @@ WeemoExtension.prototype.displayVideoCallOnChatApp = function() {
     return;
   }
 
-  jqchat(".room-detail-button").show();
+  var targetUser = chatApplication.targetUser;
+  var isTurnOnWeemoCallButton =((weemoExtension.isTurnOffForUser == "false" && (targetUser.indexOf("space-")===-1 && targetUser.indexOf("team-")===-1))
+    || (weemoExtension.isTurnOffForGroupCall == "false" && (targetUser.indexOf("space-") !== -1 || targetUser.indexOf("team-")!==-1)) );
 
-  var chatMessage = {
-    "url" : chatApplication.jzChatSend,
-    "user" : chatApplication.username,
-    "fullname" : chatApplication.fullname,
-    "targetUser" : chatApplication.targetUser,
-    "room" : chatApplication.room,
-    "token" : chatApplication.token
-  };
+  if (isTurnOnWeemoCallButton) {
+    var chatMessage = {
+      "url" : chatApplication.jzChatSend,
+      "user" : chatApplication.username,
+      "fullname" : chatApplication.fullname,
+      "targetUser" : chatApplication.targetUser,
+      "room" : chatApplication.room,
+      "token" : chatApplication.token
+    };
 
-  jqchat(".btn-weemo").unbind("click").one("click", function() {
-    if (!jqchat(this).hasClass("disabled"))
-      console.log("targetUser : "+chatApplication.targetUser);
-      console.log("targetFullname   : "+chatApplication.targetFullname);
-      weemoExtension.createWeemoCall(chatApplication.targetUser, chatApplication.targetFullname, chatMessage);
-  });
+    jqchat(".btn-weemo").unbind("click").one("click", function() {
+      if (!jqchat(this).hasClass("disabled"))
+        console.log("targetUser : "+chatApplication.targetUser);
+        console.log("targetFullname   : "+chatApplication.targetFullname);
+        weemoExtension.createWeemoCall(chatApplication.targetUser, chatApplication.targetFullname, chatMessage);
+    });
 
-  jqchat(".btn-weemo-conf").unbind("click").one("click", function() {
-    if (!jqchat(this).hasClass("disabled"))
-      weemoExtension.joinWeemoCall(chatApplication.targetUser, chatApplication.targetFullname, chatMessage);
-  });
+    jqchat(".btn-weemo-conf").unbind("click").one("click", function() {
+      if (!jqchat(this).hasClass("disabled"))
+        weemoExtension.joinWeemoCall(chatApplication.targetUser, chatApplication.targetFullname, chatMessage);
+    });
 
-  function cbGetConnectionStatus(targetUser, activity) {
-    if (targetUser.indexOf("space-")===-1 && targetUser.indexOf("team-")===-1) {
-      jqchat(".btn-weemo-conf").css("display", "none");
-      jqchat(".btn-weemo").css("display", "block");
-      if (activity === "offline" || activity === "invisible") {
-        jqchat(".btn-weemo").addClass("disabled");
-      } else if (weemoExtension.isConnected && weemoExtension.callActive === false) {
-        jqchat(".btn-weemo").removeClass("disabled");
-      }
-    } else {
-      if (weemoExtension.isConnected && weemoExtension.callActive === false) {
-       jqchat(".btn-weemo").removeClass("disabled");
+    function cbGetConnectionStatus(targetUser, activity) {
+      if (targetUser.indexOf("space-")===-1 && targetUser.indexOf("team-")===-1) {
+        if (activity === "offline" || activity === "invisible") {
+          jqchat(".btn-weemo").addClass("disabled");
+        } else if (weemoExtension.isConnected && weemoExtension.callActive === false) {
+          jqchat(".btn-weemo").removeClass("disabled");
+        }
       } else {
-        jqchat(".btn-weemo-conf").addClass("disabled");
-        jqchat(".btn-weemo").addClass("disabled");
+        if (weemoExtension.isConnected && weemoExtension.callActive === false) {
+         jqchat(".btn-weemo").removeClass("disabled");
+        } else {
+          jqchat(".btn-weemo-conf").addClass("disabled");
+          jqchat(".btn-weemo").addClass("disabled");
+        }
       }
     }
-  }
 
-  weemoExtension.getStatus(chatApplication.targetUser, cbGetConnectionStatus);
+    weemoExtension.getStatus(chatApplication.targetUser, cbGetConnectionStatus);
+  }
 
   setTimeout(function() { weemoExtension.displayVideoCallOnChatApp() }, 2000);
 };
@@ -830,6 +833,7 @@ var weemoExtension = new WeemoExtension();
     if(weemoExtension.isTurnOff == "true") return;
     if(navigator.platform.indexOf("Linux") >= 0) return;
     weemoExtension.isTurnOffForUser = $notificationApplication.attr("data-weemo-turnoff-user");
+    weemoExtension.isTurnOffForGroupCall = $notificationApplication.attr("data-weemo-turnoff-group");
 
     var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
 

@@ -458,10 +458,11 @@ public class VideoCallAdministration {
       if(videoPermissions != null && videoPermissions.length() > 0) {
         String[] arrPermissions = videoPermissions.split(",");
         for (String string : arrPermissions) {
-          if(string.split("#").length < 2) continue;
+          if(string.split("#").length < 3) continue;
           String permissionId = string.split("#")[0];
           String enableVideoCalls = string.split("#")[1];
-          sb.append("#").append(permissionId).append(",").append(enableVideoCalls);
+          String enableVideoGroupCalls = string.split("#")[2];
+          sb.append("#").append(permissionId).append(",").append(enableVideoCalls).append(",").append(enableVideoGroupCalls);
           if(permissionId.indexOf(":") > 0) {
             String membership = permissionId.split(":")[0].trim();
             String memebershipLabel = membership;
