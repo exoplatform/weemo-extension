@@ -293,12 +293,18 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
           //this.authenticate();
           weemoExtension.changeStatus("Blue");
           break;
+        case 'disconnectedWeemoDriver':
+          weemoExtension.setCallActive(false);
+          weemoExtension.isConnected = false;
+          break;
         case 'loggedasotheruser':
           // force weemo to kick previous user and replace it with current one
           this.authenticate(1);
           break;
         case 'unsupportedOS':
           weemoExtension.isSupport = false;
+          weemoExtension.setCallActive(false);
+          weemoExtension.isConnected = false;
         case 'sipOk':
           weemoExtension.isConnected = true;
           weemoExtension.changeStatus("Green");
@@ -311,12 +317,11 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
             this.setDisplayName(fn); // Configure the display name
           }
           break;
-        case 'loggedasotheruser':
-        // force weemo to kick previous user and replace it with current one
-        //this.authenticate(1);
         case 'sipNok':
         case 'error':
         case 'kicked':
+          weemoExtension.isConnected = false;
+          weemoExtension.setCallActive(false);
           weemoExtension.changeStatus("Warning");
           break;
       }
@@ -751,6 +756,7 @@ WeemoExtension.prototype.displayVideoCallOnChatApp = function() {
       } else {
         if (weemoExtension.isConnected && weemoExtension.callActive === false) {
          jqchat(".btn-weemo").removeClass("disabled");
+          jqchat(".btn-weemo-conf").removeClass("disabled");
         } else {
           jqchat(".btn-weemo-conf").addClass("disabled");
           jqchat(".btn-weemo").addClass("disabled");
@@ -761,7 +767,7 @@ WeemoExtension.prototype.displayVideoCallOnChatApp = function() {
     weemoExtension.getStatus(chatApplication.targetUser, cbGetConnectionStatus);
   }
 
-  setTimeout(function() { weemoExtension.displayVideoCallOnChatApp() }, 2000);
+  setTimeout(function() { weemoExtension.displayVideoCallOnChatApp() }, 3000);
 };
 
 WeemoExtension.prototype.displayVideoCallOnTopNav = function() {
