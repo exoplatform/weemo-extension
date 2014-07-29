@@ -266,7 +266,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
     this.weemo.setDebugLevel(4); // Activate debug in JavaScript console
     this.weemo.setWebAppId(this.weemoKey);
-    this.weemo.setToken("weemo"+$uid); // Set user unique identifier
+    this.weemo.setToken("weemo"+$uid);
     this.weemo.initialize();
     var fn = jqchat(".label-user").text();
     var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
@@ -450,7 +450,7 @@ WeemoExtension.prototype.createWeemoCall = function(targetUser, targetFullname, 
     }
 
     if (targetUser.indexOf("space-")===-1 && targetUser.indexOf("team-")===-1) {
-      this.setUidToCall("weemo_"+targetUser);
+      this.setUidToCall("weemo"+targetUser);
       this.setDisplaynameToCall(targetFullname);
       this.setCallType("internal");
     } else {
@@ -866,7 +866,7 @@ var weemoExtension = new WeemoExtension();
 
     var tokenKey = $notificationApplication.attr("data-token-key");
     weemoExtension.setTokenKey(tokenKey);
-    
+
     
     var username = $notificationApplication.attr("data-username");
     weemoExtension.initCall(username, username);
