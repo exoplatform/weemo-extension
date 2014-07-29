@@ -38,7 +38,7 @@
         </value-param>
         <value-param>
           <name>containerName</name>
-          <value>AddOnContainer</value>
+          <value>TopNavigationContainer</value>
         </value-param>
         <object-param>
           <name>VideoCallApplication</name>
