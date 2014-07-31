@@ -22,7 +22,7 @@ function WeemoExtension() {
   this.weemoKey = "";
   this.isValidWeemoKey = true;
   this.isTurnOffForUser = false;
-  this.isTurnOffForGroupCall = 'false';
+  this.isTurnOffForGroupCall = 'true';
   this.isTurnOff = false;
   this.connectedWeemoDriver = false;
   this.videoCallVersion = "";
