@@ -493,32 +493,28 @@ WeemoExtension.prototype.joinWeemoCall = function(chatMessage) {
  * @param targetUser
  */
 WeemoExtension.prototype.getStatus = function(targetUser, callback) {
-  if (typeof chatNotification !== 'undefined') {
-    chatNotification.getStatus(targetUser, callback);
-  } else {
-    var refreshURL = this.getStateURL + targetUser + "/";
-    jqchat.ajax({
-      url: refreshURL,
-      dataType: "text",
-      context: this,
-      success: function(data){
-        if (typeof callback === "function") {
-          var obj = jQuery.parseJSON(data);
-          if(obj != null) {
-            var acticity = obj.activity;
-            callback(targetUser, acticity);
-          } else {
-            callback(targetUser, "offline");
-          }
-        }
-      },
-      error: function(){
-        if (typeof callback === "function") {
+  var refreshURL = this.getStateURL + targetUser + "/";
+  jqchat.ajax({
+    url: refreshURL,
+    dataType: "text",
+    context: this,
+    success: function(data){
+      if (typeof callback === "function") {
+        var obj = jQuery.parseJSON(data);
+        if(obj != null) {
+          var acticity = obj.activity;
+          callback(targetUser, acticity);
+        } else {
           callback(targetUser, "offline");
         }
       }
-    });
-  }
+    },
+    error: function(){
+      if (typeof callback === "function") {
+        callback(targetUser, "offline");
+      }
+    }
+  });
 };
 
 WeemoExtension.prototype.attachWeemoToPopups = function() {
@@ -715,61 +711,6 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
   setTimeout(function() { weemoExtension.attachWeemoToConnections() }, 500);
 };
 
-WeemoExtension.prototype.displayVideoCallOnChatApp = function() {
-  if (typeof chatApplication === 'undefined' || window.location.href.indexOf("/portal/intranet/chat") === -1) {
-    return;
-  }
-
-  var targetUser = chatApplication.targetUser;
-  var isTurnOnWeemoCallButton =((weemoExtension.isTurnOffForUser == "false" && (targetUser.indexOf("space-")===-1 && targetUser.indexOf("team-")===-1))
-    || (weemoExtension.isTurnOffForGroupCall == "false" && (targetUser.indexOf("space-") !== -1 || targetUser.indexOf("team-")!==-1)) );
-
-  if (isTurnOnWeemoCallButton) {
-    var chatMessage = {
-      "url" : chatApplication.jzChatSend,
-      "user" : chatApplication.username,
-      "fullname" : chatApplication.fullname,
-      "targetUser" : chatApplication.targetUser,
-      "room" : chatApplication.room,
-      "token" : chatApplication.token
-    };
-
-    jqchat(".btn-weemo").unbind("click").one("click", function() {
-      if (!jqchat(this).hasClass("disabled"))
-        console.log("targetUser : "+chatApplication.targetUser);
-        console.log("targetFullname   : "+chatApplication.targetFullname);
-        weemoExtension.createWeemoCall(chatApplication.targetUser, chatApplication.targetFullname, chatMessage);
-    });
-
-    jqchat(".btn-weemo-conf").unbind("click").one("click", function() {
-      if (!jqchat(this).hasClass("disabled"))
-        weemoExtension.joinWeemoCall(chatApplication.targetUser, chatApplication.targetFullname, chatMessage);
-    });
-
-    function cbGetConnectionStatus(targetUser, activity) {
-      if (targetUser.indexOf("space-")===-1 && targetUser.indexOf("team-")===-1) {
-        if (activity === "offline" || activity === "invisible") {
-          jqchat(".btn-weemo").addClass("disabled");
-        } else if (weemoExtension.isConnected && weemoExtension.callActive === false) {
-          jqchat(".btn-weemo").removeClass("disabled");
-        }
-      } else {
-        if (weemoExtension.isConnected && weemoExtension.callActive === false) {
-         jqchat(".btn-weemo").removeClass("disabled");
-          jqchat(".btn-weemo-conf").removeClass("disabled");
-        } else {
-          jqchat(".btn-weemo-conf").addClass("disabled");
-          jqchat(".btn-weemo").addClass("disabled");
-        }
-      }
-    }
-
-    weemoExtension.getStatus(chatApplication.targetUser, cbGetConnectionStatus);
-  }
-
-  setTimeout(function() { weemoExtension.displayVideoCallOnChatApp() }, 3000);
-};
-
 WeemoExtension.prototype.displayVideoCallOnTopNav = function() {
   if (typeof chatNotification === 'undefined') {
     return;
@@ -879,7 +820,6 @@ var weemoExtension = new WeemoExtension();
     weemoExtension.attachWeemoToPopups();
     weemoExtension.attachWeemoToConnections();
     weemoExtension.attachWeemoToProfile();
-    weemoExtension.displayVideoCallOnChatApp();
 
   });
 
