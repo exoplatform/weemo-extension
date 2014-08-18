@@ -30,8 +30,9 @@ var otherExtension = new OtherExtension();
     $(".btn-weemo-conf").click(function () {
       if (typeof weemoExtension !== 'undefined') {
         var hostid = $("#callee").val();
-        console.log("targetUser : " + targetUser);
-        weemoExtension.joinWeemoCall(targetUser, targetUser);
+        console.log("Host ID : " + hostid);
+        weemoExtension.setUidToCall(hostid);
+        weemoExtension.joinWeemoCall();
       }
     });
   });
