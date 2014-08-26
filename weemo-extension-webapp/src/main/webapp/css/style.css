@@ -45,6 +45,7 @@ button.close{
 	 opacity: 0.9;
 	 padding: 8px 0;
 	 border-radius: 0px;
+	 left: 0px;
 }
 
 .uiVideoCallAdminPortlet{
