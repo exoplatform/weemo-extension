@@ -6,8 +6,10 @@
   function VideoCalls() {} ;
 
   
-  VideoCalls.prototype.showPopover = function (element,place) { 
-	var userElem = gj(element).find("a:first");
+  VideoCalls.prototype.showPopover = function (element,place) {
+    var isTurnOff = weemoExtension.isTurnOff;
+    if (isTurnOff.indexOf("true") != -1) return;
+    var userElem = gj(element).find("a:first");
     var userName = gj(userElem).attr("href");
     var popElem = gj(element).find(".avatarXSmall:first");
     userName = userName.substring(userName.lastIndexOf("/") + 1, userName.length);
