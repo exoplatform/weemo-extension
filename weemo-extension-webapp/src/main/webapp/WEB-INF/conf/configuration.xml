@@ -7,4 +7,5 @@
   <import>war:/conf/weemo-extension/weemo-extension-configuration.xml</import>
   <import>war:/conf/weemo-extension/portal/portal-configuration.xml</import>
   <import>war:/conf/weemo-extension/system-configuration.xml</import>
+  <import>war:/conf/weemo-extension/container-configuration.xml</import>
 </configuration>
