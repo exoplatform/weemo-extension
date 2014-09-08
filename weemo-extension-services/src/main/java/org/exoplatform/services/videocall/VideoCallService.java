@@ -16,6 +16,7 @@
  */
 package org.exoplatform.services.videocall;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -222,7 +223,14 @@ public class VideoCallService {
       if (LOG.isErrorEnabled()) {
         LOG.error("saveVideoCallProfile() failed because of ", e);
       }
-    } 
+    } finally {
+      try {
+	    if (p12Cert != null) p12Cert.close();
+	    if (pemCert != null)  pemCert.close();
+      } catch (IOException e){
+    	LOG.error("Cannot close input streams reading certificate files", e);
+      }
+    }
   }
   /**
    * Get P12 certificate from VideoCalls Profile.  
@@ -247,11 +255,11 @@ public class VideoCallService {
       }
     } catch (LoginException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("Failed to get p12 certificate file because of ");
+        LOG.error("Failed to get p12 certificate file.");
       }
     } catch (NoSuchWorkspaceException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("Failed to get p12 certificate file because of ");
+        LOG.error("Failed to get p12 certificate file.");
       }
     } catch (PathNotFoundException e){
       if (LOG.isErrorEnabled()) {
@@ -259,7 +267,7 @@ public class VideoCallService {
       }
     } catch (RepositoryException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("Failed to get p12 certificate file because of ");
+        LOG.error("Failed to get p12 certificate file.");
       }
     }
     return isP12;
@@ -287,11 +295,11 @@ public class VideoCallService {
       } 
     } catch (LoginException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("Failed to get pem certificate file because of ");
+        LOG.error("Failed to get pem certificate file.");
       }
     } catch (NoSuchWorkspaceException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("Failed to get pem certificate file because of ");
+        LOG.error("Failed to get pem certificate file.");
       }
     } catch (PathNotFoundException e){
       if (LOG.isErrorEnabled()) {
@@ -299,7 +307,7 @@ public class VideoCallService {
       }
     } catch (RepositoryException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("Failed to get pem certificate file because of ");
+        LOG.error("Failed to get pem certificate file.");
       }
     }
     return isPem;
@@ -339,6 +347,11 @@ public class VideoCallService {
           if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
             InputStream isP12 = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();
             videoCallModel.setP12Cert(isP12);
+            try {
+              if (isP12 != null) isP12.close();
+            } catch (IOException e){
+              LOG.error("Cannot close input stream reading p12 file", e);
+            }
             videoCallModel.setP12CertName(jcrContent.getProperty("exo:videoCallCertificateFileName").getString());
           }
         } else {
@@ -351,6 +364,11 @@ public class VideoCallService {
           if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
             InputStream isPem = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();
             videoCallModel.setPemCert(isPem);
+            try {
+              if (isPem != null) isPem.close();
+            } catch (IOException e){
+              LOG.error("Cannot close input stream reading pem file", e);
+            }
             videoCallModel.setPemCertName(jcrContent.getProperty("exo:videoCallCertificateFileName").getString());
           }
         } else {
@@ -360,11 +378,11 @@ public class VideoCallService {
         videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
       } catch (LoginException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("Failed to get VideoCallProfile node because of ");
+          LOG.error("Failed to get VideoCallProfile node.");
         }
       } catch (NoSuchWorkspaceException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("Failed to get VideoCallProfile node because of ");
+          LOG.error("Failed to get VideoCallProfile node.");
         }
       } catch (PathNotFoundException e){
         if (LOG.isErrorEnabled()) {
@@ -372,7 +390,7 @@ public class VideoCallService {
         }
       } catch (RepositoryException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("Failed to get VideoCallProfile node because of ");
+          LOG.error("Failed to get VideoCallProfile node.");
         }
       }
     }
@@ -418,11 +436,11 @@ public class VideoCallService {
         if (videoCallNode != null) isExist = true;
       } catch (LoginException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("isExistVideoCallProfile() failed because of ");
+          LOG.error("isExistVideoCallProfile() failed because of ", e);
         }
       } catch (NoSuchWorkspaceException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("isExistVideoCallProfile() failed because of ");
+          LOG.error("isExistVideoCallProfile() failed because of ", e);
         }
       } catch (PathNotFoundException e) {
         if (LOG.isErrorEnabled()) {
@@ -430,7 +448,7 @@ public class VideoCallService {
         }
       } catch (RepositoryException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("isExistVideoCallProfile() failed because of ");
+          LOG.error("isExistVideoCallProfile() failed because of ", e);
         }
       }
     }     
