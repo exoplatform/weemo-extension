@@ -25,6 +25,7 @@ import java.util.HashMap;
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -49,8 +50,9 @@ import org.apache.commons.lang.StringUtils;
 public class VideoCallService {
   private static ExoCache<Serializable, VideoCallModel> videoProfileCache;
   public static String VIDEO_PROFILE_KEY = "videoCallsProfile" + CommonsUtils.getRepository().getConfiguration().getName();
-  public static String BASE_PATH = "exo:applications";
+  public static String BASE_PATH = "/exo:applications";
   public static String VIDEOCALL_BASE_PATH = "VideoCallsProfile";
+  public static String VIDEOCALL_NODE_PATH = "/exo:applications/VideoCallsProfile";
   public static String VIDEOCALL_NODETYPE = "exo:videoCallProfile";
   public static String DISABLEVIDEOCALL_PROP ="exo:disableVideoCall";
   public static String WEEMOKEY_PROP = "exo:weemoKey";
@@ -104,17 +106,14 @@ public class VideoCallService {
     InputStream p12Cert = videoCallModel.getP12Cert();
     InputStream pemCert = videoCallModel.getPemCert();
     String profileId = videoCallModel.getProfileId();
-    String domainId = videoCallModel.getDomainId();  
+    String domainId = videoCallModel.getDomainId();
     
-   
-    SessionProvider sessionProvider = null;
     try {
-      sessionProvider = WCMCoreUtils.getSystemSessionProvider();
+      SessionProvider sessionProvider = WCMCoreUtils.getSystemSessionProvider();
       RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
       Session session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());
       
-      Node rootNode = session.getRootNode();
-      Node baseNode = rootNode.getNode(BASE_PATH);
+      Node baseNode = (Node) session.getItem(BASE_PATH);
       Node videoCallNode = null;
       if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
         videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);
@@ -211,6 +210,10 @@ public class VideoCallService {
       if (LOG.isErrorEnabled()) {
         LOG.error("saveVideoCallProfile() failed because of ", e);
       }
+    } catch (PathNotFoundException e) {
+      if (LOG.isErrorEnabled()) {
+        LOG.error("saveVideoCallProfile() failed because of ", e);
+      }
     } catch (RepositoryException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("saveVideoCallProfile() failed because of ", e);
@@ -231,28 +234,33 @@ public class VideoCallService {
     RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
     if(repositoryService == null) return null;
     sessionProvider = WCMCoreUtils.getSystemSessionProvider();
-    Session session;
     try {
-      session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
-      Node rootNode = session.getRootNode();
-      Node baseNode = rootNode.getNode(BASE_PATH);
-      if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
-        Node videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);      
+      Session session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());
+      Node videoCallNode = (Node) session.getItem(VIDEOCALL_NODE_PATH);
        
-        if(videoCallNode.hasNode(VIDEO_P12_CERT_NODE_NAME)) {
-          Node p12CertNode = videoCallNode.getNode(VIDEO_P12_CERT_NODE_NAME);
-          Node jcrContent = p12CertNode.getNode(NodetypeConstant.JCR_CONTENT);
-          if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
-            isP12 = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();            
-          }
-        } 
+      if(videoCallNode.hasNode(VIDEO_P12_CERT_NODE_NAME)) {
+        Node p12CertNode = videoCallNode.getNode(VIDEO_P12_CERT_NODE_NAME);
+        Node jcrContent = p12CertNode.getNode(NodetypeConstant.JCR_CONTENT);
+        if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
+          isP12 = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();            
+        }
       }
     } catch (LoginException e) {
-      // Do nothing
+      if (LOG.isErrorEnabled()) {
+        LOG.error("Failed to get p12 certificate file because of ");
+      }
     } catch (NoSuchWorkspaceException e) {
-      // Do nothing
+      if (LOG.isErrorEnabled()) {
+        LOG.error("Failed to get p12 certificate file because of ");
+      }
+    } catch (PathNotFoundException e){
+      if (LOG.isErrorEnabled()) {
+    	LOG.error("VideoCallProfile node doesn't exist in repository.");
+      }
     } catch (RepositoryException e) {
-      // Do nothing
+      if (LOG.isErrorEnabled()) {
+        LOG.error("Failed to get p12 certificate file because of ");
+      }
     }
     return isP12;
   }
@@ -266,28 +274,33 @@ public class VideoCallService {
     RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
     if(repositoryService == null) return null;
     sessionProvider = WCMCoreUtils.getSystemSessionProvider();
-    Session session;
     try {
-      session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
-      Node rootNode = session.getRootNode();
-      Node baseNode = rootNode.getNode(BASE_PATH);
-      if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
-        Node videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);      
+      Session session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
+      Node videoCallNode = (Node) session.getItem(VIDEOCALL_NODE_PATH);      
        
-        if(videoCallNode.hasNode(VIDEO_PEM_CERT_NODE_NAME)) {
-          Node p12CertNode = videoCallNode.getNode(VIDEO_PEM_CERT_NODE_NAME);
-          Node jcrContent = p12CertNode.getNode(NodetypeConstant.JCR_CONTENT);
-          if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
-            isPem = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();            
-          }
-        } 
-      }
+      if(videoCallNode.hasNode(VIDEO_PEM_CERT_NODE_NAME)) {
+        Node p12CertNode = videoCallNode.getNode(VIDEO_PEM_CERT_NODE_NAME);
+        Node jcrContent = p12CertNode.getNode(NodetypeConstant.JCR_CONTENT);
+        if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
+          isPem = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();            
+        }
+      } 
     } catch (LoginException e) {
-      // Do nothing
+      if (LOG.isErrorEnabled()) {
+        LOG.error("Failed to get pem certificate file because of ");
+      }
     } catch (NoSuchWorkspaceException e) {
-      // Do nothing
+      if (LOG.isErrorEnabled()) {
+        LOG.error("Failed to get pem certificate file because of ");
+      }
+    } catch (PathNotFoundException e){
+      if (LOG.isErrorEnabled()) {
+        LOG.error("VideoCallProfile node doesn't exist in repository.");
+      }
     } catch (RepositoryException e) {
-      // Do nothing
+      if (LOG.isErrorEnabled()) {
+        LOG.error("Failed to get pem certificate file because of ");
+      }
     }
     return isPem;
   }
@@ -304,58 +317,63 @@ public class VideoCallService {
       RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
       if(repositoryService == null) return null;
       sessionProvider = WCMCoreUtils.getSystemSessionProvider();
-      Session session;
       try {
-        session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
-        Node rootNode = session.getRootNode();
-        Node baseNode = rootNode.getNode(BASE_PATH);
-        if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
-          Node videoCallNode = baseNode.getNode(VIDEOCALL_BASE_PATH);
-          videoCallModel = new VideoCallModel();
-          videoCallModel.setWeemoKey(videoCallNode.getProperty(WEEMOKEY_PROP).getString());
-          videoCallModel.setDisableVideoCall(videoCallNode.getProperty(DISABLEVIDEOCALL_PROP).getString());
-          videoCallModel.setProfileId(videoCallNode.getProperty(VIDEO_PROFILE_ID).getString());
-          if(videoCallNode.hasProperty(VIDEO_DOMAIN_ID)) {
-            videoCallModel.setDomainId(videoCallNode.getProperty(VIDEO_DOMAIN_ID).getString());
-          }          
-          if(videoCallNode.hasProperty(VIDEO_PERMISSIONS_PROP)) {
-            videoCallModel.setVideoCallPermissions(videoCallNode.getProperty(VIDEO_PERMISSIONS_PROP).getString());
-          }          
-          videoCallModel.setCustomerCertificatePassphrase(videoCallNode.getProperty(VIDEO_PASSPHARSE).getString());
-          videoCallModel.setAuthId(videoCallNode.getProperty(VIDEO_AUTH_ID).getString());
-          videoCallModel.setAuthSecret(videoCallNode.getProperty(VIDEO_AUTH_SECRET).getString());
-          if(videoCallNode.hasNode(VIDEO_P12_CERT_NODE_NAME)) {
-            Node p12CertNode = videoCallNode.getNode(VIDEO_P12_CERT_NODE_NAME);
-            Node jcrContent = p12CertNode.getNode(NodetypeConstant.JCR_CONTENT);
-            if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
-              InputStream isP12 = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();
-              videoCallModel.setP12Cert(isP12);
-              videoCallModel.setP12CertName(jcrContent.getProperty("exo:videoCallCertificateFileName").getString());
-            }
-          } else {
-            videoCallModel.setP12Cert(null);
-            videoCallModel.setP12CertName("");
+        Session session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
+        Node videoCallNode = (Node) session.getItem(VIDEOCALL_NODE_PATH);
+        videoCallModel = new VideoCallModel();
+        videoCallModel.setWeemoKey(videoCallNode.getProperty(WEEMOKEY_PROP).getString());
+        videoCallModel.setDisableVideoCall(videoCallNode.getProperty(DISABLEVIDEOCALL_PROP).getString());
+        videoCallModel.setProfileId(videoCallNode.getProperty(VIDEO_PROFILE_ID).getString());
+        if(videoCallNode.hasProperty(VIDEO_DOMAIN_ID)) {
+          videoCallModel.setDomainId(videoCallNode.getProperty(VIDEO_DOMAIN_ID).getString());
+        }          
+        if(videoCallNode.hasProperty(VIDEO_PERMISSIONS_PROP)) {
+          videoCallModel.setVideoCallPermissions(videoCallNode.getProperty(VIDEO_PERMISSIONS_PROP).getString());
+        }          
+        videoCallModel.setCustomerCertificatePassphrase(videoCallNode.getProperty(VIDEO_PASSPHARSE).getString());
+        videoCallModel.setAuthId(videoCallNode.getProperty(VIDEO_AUTH_ID).getString());
+        videoCallModel.setAuthSecret(videoCallNode.getProperty(VIDEO_AUTH_SECRET).getString());
+        if(videoCallNode.hasNode(VIDEO_P12_CERT_NODE_NAME)) {
+          Node p12CertNode = videoCallNode.getNode(VIDEO_P12_CERT_NODE_NAME);
+          Node jcrContent = p12CertNode.getNode(NodetypeConstant.JCR_CONTENT);
+          if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
+            InputStream isP12 = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();
+            videoCallModel.setP12Cert(isP12);
+            videoCallModel.setP12CertName(jcrContent.getProperty("exo:videoCallCertificateFileName").getString());
           }
-          if(videoCallNode.hasNode(VIDEO_PEM_CERT_NODE_NAME)) {
-            Node pemCertNode = videoCallNode.getNode(VIDEO_PEM_CERT_NODE_NAME);
-            Node jcrContent = pemCertNode.getNode(NodetypeConstant.JCR_CONTENT);
-            if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
-              InputStream isPem = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();
-              videoCallModel.setPemCert(isPem);
-              videoCallModel.setPemCertName(jcrContent.getProperty("exo:videoCallCertificateFileName").getString());
-            }
-          } else {
-            videoCallModel.setPemCert(null);
-            videoCallModel.setPemCertName("");
-          }
-          videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
+        } else {
+          videoCallModel.setP12Cert(null);
+          videoCallModel.setP12CertName("");
         }
+        if(videoCallNode.hasNode(VIDEO_PEM_CERT_NODE_NAME)) {
+          Node pemCertNode = videoCallNode.getNode(VIDEO_PEM_CERT_NODE_NAME);
+          Node jcrContent = pemCertNode.getNode(NodetypeConstant.JCR_CONTENT);
+          if(jcrContent != null && jcrContent.getProperty(NodetypeConstant.JCR_DATA) != null) {
+            InputStream isPem = jcrContent.getProperty(NodetypeConstant.JCR_DATA).getStream();
+            videoCallModel.setPemCert(isPem);
+            videoCallModel.setPemCertName(jcrContent.getProperty("exo:videoCallCertificateFileName").getString());
+          }
+        } else {
+          videoCallModel.setPemCert(null);
+          videoCallModel.setPemCertName("");
+        }
+        videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
       } catch (LoginException e) {
-        // Do nothing
+        if (LOG.isErrorEnabled()) {
+          LOG.error("Failed to get VideoCallProfile node because of ");
+        }
       } catch (NoSuchWorkspaceException e) {
-        // Do nothing
+        if (LOG.isErrorEnabled()) {
+          LOG.error("Failed to get VideoCallProfile node because of ");
+        }
+      } catch (PathNotFoundException e){
+        if (LOG.isErrorEnabled()) {
+          LOG.error("VideoCallProfile node doesn't exist in repository.");
+        }
       } catch (RepositoryException e) {
-        // Do nothing
+        if (LOG.isErrorEnabled()) {
+          LOG.error("Failed to get VideoCallProfile node because of ");
+        }
       }
     }
     return videoCallModel;
@@ -394,25 +412,25 @@ public class VideoCallService {
       SessionProvider sessionProvider = null;
       RepositoryService repositoryService = WCMCoreUtils.getService(RepositoryService.class);
       sessionProvider = WCMCoreUtils.getSystemSessionProvider();
-      Session session;
       try {
-        session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());    
-        Node rootNode = session.getRootNode();
-        Node baseNode = rootNode.getNode(BASE_PATH);
-        if(baseNode.hasNode(VIDEOCALL_BASE_PATH)) {
-          isExist = true;
-        }
+        Session session = sessionProvider.getSession(WORKSPACE_NAME, repositoryService.getCurrentRepository());
+        Node videoCallNode = (Node) session.getItem(VIDEOCALL_NODE_PATH);
+        if (videoCallNode != null) isExist = true;
       } catch (LoginException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("isExistVideoCallProfile() failed because of ", e);
+          LOG.error("isExistVideoCallProfile() failed because of ");
         }
       } catch (NoSuchWorkspaceException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("isExistVideoCallProfile() failed because of ", e);
+          LOG.error("isExistVideoCallProfile() failed because of ");
+        }
+      } catch (PathNotFoundException e) {
+        if (LOG.isErrorEnabled()) {
+          LOG.error("VideoCallProfile node doesn't exist in repository.");
         }
       } catch (RepositoryException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("isExistVideoCallProfile() failed because of ", e);
+          LOG.error("isExistVideoCallProfile() failed because of ");
         }
       }
     }     
