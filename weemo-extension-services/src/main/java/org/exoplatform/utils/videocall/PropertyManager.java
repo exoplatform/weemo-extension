@@ -19,13 +19,13 @@
 
 package org.exoplatform.utils.videocall;
 
+import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.services.videocall.VideoCallService;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import org.exoplatform.model.videocall.VideoCallModel;
-import org.exoplatform.services.videocall.VideoCallService;
 
 public class PropertyManager {
   private static Properties properties = null;
@@ -82,7 +82,7 @@ public class PropertyManager {
             
       overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "");
       overridePropertyIfNotSet(PROPERTY_VIDEO_PROFILE, "basic");
-      overridePropertyIfNotSet(PROPERTY_AUTH_URL, "https://oauths-ppr.weemo.com/auth/");
+      overridePropertyIfNotSet(PROPERTY_AUTH_URL, "https://oauths.weemo.com/auth/");
       overridePropertyIfNotSet(PROPERTY_USER_ID_AUTH, "");
       
       overridePropertyIfNotSet(PROPERTY_WEEMO_KEY, "");

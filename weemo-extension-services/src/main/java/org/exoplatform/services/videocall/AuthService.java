@@ -16,9 +16,28 @@
  */
 package org.exoplatform.services.videocall;
 
+import org.apache.commons.lang.StringUtils;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.portal.config.UserACL;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.Group;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.IdentityConstants;
+import org.exoplatform.utils.videocall.PropertyManager;
+import org.json.JSONObject;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,28 +54,6 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import org.exoplatform.services.organization.Group;
-import org.exoplatform.services.organization.User;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import org.apache.commons.lang.StringUtils;
-import org.exoplatform.container.PortalContainer;
-import org.exoplatform.model.videocall.VideoCallModel;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
-import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.utils.videocall.PropertyManager;
-import org.json.JSONObject;
-
-
 
 
 public class AuthService {
@@ -68,19 +65,17 @@ public class AuthService {
   private InputStream p12File = null;
   private String passphrase = null;
   private String domain_id = null;  
-  public final static String ANY = "any";
-  public final static String ROOT = "root";
-  OrganizationService orgService;
-  
+
   private static final Log LOG = ExoLogger.getLogger(AuthService.class.getName());
   
   public AuthService() {
     authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);  
-    PortalContainer container = PortalContainer.getInstance();
-    orgService = (OrganizationService) container.getComponentInstanceOfType(OrganizationService.class);
   }
   
   public JSONObject verifyPermission(String entry) throws Exception {
+    PortalContainer container = PortalContainer.getInstance();
+    OrganizationService orgService = (OrganizationService) container.getComponentInstanceOfType(OrganizationService.class);
+    UserACL userACL = (UserACL) container.getComponentInstanceOfType(UserACL.class);
     IDType idType;
     JSONObject json = new JSONObject();
     if (entry.startsWith("/")) {
@@ -93,7 +88,7 @@ public class AuthService {
     boolean isExistEntry = false;
     
     if (idType == IDType.USER) {
-      if (ANY.equalsIgnoreCase(entry) || ROOT.equalsIgnoreCase(entry)) {
+      if (IdentityConstants.ANY.equalsIgnoreCase(entry) || userACL.getSuperUser().equalsIgnoreCase(entry)) {
         isExistEntry = true;
       }
       isExistEntry = orgService.getUserHandler().findUserByName(entry) != null;
@@ -366,63 +361,6 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
       }
     }
     return file;
-  }
-  
-  //////////////////////////////////////////////////////
-  public static void main(String[] args) {
-    try {
-      SSLContext ctx = SSLContext.getInstance("SSL"); 
-      URL url ;  
-      String urlStr = "https://oauths-ppr.weemo.com/auth/" + "?client_id=33cc7f1e82763049a4944a702c880d&client_secret=3569996f0d03b2cd3880223747c617";
-      String post = "uid=" + URLEncoder.encode("1033a56f0e68", "UTF-8")
-          + "&identifier_client=" + URLEncoder.encode("exo_domain", "UTF-8")
-          + "&id_profile=" + URLEncoder.encode("basic", "UTF-8");      
-      url = new URL(urlStr);      
-      HttpsURLConnection connection = (HttpsURLConnection) url.openConnection(); 
-      InputStream p12InputStream = new URL("http://localhost:8080/rest/private/jcr/repository/collaboration/exo:applications/VideoCallsProfile/client.p12").openStream();
-      //InputStream p12InputStream = new URL("http://plfent-4.1.x-pkgpriv-weemo-addon-snapshot.acceptance4.exoplatform.org/weemo-extension/resources/client.p12").openStream();
-      //InputStream p12InputStream = AuthService.class.getResourceAsStream("http://localhost:8080/rest/private/jcr/repository/collaboration/exo:applications/VideoCallsProfile/client.p12");
-      File p12File = convertInputStreamToFile(p12InputStream, "client.p12");
-      
-      InputStream pemInputStream = new URL("http://localhost:8080/rest/private/jcr/repository/collaboration/exo:applications/VideoCallsProfile/weemo-ca.pem").openStream();
-      //InputStream pemInputStream = new URL("http://plfent-4.1.x-pkgpriv-weemo-addon-snapshot.acceptance4.exoplatform.org/weemo-extension/resources/weemo-ca.pem").openStream();
-      //InputStream pemInputStream = AuthService.class.getResourceAsStream("http://localhost:8080/rest/private/jcr/repository/collaboration/exo:applications/VideoCallsProfile/weemo-ca.pem");
-      File pemFile = convertInputStreamToFile(pemInputStream, "weemo-ca.pem");
-      
-      //KeyManager[] keyManagers = getKeyManagers("PKCS12", new FileInputStream(new File("/home/tanhq/java/eXoProjects/weemo-extension/weemo-extension-webapp/src/main/webapp/resources/client.p12")), "XnyexbUF");      
-      //TrustManager[] trustManagers = getTrustManagers(new FileInputStream(new File("/home/tanhq/java/eXoProjects/weemo-extension/weemo-extension-webapp/src/main/webapp/resources/weemo-ca.pem")), "XnyexbUF");
-      
-      KeyManager[] keyManagers = getKeyManagers("PKCS12", new FileInputStream(p12File), "XnyexbUF");
-      TrustManager[] trustManagers = getTrustManagers(new FileInputStream(pemFile), "XnyexbUF");
-      HostnameVerifier hv = new HostnameVerifier() {
-        public boolean verify(String hostname, SSLSession session) { return true; }
-
-       
-      };
-      
-      ctx.init(keyManagers, trustManagers, new SecureRandom());
-      connection.setSSLSocketFactory(ctx.getSocketFactory());
-      connection.setRequestMethod("POST");
-      connection.setDoOutput(true);
-      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-      connection.setRequestProperty("Content-Length", String.valueOf(post.getBytes().length));
-      connection.connect();
-      
-      connection.getOutputStream().write(post.getBytes());
-      
-      
-      BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-      StringBuilder sb = new StringBuilder();
-      String line;
-      while ((line = br.readLine()) != null) {
-          sb.append(line+"\n");
-      }
-      br.close();
-      System.out.println(sb.toString());
-    } catch(Exception ex) {
-      ex.printStackTrace();
-    }
-    
   }
   
 }

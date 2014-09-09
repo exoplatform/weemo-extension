@@ -1,37 +1,25 @@
 package org.exoplatform.portlet.administration;
 
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Scanner;
-import java.util.logging.Logger;
-
-import juzu.*;
+import juzu.Action;
+import juzu.Method;
+import juzu.Path;
+import juzu.Resource;
+import juzu.Response;
+import juzu.Route;
+import juzu.View;
 import juzu.impl.request.Request;
 import juzu.plugin.ajax.Ajax;
 import juzu.request.HttpContext;
 import juzu.request.RenderContext;
 import juzu.template.Template;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.portlet.PortletPreferences;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.exoplatform.portal.application.PortalRequestContext;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
-import org.exoplatform.services.organization.Group;
-
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.Group;
 import org.exoplatform.services.organization.MembershipType;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.Query;
@@ -41,15 +29,24 @@ import org.exoplatform.services.videocall.AuthService;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.utils.videocall.PropertyManager;
-import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.core.UIPageIterator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ibm.icu.impl.ICUBinary.Authenticate;
-
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.portlet.PortletPreferences;
+import javax.servlet.http.HttpSession;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.Scanner;
 
 
 public class VideoCallAdministration {
@@ -267,7 +264,7 @@ public class VideoCallAdministration {
       httpSession.setAttribute(MODEL_FROM_AUTH, videoCallModel);
       return VideoCallAdministration_.index();
     } else {
-      URL url = new URL("https://cjs.weemo.com/js/webappid/"+weemoKey+"/env/ppr");
+      URL url = new URL("https://cjs.weemo.com/js/webappid/"+weemoKey+"");
       InputStream in = url.openStream();
       Scanner scan = new Scanner(in);
       StringBuffer sb = new StringBuffer();
