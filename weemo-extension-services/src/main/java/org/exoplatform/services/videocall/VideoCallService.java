@@ -226,9 +226,13 @@ public class VideoCallService {
     } finally {
       try {
 	    if (p12Cert != null) p12Cert.close();
-	    if (pemCert != null)  pemCert.close();
       } catch (IOException e){
-    	LOG.error("Cannot close input streams reading certificate files", e);
+        LOG.error("Cannot close input streams reading p12 certificate file", e);
+      }
+      try {
+  	    if (pemCert != null)  pemCert.close();
+      } catch (IOException e){
+        LOG.error("Cannot close input streams reading pem certificate file", e);
       }
     }
   }
