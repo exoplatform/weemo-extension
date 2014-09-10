@@ -341,13 +341,13 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
         outputStream.write(bytes, 0, read);
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      LOG.error("Unknown Exception", e);
     } finally {
       if (inputStream != null) {
         try {
           inputStream.close();
         } catch (IOException e) {
-          e.printStackTrace();
+          LOG.error("Unknown Exception", e);
         }
       }
       if (outputStream != null) {
@@ -355,9 +355,8 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
           // outputStream.flush();
           outputStream.close();
         } catch (IOException e) {
-          e.printStackTrace();
+          LOG.error("Unknown Exception", e);
         }
-   
       }
     }
     return file;

@@ -76,6 +76,8 @@ public class VideoCallAdministration {
   
   public static String MODEL_FROM_AUTH = "VideoCallsAuth";
 
+  private static final Log LOG = ExoLogger.getLogger(VideoCallAdministration.class.getName());
+
   @Inject
   Provider<PortletPreferences> providerPreferences;
 
@@ -280,7 +282,7 @@ public class VideoCallAdministration {
         httpSession.setAttribute(MODEL_FROM_AUTH, videoCallModel);
         return VideoCallAdministration_.index();
       } catch(JSONException ex) {
-        //Do nothing in case the weemo key is right      
+        LOG.info("Weemo key is right");
       }
     }
     //Check for other parametters in case weemoKey is right

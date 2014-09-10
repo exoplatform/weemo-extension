@@ -248,11 +248,11 @@ public class VideoCallService {
         } 
       }
     } catch (LoginException e) {
-      // Do nothing
+      LOG.warn(e.getMessage());
     } catch (NoSuchWorkspaceException e) {
-      // Do nothing
+      LOG.warn(e.getMessage());
     } catch (RepositoryException e) {
-      // Do nothing
+      LOG.warn(e.getMessage());
     }
     return isP12;
   }
@@ -283,11 +283,11 @@ public class VideoCallService {
         } 
       }
     } catch (LoginException e) {
-      // Do nothing
+      LOG.warn(e.getMessage());
     } catch (NoSuchWorkspaceException e) {
-      // Do nothing
+      LOG.warn(e.getMessage());
     } catch (RepositoryException e) {
-      // Do nothing
+      LOG.warn(e.getMessage());
     }
     return isPem;
   }
@@ -351,11 +351,11 @@ public class VideoCallService {
           videoProfileCache.put(VIDEO_PROFILE_KEY, videoCallModel);
         }
       } catch (LoginException e) {
-        // Do nothing
+        LOG.warn(e.getMessage());
       } catch (NoSuchWorkspaceException e) {
-        // Do nothing
+        LOG.warn(e.getMessage());
       } catch (RepositoryException e) {
-        // Do nothing
+        LOG.warn(e.getMessage());
       }
     }
     return videoCallModel;

@@ -20,6 +20,8 @@
 package org.exoplatform.utils.videocall;
 
 import org.exoplatform.model.videocall.VideoCallModel;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.videocall.VideoCallService;
 
 import java.io.FileInputStream;
@@ -57,6 +59,8 @@ public class PropertyManager {
   
   public static VideoCallService videoCallService = null;
 
+  private static final Log LOG = ExoLogger.getLogger(PropertyManager.class.getName());
+
   public static String getProperty(String key)
   {
     String value = (String)properties().get(key);    
@@ -77,8 +81,8 @@ public class PropertyManager {
       }
       catch (Exception e)
       {
-        //Do nothing
-      }     
+        LOG.warn("Can not find weemo.properties. Default values will be used instead");
+      }
             
       overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "");
       overridePropertyIfNotSet(PROPERTY_VIDEO_PROFILE, "basic");
