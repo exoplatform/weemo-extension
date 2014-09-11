@@ -12,27 +12,51 @@ var otherExtension = new OtherExtension();
   $(document).ready(function () {
     setInterval(function() {
       if ((typeof weemoExtension !== 'undefined') && weemoExtension.isConnected) {
-        $(".btn-weemo").removeAttr("disabled");
-        $(".btn-weemo-conf").removeAttr("disabled");
+        $(".btn-weemo-call").removeAttr("disabled");
+        $(".btn-weemo-host").removeAttr("disabled");
+        $(".btn-weemo-join").removeAttr("disabled");
       } else {
-        $(".btn-weemo").attr("disabled", "disabled");
-        $(".btn-weemo-conf").attr("disabled", "disabled");
+        $(".btn-weemo-call").attr("disabled", "disabled");
+        $(".btn-weemo-host").attr("disabled", "disabled");
+        $(".btn-weemo-join").attr("disabled", "disabled");
       }
     }, 3000);
-    $(".btn-weemo").click(function () {
+    $(".btn-weemo-call").click(function () {
       if (typeof weemoExtension !== 'undefined') {
         var targetUser = $("#callee").val();
-        console.log("targetUser : " + targetUser);
-        weemoExtension.createWeemoCall(targetUser, targetUser);
+
+        weemoExtension.setUidToCall("weemo"+targetUser); // userid which authenticated by weemo
+        weemoExtension.setDisplaynameToCall(targetUser); // Full name of callee. Here we use the same userid for simply
+        weemoExtension.setCallType("internal");
+        weemoExtension.setCallOwner(true);
+        weemoExtension.setCallActive(false);
+        weemoExtension.weemo.createCall(weemoExtension.uidToCall, weemoExtension.callType, weemoExtension.displaynameToCall);
       }
     });
 
-    $(".btn-weemo-conf").click(function () {
+    $(".btn-weemo-host").click(function () {
       if (typeof weemoExtension !== 'undefined') {
-        var hostid = $("#callee").val();
-        console.log("Host ID : " + hostid);
+        var hostid = $("#teamid").val();
+
         weemoExtension.setUidToCall(hostid);
-        weemoExtension.joinWeemoCall();
+        weemoExtension.setDisplaynameToCall(hostid);
+        weemoExtension.setCallType("host");
+        weemoExtension.setCallOwner(true);
+        weemoExtension.setCallActive(false);
+        weemoExtension.weemo.createCall(weemoExtension.uidToCall, weemoExtension.callType, weemoExtension.displaynameToCall);
+      }
+    });
+
+    $(".btn-weemo-join").click(function () {
+      if (typeof weemoExtension !== 'undefined') {
+        var hostid = $("#teamid").val();
+
+        weemoExtension.setUidToCall(hostid);
+        weemoExtension.setDisplaynameToCall(hostid);
+        weemoExtension.setCallType("attendee");
+        weemoExtension.setCallOwner(false);
+        weemoExtension.setCallActive(false);
+        weemoExtension.weemo.createCall(weemoExtension.uidToCall, weemoExtension.callType, weemoExtension.displaynameToCall);
       }
     });
   });
