@@ -57,24 +57,25 @@ import java.security.cert.CertificateFactory;
 
 
 public class AuthService {
-  
-  private String authUrl;  
+
+  private String authUrl;
   private String clientId = null;
   private String clientSecret = null;
   private InputStream caFile = null;
   private InputStream p12File = null;
   private String passphrase = null;
-  private String domain_id = null;  
+  private String domain_id = null;
 
   private static final Log LOG = ExoLogger.getLogger(AuthService.class.getName());
-  
+
   public AuthService() {
-    authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);  
+    authUrl = PropertyManager.getProperty(PropertyManager.PROPERTY_AUTH_URL);
   }
-  
+
   public JSONObject verifyPermission(String entry) throws Exception {
     PortalContainer container = PortalContainer.getInstance();
-    OrganizationService orgService = (OrganizationService) container.getComponentInstanceOfType(OrganizationService.class);
+    OrganizationService orgService = (OrganizationService) container.getComponentInstanceOfType(OrganizationService
+            .class);
     UserACL userACL = (UserACL) container.getComponentInstanceOfType(UserACL.class);
     IDType idType;
     JSONObject json = new JSONObject();
@@ -86,17 +87,17 @@ public class AuthService {
       idType = IDType.USER;
     }
     boolean isExistEntry = false;
-    
+
     if (idType == IDType.USER) {
       if (IdentityConstants.ANY.equalsIgnoreCase(entry) || userACL.getSuperUser().equalsIgnoreCase(entry)) {
         isExistEntry = true;
       }
       isExistEntry = orgService.getUserHandler().findUserByName(entry) != null;
       json.put("isExist", isExistEntry);
-      if(isExistEntry) {
+      if (isExistEntry) {
         User user = orgService.getUserHandler().findUserByName(entry);
         String userName = user.getDisplayName();
-        if(userName == null) {
+        if (userName == null) {
           userName = user.getFirstName() + " " + user.getLastName();
         }
         json.put("displayName", userName);
@@ -108,7 +109,7 @@ public class AuthService {
     if (idType == IDType.GROUP) {
       isExistEntry = orgService.getGroupHandler().findGroupById(entry) != null;
       json.put("isExist", isExistEntry);
-      if(isExistEntry) {
+      if (isExistEntry) {
         json.put("displayName", orgService.getGroupHandler().findGroupById(entry).getLabel());
         json.put("type", "GROUP");
       }
@@ -122,49 +123,48 @@ public class AuthService {
       if ("*".equals(membership[0])) {
         isExistEntry = true;
       } else {
-        isExistEntry =  orgService.getMembershipTypeHandler().findMembershipType(membership[0]) != null;
+        isExistEntry = orgService.getMembershipTypeHandler().findMembershipType(membership[0]) != null;
       }
-    }   
+    }
     json.put("isExist", isExistEntry);
-    if(isExistEntry) {
+    if (isExistEntry) {
       json.put("displayName", orgService.getGroupHandler().findGroupById(membership[1]).getLabel());
       json.put("type", "MEMBERSHIP");
     }
     return json;
   }
-  
-  
+
+
   public String authenticate(VideoCallModel videoCallModel, String profile_id) {
     VideoCallService videoCallService = new VideoCallService();
-    if(videoCallModel == null) {
+    if (videoCallModel == null) {
       caFile = videoCallService.getPemCertInputStream();
       p12File = videoCallService.getP12CertInputStream();
       videoCallModel = videoCallService.getVideoCallProfile();
     } else {
       caFile = videoCallModel.getPemCert();
       p12File = videoCallModel.getP12Cert();
-    }  
-    
-    if(videoCallModel != null) {
-      domain_id = videoCallModel.getDomainId();      
+    }
+
+    if (videoCallModel != null) {
+      domain_id = videoCallModel.getDomainId();
       clientId = videoCallModel.getAuthId();
-      clientSecret = videoCallModel.getAuthSecret();      
+      clientSecret = videoCallModel.getAuthSecret();
       passphrase = videoCallModel.getCustomerCertificatePassphrase();
     }
     String responseContent = null;
-    if(StringUtils.isEmpty(passphrase)) return null;
-    if(caFile == null || p12File == null) return null;
-        
+    if (StringUtils.isEmpty(passphrase)) return null;
+    if (caFile == null || p12File == null) return null;
+
     try {
-      String userId = ConversationState.getCurrent().getIdentity().getUserId();     
+      String userId = ConversationState.getCurrent().getIdentity().getUserId();
       SSLContext ctx = SSLContext.getInstance("SSL");
       URL url = null;
       try {
         String urlStr = authUrl + "?client_id=" + clientId + "&client_secret=" + clientSecret + "&uid=weemo" + userId;
         LOG.info("Request URL: " + urlStr);
         url = new URL(urlStr);
-      }
-      catch (MalformedURLException e) {
+      } catch (MalformedURLException e) {
         if (LOG.isErrorEnabled()) {
           LOG.error("Could not create valid URL with base (see log for full URL)");
         }
@@ -177,15 +177,15 @@ public class AuthService {
           LOG.error("Could not connect (see log for full URL)");
         }
       }
-      
+
       String post = "identifier_client=" + URLEncoder.encode(domain_id, "UTF-8")
-          +  "&id_profile=" + URLEncoder.encode(profile_id, "UTF-8");
-      LOG.info("Post: " + post);      
-      
+              + "&id_profile=" + URLEncoder.encode(profile_id, "UTF-8");
+      LOG.info("Post: " + post);
+
       TrustManager[] trustManagers = getTrustManagers(caFile, passphrase);
       KeyManager[] keyManagers = getKeyManagers("PKCS12", p12File, passphrase);
-                
-      ctx.init(keyManagers, trustManagers, new SecureRandom());      
+
+      ctx.init(keyManagers, trustManagers, new SecureRandom());
       try {
         connection.setSSLSocketFactory(ctx.getSocketFactory());
         connection.setRequestMethod("GET");
@@ -197,7 +197,7 @@ public class AuthService {
           LOG.error("Could not configure request for POST (see log for full URL & post body)");
         }
       }
-      
+
       try {
         LOG.info("Connecting");
         connection.connect();
@@ -206,35 +206,36 @@ public class AuthService {
           LOG.error("Could not connect request (see log for full URL)");
         }
       }
-      
+
       BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
       StringBuilder sbuilder = new StringBuilder();
       String line;
       while ((line = br.readLine()) != null) {
-        sbuilder.append(line+"\n");
+        sbuilder.append(line + "\n");
       }
       br.close();
       responseContent = sbuilder.toString();
       // Set new token key
       String tokenKey = "";
-      if(!StringUtils.isEmpty(responseContent)) {        
+      if (!StringUtils.isEmpty(responseContent)) {
         JSONObject json = new JSONObject(responseContent);
-        tokenKey = json.get("token").toString();        
+        tokenKey = json.get("token").toString();
       } else {
         tokenKey = "";
       }
       videoCallService.setTokenKey(tokenKey);
-    } catch(Exception ex) {
+    } catch (Exception ex) {
       LOG.error("Have problem during authenticating process.");
       videoCallService.setTokenKey("");
-    }    
+    }
     return responseContent;
-  } 
-  
-  
-  protected static KeyManager[] getKeyManagers(String keyStoreType, InputStream keyStoreFile, String keyStorePassword) throws Exception {
+  }
+
+
+  protected static KeyManager[] getKeyManagers(String keyStoreType, InputStream keyStoreFile,
+                                               String keyStorePassword) throws Exception {
     KeyStore keyStore = null;
-    try{
+    try {
       keyStore = KeyStore.getInstance(keyStoreType);
       keyStore.load(keyStoreFile, keyStorePassword.toCharArray());
     } catch (NoSuchAlgorithmException e) {
@@ -245,36 +246,36 @@ public class AuthService {
       if (LOG.isErrorEnabled()) {
         LOG.error("Java implementation cannot manipulate PKCS12 keystores");
       }
-    } catch (CertificateException e) {      
+    } catch (CertificateException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("Bad key or certificate in " + keyStoreFile, e.getMessage());
       }
-    } catch (FileNotFoundException e) {      
+    } catch (FileNotFoundException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("Could not find or read " + keyStoreFile, e.getMessage());
       }
     } catch (IOException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("PKCS12 password is incorrect or keystore is inconsistent: " + keyStoreFile);
-      }      
+      }
     }
-    
-    KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-    kmf.init(keyStore, keyStorePassword.toCharArray());   
-    return kmf.getKeyManagers();
-}
 
-protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, String trustStorePassword) throws Exception {
+    KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+    kmf.init(keyStore, keyStorePassword.toCharArray());
+    return kmf.getKeyManagers();
+  }
+
+  protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, String trustStorePassword) throws
+          Exception {
     CertificateFactory certificateFactory = null;
     try {
       certificateFactory = CertificateFactory.getInstance("X.509");
-    }
-    catch (CertificateException e) {
+    } catch (CertificateException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("Could not initialize the certificate " + e.getMessage());
       }
     }
-    
+
     Certificate caCert = null;
     try {
       caCert = certificateFactory.generateCertificate(trustStoreFile);
@@ -282,13 +283,13 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
       if (LOG.isErrorEnabled()) {
         LOG.error("Bad key or certificate in " + trustStoreFile, e.getMessage());
       }
-    } 
-    
+    }
+
     KeyStore trustStore = null;
     try {
       trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
       trustStore.load(null, null);
-    } catch (KeyStoreException e) {     
+    } catch (KeyStoreException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("Java implementation cannot manipulate " + KeyStore.getDefaultType() + " keystores");
       }
@@ -304,8 +305,8 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
       if (LOG.isErrorEnabled()) {
         LOG.error("Could not initialize truststore ", e.getMessage());
       }
-    }    
-    
+    }
+
     try {
       trustStore.setCertificateEntry("CA", caCert);
     } catch (KeyStoreException e) {
@@ -313,7 +314,7 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
         LOG.error(trustStoreFile + " cannot be used as a CA");
       }
     }
-    
+
     TrustManagerFactory tmf = null;
     try {
       tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
@@ -324,10 +325,10 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
       }
     } catch (KeyStoreException e) {
       LOG.error("Java implementation cannot manipulate " + KeyStore.getDefaultType() + " trusts");
-    }     
+    }
     return tmf.getTrustManagers();
-  } 
-  
+  }
+
   ///////////////////////////////////////////////////////////////////
   public static File convertInputStreamToFile(InputStream inputStream, String fileName) {
     File file = null;
@@ -361,5 +362,5 @@ protected static TrustManager[] getTrustManagers(InputStream trustStoreFile, Str
     }
     return file;
   }
-  
+
 }

@@ -1,22 +1,10 @@
 package org.exoplatform.portlet.videocall;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import juzu.*;
+import juzu.Path;
+import juzu.View;
 import juzu.request.RenderContext;
 import juzu.template.Template;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.portlet.PortletPreferences;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.commons.version.util.VersionComparator;
 import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
@@ -27,51 +15,43 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.utils.videocall.PropertyManager;
 import org.json.JSONObject;
 
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+import java.io.InputStream;
+import java.util.Properties;
+
 public class VideoCallApplication {
 
   @Inject
   @Path("index.gtmpl")
   Template index;
-  
-  String token_ = "---";
+
   String remoteUser_ = null;
-  String fullname_ = null;
-  boolean isAdmin_=false;
-
-  boolean profileInitialized_ = false;
-
-  Logger log = Logger.getLogger("ChatApplication");
 
   OrganizationService organizationService_;
 
   SpaceService spaceService_;
-  
+
   VideoCallService videoCallService_;
-  
 
   @Inject
-  Provider<PortletPreferences> providerPreferences;
-
-  @Inject
-  public VideoCallApplication(OrganizationService organizationService, SpaceService spaceService, VideoCallService videoCallService)
-  {
+  public VideoCallApplication(OrganizationService organizationService, SpaceService spaceService,
+                              VideoCallService videoCallService) {
     organizationService_ = organizationService;
     spaceService_ = spaceService;
     videoCallService_ = videoCallService;
   }
 
-
   @View
-  public void index(RenderContext renderContext) throws Exception
-  {
+  public void index(RenderContext renderContext) throws Exception {
     PortalRequestContext requestContext = Util.getPortalRequestContext();
     HttpSession httpSession = requestContext.getRequest().getSession();
-    remoteUser_ = renderContext.getSecurityContext().getRemoteUser();   
+    remoteUser_ = renderContext.getSecurityContext().getRemoteUser();
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
-    if(videoCallModel == null) videoCallModel = new VideoCallModel();
-    String weemoKey = videoCallModel.getWeemoKey();    
+    if (videoCallModel == null) videoCallModel = new VideoCallModel();
+    String weemoKey = videoCallModel.getWeemoKey();
     String tokenKey = null;
-    if(httpSession.getAttribute("tokenKey") != null) {
+    if (httpSession.getAttribute("tokenKey") != null) {
       tokenKey = httpSession.getAttribute("tokenKey").toString();
     } else {
       tokenKey = videoCallService_.getTokenKey();
@@ -79,35 +59,35 @@ public class VideoCallApplication {
     //Load videocalls version
     InputStream isProperties = null;
     isProperties = videoCallService_.getClass().getResourceAsStream("/extension.properties");
-    
+
     String videoCallVersion = null;
-    if(isProperties != null) {
+    if (isProperties != null) {
       Properties properties = new Properties();
       properties.load(isProperties);
       videoCallVersion = properties.getProperty(PropertyManager.PROPERTY_VIDEOCALL_VERSION);
     }
-    if(videoCallVersion == null) {
+    if (videoCallVersion == null) {
       videoCallVersion = "";
     }
     boolean turnOffVideoCallForUser = videoCallService_.isTurnOffVideoCallForUser();
     boolean turnOffVideoGroupCallForUser = videoCallService_.isTurnOffVideoCallForUser(true);
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
-    if(tokenKey == null) {
-      String profile_id = videoCallModel.getProfileId();      
-      AuthService authService = new AuthService();      
-      String content = authService.authenticate(null, profile_id);      
-      if(!StringUtils.isEmpty(content)) {
+    if (tokenKey == null) {
+      String profile_id = videoCallModel.getProfileId();
+      AuthService authService = new AuthService();
+      String content = authService.authenticate(null, profile_id);
+      if (!StringUtils.isEmpty(content)) {
         JSONObject json = new JSONObject(content);
         tokenKey = json.get("token").toString();
         httpSession.setAttribute("tokenKey", tokenKey);
         videoCallService_.setTokenKey(tokenKey);
       } else {
-        tokenKey = ""; 
+        tokenKey = "";
         videoCallService_.setTokenKey("");
       }
     }
-    
-    index.with().set("user", remoteUser_)           
+
+    index.with().set("user", remoteUser_)
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
             .set("turnOffVideoCallForUser", turnOffVideoCallForUser)
@@ -115,5 +95,5 @@ public class VideoCallApplication {
             .set("turnOffVideoCall", turnOffVideoCall)
             .set("videoCallVersion", videoCallVersion)
             .render();
-  }  
+  }
 }
