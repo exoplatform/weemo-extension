@@ -1,0 +1,15 @@
+<pre>
+- To call 1:1:
+   + Input online userid you want to call into textbox
+   + Click call.
+- To host a conference call:
+   + Input textbox room/team name you want to host
+   + Click Host.
+- To join a conference call:
+   + Input textbox room/team name you want to join
+   + Click join.
+        
+</pre>
+Call who : <input type = "text" id = "callee" placeholder = "userid to call" > <button class = "btn-weemo-call" title = "Call" disabled >Call</button>
+</br>
+Join team: : <input type = "text" id = "teamid" placeholder = "teamid to host or join" > <button class = "btn-weemo-host" title = "Host" disabled >Host</button> <button class="btn-weemo-join" title="Join" disabled>Join</button>

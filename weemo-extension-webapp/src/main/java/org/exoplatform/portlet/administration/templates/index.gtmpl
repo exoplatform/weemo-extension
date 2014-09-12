@@ -142,7 +142,8 @@
 				  <thead>
 				    <tr>
 				          <th>&{exoplatform.videocall.owner}</th>
-				          <th class="span2 center">&{exoplatform.videocall.1_1profile}</th>	
+				          <th class="span2 center">&{exoplatform.videocall.1_1profile}</th>
+                          <th class="span2 center">&{exoplatform.videocall.group_calls_profile}</th>
 				          <th class="span1 center">&{exoplatform.videocall.action}</th>
 				    </tr>
 				  </thead>
@@ -156,12 +157,15 @@
 						  %>
 						    <tr>
 						      <td class="left">
-						        <div permission="<%=arrs[0]%>" title="<%=arrs[2]%>" class="Text"><%=arrs[2]%></div>
+						        <div permission="<%=arrs[0]%>" title="<%=arrs[3]%>" class="Text"><%=arrs[3]%></div>
 						      </td>
 						      <td class="center">				        
 		                        <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="&{exoplatform.videocall.administration.swither.yes}" data-no="&{exoplatform.videocall.administration.swither.no}" checked="checked" style="visibility: hidden;" class="yesno"></div>
-		                      </td>					 
-		                      <td class="center"><a data-original-title="&{exoplatform.videocall.administration.delete}" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete uiIconLightGray"></i></a></td>
+		                      </td>
+                              <td class="center">
+                                <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[2]%>" data-yes="&{exoplatform.videocall.administration.swither.yes}" data-no="&{exoplatform.videocall.administration.swither.no}" checked="checked" style="visibility: hidden;" class="yesno"></div>
+		                      </td>
+                          <td class="center"><a data-original-title="&{exoplatform.videocall.administration.delete}" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete uiIconLightGray"></i></a></td>
 		                    </tr>
 						  <%
 				  	  }
@@ -169,7 +173,7 @@
 				  } else {
 				  %>
 				    <tr>
-				      <td class="empty center" colspan="3">
+				      <td class="empty center" colspan="4">
 				      	<div class="actionContainer">
 					        &{exoplatform.videocall.permissions.empty.message}
 					    </div>

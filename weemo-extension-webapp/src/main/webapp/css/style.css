@@ -45,6 +45,7 @@ button.close{
 	 opacity: 0.9;
 	 padding: 8px 0;
 	 border-radius: 0px;
+	 left: 0px;
 }
 
 .uiVideoCallAdminPortlet{
@@ -111,10 +112,6 @@ button.close{
     margin-top: 0px;
 }
 
-.connectAction .btn{
-	margin-top: 5px;
-}
-
 .confirmationVideoCallIcon {
   	background: url(/eXoResources/skin/images/PopupMessage/icons.png) no-repeat;
 	padding-left: 20px;
@@ -132,5 +129,24 @@ button.close{
 
 .btn.disabled{
 	font-weight: normal;
+}
+
+.connectAction .btn:first-child {
+    padding: 4px 10px;
+}
+.connectAction .weemoCallOverlay,
+.connectAction .chatPopupOverlay {
+    margin-top: 0px!important;
+}
+.connectAction {
+    padding: 10px 5px;
+}
+#tiptip_holder {
+    width: 260px!important;
+    max-width: 260px!important;
+}
+.twice-line .chatPopupOverlay,
+.twice-line .weemoCallOverlay {
+    margin-top: 10px!important;
 }
 
