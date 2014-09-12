@@ -6,8 +6,8 @@
  - Provide video call service by attaching video call button in user popup, connections, suggestion...
  - Provide utitily to help other extensions implement video call in themselves 
  
+ 
   -----------
-  
   **By reusing weemo-extension utility, you also can put video call button to other place in your own extensions.**
 
    Just do some following steps:
@@ -21,6 +21,7 @@
       - Display Name of User Id or Host Id
    3. Reuse weemo-extension javascript utility to make a call.
    4. Additionally, You can enable/disable/set invisible call button which depends on permission or something like that
+
 
  -----------
 **Example:** 
