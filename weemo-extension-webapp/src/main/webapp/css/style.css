@@ -1,5 +1,5 @@
 [class^="uiIconWeemo"], .btn.disabled:hover  [class^="uiIconWeemo"] {
-  background-image: url('/weemo-extension/img/uiIconWeemoDarkGray.png');
+  background-image: url('/weemo-extension/img/uiIconWeemoLightGray.png');
 }
 
 .nav-pills > .active > a > [class^="uiIconWeemo"],
@@ -30,7 +30,7 @@
 }
 
 button.close{
-	background-image: url("/eXoResources/skin/images/Icons/uiIconsLightGray.png");
+	background-image: url("../img/uiIconsLightGray.png");
 	background-position: -160px -100px;
 }
 
@@ -94,7 +94,7 @@ button.close{
 }
 
 .uiVideoCallIconWarning {
-    background: url("/eXoResources/skin/images/Icons/uiIconColor.png") no-repeat scroll -20px top rgba(0, 0, 0, 0);
+    background: url("../img/uiIconColor.png") no-repeat scroll -20px top rgba(0, 0, 0, 0);
     width: 16px;
 	vertical-align: text-top;
 	height: 16px;
@@ -113,7 +113,7 @@ button.close{
 }
 
 .confirmationVideoCallIcon {
-  	background: url(/eXoResources/skin/images/PopupMessage/icons.png) no-repeat;
+  	background: url("../img/icons.png") no-repeat;
 	padding-left: 20px;
 	line-height: 16px;
 	height: 16px;
