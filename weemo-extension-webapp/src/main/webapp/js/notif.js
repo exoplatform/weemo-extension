@@ -294,7 +294,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
           weemoExtension.changeStatus("Blue");
           break;
         case 'disconnectedWeemoDriver':
-          weemoExtension.setCallActive(false);
           weemoExtension.isConnected = false;
           break;
         case 'loggedasotheruser':
@@ -303,7 +302,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
           break;
         case 'unsupportedOS':
           weemoExtension.isSupport = false;
-          weemoExtension.setCallActive(false);
           weemoExtension.isConnected = false;
         case 'sipOk':
           weemoExtension.isConnected = true;
@@ -321,7 +319,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
         case 'error':
         case 'kicked':
           weemoExtension.isConnected = false;
-          weemoExtension.setCallActive(false);
           weemoExtension.changeStatus("Warning");
           break;
       }
