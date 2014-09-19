@@ -76,7 +76,7 @@ WeemoExtension.prototype.setNotInstallWeemoDriver = function() {
   var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");      
   if(!isNotInstallWeemoDriver || 0 === isNotInstallWeemoDriver.length) {
     weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
-    var downloadUrl = "https://download.weemo.com/file/release/73";
+    var downloadUrl = "https://download.weemo.com/file/release/3";
     if (this.weemo) downloadUrl = this.weemo.getDownloadUrl();
     weemoExtension.setCookie("downloadUrl", downloadUrl, 365);    
   }
