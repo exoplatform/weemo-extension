@@ -23,6 +23,7 @@ function WeemoExtension() {
   this.isValidWeemoKey = true;
   this.isTurnOffForUser = false;
   this.isTurnOffForGroupCall = 'true';
+  this.isSameUserLogged = 'false';
   this.isTurnOff = false;
   this.connectedWeemoDriver = false;
   this.videoCallVersion = "";
@@ -249,7 +250,12 @@ WeemoExtension.prototype.changeStatus = function(status) {
   $weemoStatus.removeClass("uiNotifWeemoBlue");
   $weemoStatus.removeClass("uiNotifWeemoWarning");
   $weemoStatus.removeClass("uiNotifWeemoGreen");
-  $weemoStatus.addClass("uiNotifWeemo"+status);
+
+  if (weemoExtension.isSameUserLogged === 'true') {
+    $weemoStatus.addClass("uiNotifWeemoWarning");
+  } else {
+    $weemoStatus.addClass("uiNotifWeemo" + status);
+  }
 
 }
 
@@ -778,6 +784,7 @@ var weemoExtension = new WeemoExtension();
     if(navigator.platform.indexOf("Linux") >= 0) return;
     weemoExtension.isTurnOffForUser = $notificationApplication.attr("data-weemo-turnoff-user");
     weemoExtension.isTurnOffForGroupCall = $notificationApplication.attr("data-weemo-turnoff-group");
+    weemoExtension.isSameUserLogged = $notificationApplication.attr("is-same-user-logged");
 
     var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
 
