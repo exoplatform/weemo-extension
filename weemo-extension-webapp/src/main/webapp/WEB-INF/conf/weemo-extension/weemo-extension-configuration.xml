@@ -22,15 +22,20 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
   xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
-  
-   <component>
-      <type>org.exoplatform.platform.common.service.MenuConfiguratorService</type>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.platform.common.service.MenuConfiguratorService</target-component>
+    <component-plugin>
+      <name>Weemo MenuConfigurationService Plugin</name>
+      <set-method>addNavigation</set-method>
+      <type>org.exoplatform.platform.common.service.plugin.MenuConfiguratorAddNodePlugin</type>
       <init-params>
-         <value-param>
-            <name>setup.navigation.file</name>
-            <value>war:/conf/weemo-extension/setup-navigation.xml</value>
-         </value-param>
+        <value-param>
+          <name>extended.setup.navigation.file</name>
+          <value>war:/conf/weemo-extension/setup-navigation.xml</value>
+        </value-param>
       </init-params>
-   </component>
+    </component-plugin>
+  </external-component-plugins>
    
 </configuration>
