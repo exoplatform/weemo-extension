@@ -23,34 +23,14 @@
   xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
   xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
   
-   <external-component-plugins>
-     <target-component>org.exoplatform.platform.common.service.MenuConfiguratorService</target-component>
-     <component-plugin>
-       <name>Weemo MenuConfigurationService Plugin</name>
-       <set-method>addNavigation</set-method>
-       <type>org.exoplatform.platform.common.service.plugin.MenuConfiguratorAddNodePlugin</type>
-       <init-params>
+   <component>
+      <type>org.exoplatform.platform.common.service.MenuConfiguratorService</type>
+      <init-params>
          <value-param>
-           <name>extended.setup.navigation.file</name>
-           <value>war:/conf/weemo-extension/setup-navigation.xml</value>
+            <name>setup.navigation.file</name>
+            <value>war:/conf/weemo-extension/setup-navigation.xml</value>
          </value-param>
-         <value-param>
-           <name>isChild</name>
-           <value>true</value>
-         </value-param>
-         <object-param>
-           <name>target.node.config</name>
-           <object type="org.exoplatform.portal.config.model.PageNode">
-             <field name="name">
-               <string>portalnavigation</string>
-             </field>
-             <field name="pageReference">
-               <string>group::/platform/administrators::portalnavigation</string>
-             </field>
-           </object>
-         </object-param>
-       </init-params>
-     </component-plugin>
-   </external-component-plugins>
+      </init-params>
+   </component>
    
 </configuration>
