@@ -723,8 +723,10 @@ WeemoExtension.prototype.displayVideoCallOnTopNav = function() {
   var $uiNotifWeemoIcon = jqchat(".uiNotifWeemoIcon", $uiNotifChatIcon);
 
   if ($uiNotifWeemoIcon.length === 0 ) {
-    $uiNotifChatIcon.append("<span class=\"uiNotifWeemoIcon uiNotifWeemoRed\"></span>");
+    $uiNotifChatIcon.append("<span class=\"uiNotifWeemoIcon\"></span>");
+    this.changeStatus("Red");
   }
+
 };
 
 
