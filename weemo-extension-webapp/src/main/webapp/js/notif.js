@@ -23,6 +23,7 @@ function WeemoExtension() {
   this.isValidWeemoKey = true;
   this.isTurnOffForUser = false;
   this.isTurnOffForGroupCall = 'true';
+  this.isSameUserLogged = 'false';
   this.isTurnOff = false;
   this.connectedWeemoDriver = false;
   this.videoCallVersion = "";
@@ -76,7 +77,7 @@ WeemoExtension.prototype.setNotInstallWeemoDriver = function() {
   var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");      
   if(!isNotInstallWeemoDriver || 0 === isNotInstallWeemoDriver.length) {
     weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
-    var downloadUrl = "https://download.weemo.com/file/release/73";
+    var downloadUrl = "https://download.weemo.com/file/release/3";
     if (this.weemo) downloadUrl = this.weemo.getDownloadUrl();
     weemoExtension.setCookie("downloadUrl", downloadUrl, 365);    
   }
@@ -249,7 +250,12 @@ WeemoExtension.prototype.changeStatus = function(status) {
   $weemoStatus.removeClass("uiNotifWeemoBlue");
   $weemoStatus.removeClass("uiNotifWeemoWarning");
   $weemoStatus.removeClass("uiNotifWeemoGreen");
-  $weemoStatus.addClass("uiNotifWeemo"+status);
+
+  if (weemoExtension.isSameUserLogged === 'true') {
+    $weemoStatus.addClass("uiNotifWeemoWarning");
+  } else {
+    $weemoStatus.addClass("uiNotifWeemo" + status);
+  }
 
 }
 
@@ -294,7 +300,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
           weemoExtension.changeStatus("Blue");
           break;
         case 'disconnectedWeemoDriver':
-          weemoExtension.setCallActive(false);
           weemoExtension.isConnected = false;
           break;
         case 'loggedasotheruser':
@@ -303,7 +308,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
           break;
         case 'unsupportedOS':
           weemoExtension.isSupport = false;
-          weemoExtension.setCallActive(false);
           weemoExtension.isConnected = false;
         case 'sipOk':
           weemoExtension.isConnected = true;
@@ -321,7 +325,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
         case 'error':
         case 'kicked':
           weemoExtension.isConnected = false;
-          weemoExtension.setCallActive(false);
           weemoExtension.changeStatus("Warning");
           break;
       }
@@ -720,8 +723,10 @@ WeemoExtension.prototype.displayVideoCallOnTopNav = function() {
   var $uiNotifWeemoIcon = jqchat(".uiNotifWeemoIcon", $uiNotifChatIcon);
 
   if ($uiNotifWeemoIcon.length === 0 ) {
-    $uiNotifChatIcon.append("<span class=\"uiNotifWeemoIcon uiNotifWeemoRed\"></span>");
+    $uiNotifChatIcon.append("<span class=\"uiNotifWeemoIcon\"></span>");
+    this.changeStatus("Red");
   }
+
 };
 
 
@@ -781,6 +786,7 @@ var weemoExtension = new WeemoExtension();
     if(navigator.platform.indexOf("Linux") >= 0) return;
     weemoExtension.isTurnOffForUser = $notificationApplication.attr("data-weemo-turnoff-user");
     weemoExtension.isTurnOffForGroupCall = $notificationApplication.attr("data-weemo-turnoff-group");
+    weemoExtension.isSameUserLogged = $notificationApplication.attr("is-same-user-logged");
 
     var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
 

@@ -9,6 +9,7 @@ import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.security.ConversationRegistry;
 import org.exoplatform.services.videocall.AuthService;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -34,12 +35,15 @@ public class VideoCallApplication {
 
   VideoCallService videoCallService_;
 
+  ConversationRegistry conversationRegistry_;
+
   @Inject
   public VideoCallApplication(OrganizationService organizationService, SpaceService spaceService,
-                              VideoCallService videoCallService) {
+                              VideoCallService videoCallService, ConversationRegistry conversationRegistry) {
     organizationService_ = organizationService;
     spaceService_ = spaceService;
     videoCallService_ = videoCallService;
+    conversationRegistry_ = conversationRegistry;
   }
 
   @View
@@ -87,6 +91,12 @@ public class VideoCallApplication {
       }
     }
 
+    // Check if same account loggin on other place
+    boolean isSameUserLogged = false;
+    if (!remoteUser_.equals("__anonim_") && conversationRegistry_.getStateKeys(remoteUser_).size() > 1) {
+      isSameUserLogged = true;
+    }
+
     index.with().set("user", remoteUser_)
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
@@ -94,6 +104,7 @@ public class VideoCallApplication {
             .set("turnOffVideoGroupCallForUser", turnOffVideoGroupCallForUser)
             .set("turnOffVideoCall", turnOffVideoCall)
             .set("videoCallVersion", videoCallVersion)
+            .set("isSameUserLogged", isSameUserLogged)
             .render();
   }
 }
