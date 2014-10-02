@@ -33,14 +33,17 @@ function WeemoExtension() {
   if (platform.indexOf("Linux") < 0) {
     var wsUri = "wss://localhost:34679";
     var protocol = "weemodriver-protocol";
-    if(typeof MozWebSocket == 'function') WebSocket = MozWebSocket;
-    var websock = new WebSocket(wsUri, protocol);     
-    websock.onerror = function(evt) {
-      weemoExtension.setNotInstallWeemoDriver();
-    };   
-    websock.onopen = function(evt) {
-      weemoExtension.setInstallWeemoDriver();
-    };
+    if ('WebSocket' in window) {
+      var websock = new WebSocket(wsUri, protocol);     
+      websock.onerror = function(evt) {
+        weemoExtension.setNotInstallWeemoDriver();
+      };
+      websock.onopen = function(evt) {
+        weemoExtension.setInstallWeemoDriver();
+      };
+    } else {
+      console.log("WebSocket is NOT supported by this browser.");
+    }
   }
 
   try {
@@ -77,7 +80,7 @@ WeemoExtension.prototype.setNotInstallWeemoDriver = function() {
   var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");      
   if(!isNotInstallWeemoDriver || 0 === isNotInstallWeemoDriver.length) {
     weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
-    var downloadUrl = "https://download.weemo.com/file/release/3";
+    var downloadUrl = "https://download.weemo.com/file/release/73";
     if (this.weemo) downloadUrl = this.weemo.getDownloadUrl();
     weemoExtension.setCookie("downloadUrl", downloadUrl, 365);    
   }
@@ -104,14 +107,17 @@ WeemoExtension.prototype.checkWeemoDriver = function() {
     if (platform.indexOf("Linux") < 0) {
       var wsUri = "wss://localhost:34679";
       var protocol = "weemodriver-protocol";
-      if(typeof MozWebSocket == 'function') WebSocket = MozWebSocket;
-      var websock = new WebSocket(wsUri, protocol);     
-      websock.onerror = function(evt) {
-        //weemoExtension.setNotInstallWeemoDriver();
-      };   
-      websock.onopen = function(evt) {
-        weemoExtension.setInstallWeemoDriver();
-      };  
+      if ('WebSocket' in window) {
+        var websock = new WebSocket(wsUri, protocol);     
+        websock.onerror = function(evt) {
+          //weemoExtension.setNotInstallWeemoDriver();
+        };   
+        websock.onopen = function(evt) {
+          weemoExtension.setInstallWeemoDriver();
+        };
+      } else {
+        console.log("WebSocket is NOT supported by this browser.");
+      }  
     }
 };
 
@@ -449,8 +455,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
  *
  */
 WeemoExtension.prototype.createWeemoCall = function(targetUser, targetFullname, chatMessage) {
-
-
   if (this.weemoKey!=="") {
 
     if (chatMessage !== undefined) {
@@ -573,7 +577,14 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
       && weemoExtension.tokenKey.length > 0) {
         var targetUser = jqchat(this).attr("data-username");
         var targetFullname = jqchat(this).attr("data-fullname");
-        weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+        var trialStatus = jqchat("#weemo-status").attr("data-trialstatus");
+        if (trialStatus.indexOf("disable") != -1) {
+          weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+        } else {
+          eXo.ecm.VideoCalls.showTrialInterceptor();
+          jqchat("#currentUser").attr("data-username", targetUser);
+          jqchat("#currentUser").attr("data-fullname", targetFullname);
+        }
       } else if(!jqchat(this).hasClass("disabled")) {
         if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
           eXo.ecm.VideoCalls.showInstallInterceptor();
@@ -584,10 +595,14 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
     });
 
     function cbGetStatus(targetUser, activity) {
-    if (activity !== "offline") {
+      if (activity !== "offline") {
         jqchat(".weemoCall-"+targetUser.replace('.', '-')).removeClass("disabled");
       }
     }
+    weemoExtension.getStatus(username, cbGetStatus);
+    var weemoAddonStatus = jqchat("#weemo-status").attr("data-addonstatus");
+    var trialStatus = jqchat("#weemo-status").attr("data-trialstatus");
+    if ((weemoAddonStatus.indexOf("false") != -1) || (weemoAddonStatus.indexOf("neutral") != -1 && trialStatus.indexOf("disable") != -1)) jqchat(".weemoCallOverlay").remove();
     weemoExtension.getStatus(username, cbGetStatus);
 
   }
@@ -623,15 +638,21 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
 
   	  $h3Elem.append(html);
 
-	  
       jqchat(".weemoCallOverlay").unbind( "click" );
-	  jqchat(".weemoCallOverlay").on("click", function() {                
+	  jqchat(".weemoCallOverlay").on("click", function() {
 		if (!jqchat(this).hasClass("disabled") && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
 		&& weemoExtension.tokenKey.length > 0) {
 		  var targetUser = jqchat(this).attr("data-username");
 		  var targetFullname = jqchat(this).attr("data-fullname");
           console.log(targetUser + " == " + targetFullname.trim());
-		  weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+		  var trialStatus = jqchat("#weemo-status").attr("data-trialstatus");
+		  if (trialStatus.indexOf("disable") != -1) {
+			weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+		  } else {
+			eXo.ecm.VideoCalls.showTrialInterceptor();
+			jqchat("#currentUser").attr("data-username", targetUser);
+			jqchat("#currentUser").attr("data-fullname", targetFullname);
+		  }
 		} else if(!jqchat(this).hasClass("disabled")) {
 		  if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
 		    eXo.ecm.VideoCalls.showInstallInterceptor();
@@ -650,11 +671,13 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
 	  weemoExtension.getStatus(userName, cbGetProfileStatus);	
 
 	}
+	var weemoAddonStatus = jqchat("#weemo-status").attr("data-addonstatus");
+	var trialStatus = jqchat("#weemo-status").attr("data-trialstatus");
+	if ((weemoAddonStatus.indexOf("false") != -1) || (weemoAddonStatus.indexOf("neutral") != -1 && trialStatus.indexOf("disable") != -1)) jqchat(".weemoCallOverlay").remove();
+
 	setTimeout(function() { weemoExtension.attachWeemoToProfile() }, 250);
 
 };
-
-
 
 WeemoExtension.prototype.attachWeemoToConnections = function() {
   if (window.location.href.indexOf("/portal/intranet/connexions")==-1 && window.location.href.indexOf("/portal/intranet/connections")==-1) return;
@@ -695,13 +718,24 @@ WeemoExtension.prototype.attachWeemoToConnections = function() {
     }
   });
 
+  var weemoAddonStatus = jqchat("#weemo-status").attr("data-addonstatus");
+  var trialStatus = jqchat("#weemo-status").attr("data-trialstatus");
+  if ((weemoAddonStatus.indexOf("false") != -1) || (weemoAddonStatus.indexOf("neutral") != -1 && trialStatus.indexOf("disable") != -1)) jqchat(".weemoCallOverlay").remove();
+
   jqchat(".weemoCallOverlay").unbind( "click" );
   jqchat(".weemoCallOverlay").on("click", function() {
         if (!jqchat(this).hasClass("disabled") && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
         && weemoExtension.tokenKey.length > 0) {
           var targetUser = jqchat(this).attr("data-username");
           var targetFullname = jqchat(this).attr("data-fullname");
-          weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+          var trialStatus = jqchat("#weemo-status").attr("data-trialstatus");
+          if (trialStatus.indexOf("disable") != -1) {
+            weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+          } else {
+            eXo.ecm.VideoCalls.showTrialInterceptor();
+            jqchat("#currentUser").attr("data-username", targetUser);
+            jqchat("#currentUser").attr("data-fullname", targetFullname);
+          }
         } else if(!jqchat(this).hasClass("disabled")) {
           if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
             eXo.ecm.VideoCalls.showInstallInterceptor();
@@ -779,7 +813,17 @@ var weemoExtension = new WeemoExtension();
       "urlNotification": "/rest/state/ping/",
       "urlGetState": "/rest/state/status/",
       "notificationInterval": $notificationApplication.attr("data-weemo-interval-notif")      
-    });   
+    }); 
+
+    var weemoAddonStatus = $notificationApplication.attr("data-addonstatus");
+    var trialStatus = jqchat("#weemo-status").attr("data-trialstatus");
+    if ((weemoAddonStatus.indexOf("false") != -1) || (weemoAddonStatus.indexOf("neutral") != -1 && trialStatus.indexOf("disable") != -1)){
+      $("#videoCallsPermissionForm").css("display", "none");
+      $("#unavailableMsg").css("display", "block");
+    } else {
+      $("#videoCallsPermissionForm").css("display", "block");
+      $("#unavailableMsg").css("display", "none");
+    }  
 
     weemoExtension.isTurnOff = $notificationApplication.attr("data-weemo-turnoff");
     if(weemoExtension.isTurnOff == "true") return;
@@ -790,8 +834,8 @@ var weemoExtension = new WeemoExtension();
 
     var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
 
-//    var checkWeemoDriverEvent = window.clearInterval(checkWeemoDriverEvent);
-//    checkWeemoDriverEvent = setInterval($.proxy(weemoExtension.checkWeemoDriver, weemoExtension), 3*1000);
+    //var checkWeemoDriverEvent = window.clearInterval(checkWeemoDriverEvent);
+    //checkWeemoDriverEvent = setInterval($.proxy(weemoExtension.checkWeemoDriver, weemoExtension), 3*1000);
     weemoExtension.checkWeemoDriver();
 
     weemoExtension.videoCallVersion = $notificationApplication.attr("videoCallVersion");
@@ -804,7 +848,7 @@ var weemoExtension = new WeemoExtension();
         if(isNotInstallWeemoDriver == 'true') {
           weemoExtension.removeCookie("isDismiss");
           weemoExtension.showWeemoInstaller();
-      }
+        }
         weemoExtension.setCookie("videoCallVersion", weemoExtension.videoCallVersion, 365);
       }
     }
@@ -819,7 +863,6 @@ var weemoExtension = new WeemoExtension();
 
     var tokenKey = $notificationApplication.attr("data-token-key");
     weemoExtension.setTokenKey(tokenKey);
-
     
     var username = $notificationApplication.attr("data-username");
     weemoExtension.initCall(username, username);
@@ -827,11 +870,39 @@ var weemoExtension = new WeemoExtension();
     weemoExtension.attachWeemoToConnections();
     weemoExtension.attachWeemoToProfile();
 
+    $(".startVideoCall").on("click", function() {
+      var targetUserName = $("#currentUser").attr("data-username");
+      var targetUserFullName = $("#currentUser").attr("data-fullname");
+      weemoExtension.createWeemoCall(targetUserName.trim(), targetUserFullName.trim());
+      $("#trial-interceptor").modal("hide");
+
+      // Update trial info in BO
+      var trialStatus = $notificationApplication.attr("data-trialstatus");
+      var auth = $notificationApplication.attr("data-userkey");
+      if (trialStatus.indexOf("none") != -1) {
+        var tenantName = $notificationApplication.attr("data-tenantname");
+        var url = "/rest/cloud/addons/trial/" + tenantName + "/EXO_VIDEO_CALL/active";
+        $.ajax({
+          url: url,
+          dataType: "json",
+          beforeSend: function(jqXHR) {
+            jqXHR.setRequestHeader('Authorization', auth);
+          }
+        })
+        .done(function (json) {
+          $notificationApplication.attr("data-trialstatus", json.status);
+          $notificationApplication.attr("data-trialday", json.trialDay);
+          $notificationApplication.attr("data-remainday", json.trialDay); //just activated
+          $("#noneStatus").css("display", "none");
+          console.log("Update status of trial successfully");
+        })
+        .fail(function (jqxhr, textStatus, error) {
+          var err = textStatus + ', ' + error;
+          console.log("Request Failed: " + err);
+        });
+      }
+    });
   });
 
 })(jqchat);
-
-
-
-
 

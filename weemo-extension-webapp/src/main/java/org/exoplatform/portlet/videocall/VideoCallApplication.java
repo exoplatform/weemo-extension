@@ -1,10 +1,26 @@
 package org.exoplatform.portlet.videocall;
 
-import juzu.Path;
-import juzu.View;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Properties;
+import java.util.logging.Logger;
+
+import juzu.*;
 import juzu.request.RenderContext;
 import juzu.template.Template;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.portlet.PortletPreferences;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
@@ -16,18 +32,20 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.utils.videocall.PropertyManager;
 import org.json.JSONObject;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-import java.io.InputStream;
-import java.util.Properties;
-
 public class VideoCallApplication {
 
   @Inject
   @Path("index.gtmpl")
   Template index;
+  
+  String REST_URL = "/rest/cloud/addons/";
+  String DEFAULT_PROTOCOL = "http";
+  String WEEMO_ADDON_ID = "EXO_VIDEO_CALL";
+  
 
   String remoteUser_ = null;
+  
+  Logger log = Logger.getLogger("ChatApplication");
 
   OrganizationService organizationService_;
 
@@ -49,8 +67,18 @@ public class VideoCallApplication {
   @View
   public void index(RenderContext renderContext) throws Exception {
     PortalRequestContext requestContext = Util.getPortalRequestContext();
-    HttpSession httpSession = requestContext.getRequest().getSession();
-    remoteUser_ = renderContext.getSecurityContext().getRemoteUser();
+    HttpServletRequest request = requestContext.getRequest();
+    HttpSession httpSession = request.getSession();
+    
+	String serverName = request.getServerName();
+	String tenantName = "";
+	if(serverName.indexOf(".")!= -1) {
+		tenantName = serverName.substring(0, serverName.indexOf("."));
+	} else {
+		tenantName = serverName;
+	}
+	
+    remoteUser_ = renderContext.getSecurityContext().getRemoteUser();   
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
     if (videoCallModel == null) videoCallModel = new VideoCallModel();
     String weemoKey = videoCallModel.getWeemoKey();
@@ -97,6 +125,38 @@ public class VideoCallApplication {
       isSameUserLogged = true;
     }
 
+    
+    // Get trial information from BO
+    String trialStatus = "";
+    int trialDay = 0;
+    int remainDay = 0;
+    
+	String username = System.getProperty("cloud.backoffice.username");
+	String password = System.getProperty("cloud.backoffice.password");
+
+	String restUrl = getBaseUrl() + "trial/" + tenantName + "/" + WEEMO_ADDON_ID;
+	String trialInformation = callBOService(restUrl, username, password);
+	String encodedKey = "Basic " + new sun.misc.BASE64Encoder().encode((username+":"+password).getBytes());
+	if (!StringUtils.isEmpty(trialInformation)) {
+		JSONObject output = new JSONObject(trialInformation);
+		trialStatus = output.getString("status");
+		trialDay = output.getInt("trialDay");
+		long endDate = output.getLong("endDate");
+		long currentTime = System.currentTimeMillis();
+		if ((currentTime > endDate) && trialStatus.equals("active")) {
+			trialStatus = "expired";
+			callBOService(restUrl + "/" + trialStatus, username, password);
+		}
+		if (trialStatus.equals("active")) {
+			remainDay = (int) ((endDate - currentTime) / (24 * 60 * 60 * 1000)) + 1;
+		}
+	}
+	
+	// Get addon status on tenant from BO
+	String statusRestUrl = getBaseUrl() + "isActive/" + tenantName + "/" + WEEMO_ADDON_ID;
+	String addonstatus = callBOService(statusRestUrl, username, password);
+	if(addonstatus == null) addonstatus = "";
+    
     index.with().set("user", remoteUser_)
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
@@ -105,6 +165,64 @@ public class VideoCallApplication {
             .set("turnOffVideoCall", turnOffVideoCall)
             .set("videoCallVersion", videoCallVersion)
             .set("isSameUserLogged", isSameUserLogged)
+            .set("trialStatus", trialStatus)
+            .set("trialDay", trialDay)
+            .set("remainDay", remainDay)
+            .set("tenantName", tenantName)
+            .set("encodedKey", encodedKey)
+            .set("addonstatus", addonstatus)
             .render();
+  }
+  
+  private String callBOService(String url, String username, String password) {
+	    try {
+			URI uri = new URI(url);
+		    DefaultHttpClient client = new DefaultHttpClient();
+		
+		    client.getCredentialsProvider().setCredentials(new AuthScope(uri.getHost(), uri.getPort()),
+			                                                     new UsernamePasswordCredentials(username,password));
+		    HttpGet request = new HttpGet(url);
+		    HttpResponse response = null;
+		    StringBuilder sb = new StringBuilder();
+		    String line = "";
+			      
+		    try {
+		      response = client.execute(request);
+		      if (response.getStatusLine().getStatusCode() != 200) {
+		        throw new Exception("Couldn't get information from backoffice. Response status code - " + response.getStatusLine().getStatusCode());
+		      }
+		      InputStream in = response.getEntity().getContent();
+		      BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+		      while ((line = rd.readLine()) != null) {
+		        sb.append(line);
+		      }
+		      rd.close();
+			          
+		    } finally {
+		      if (response != null) {
+		        response.getEntity().getContent().close();
+		      }
+		    }
+		    return sb.toString();
+
+	    } catch (URISyntaxException urie) {
+	    	log.warning("The service url is in wrong format");
+	    } catch (IOException ioe) {
+	    	log.warning("Cannot read data from response");
+	    } catch (Exception e) {
+	    	log.warning("A problem happened while calling backoffice service");
+	    }
+	    return null;
+	  }
+  
+  private String getBaseUrl(){
+		String masterHostProtocol = System.getProperty("tenant.masterhost.protocol");
+		if (masterHostProtocol == null || masterHostProtocol.length()==0) {
+		  masterHostProtocol = DEFAULT_PROTOCOL;
+		}
+		String masterhost = System.getProperty("tenant.masterhost");
+		
+		String baseUrl = masterHostProtocol + "://" + masterhost + REST_URL;
+		return baseUrl;
   }
 }

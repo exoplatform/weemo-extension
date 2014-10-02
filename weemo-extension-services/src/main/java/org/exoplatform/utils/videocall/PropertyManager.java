@@ -85,7 +85,7 @@ public class PropertyManager {
       }
             
       overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "");
-      overridePropertyIfNotSet(PROPERTY_VIDEO_PROFILE, "basic");
+      overridePropertyIfNotSet(PROPERTY_VIDEO_PROFILE, "standard");
       overridePropertyIfNotSet(PROPERTY_AUTH_URL, "https://oauths.weemo.com/auth/");
       overridePropertyIfNotSet(PROPERTY_USER_ID_AUTH, "");
       

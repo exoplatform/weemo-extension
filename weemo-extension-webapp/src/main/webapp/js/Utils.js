@@ -994,9 +994,9 @@
 			var tdPermission = $(this).find("td")[0];
 			var tdOnOff = $(this).find("td")[1];
 			var value = $(tdOnOff).find("input:first").val();
-      var tdGroupOnOff = $(this).find("td")[2];
-      var valueGroupOnOff = $(tdGroupOnOff).find("input:first").val();
-      permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value + "#" + valueGroupOnOff;
+			var tdGroupOnOff = $(this).find("td")[2];
+			var valueGroupOnOff = $(tdGroupOnOff).find("input:first").val();
+			permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value + "#" + valueGroupOnOff;
 		  }
 		});
 	  }
@@ -1012,68 +1012,11 @@
 
   // Save VideoCalls Profile
   Utils.prototype.saveVideoCallsProfile = function(elem) {
-	var errMessages = [];
     var saveLink = $(elem).attr("linkSave");
     var formVideoAdmin = $("#videoCallsPermissionForm");
     $(formVideoAdmin).attr("action",saveLink);
 
     if (!$("#chkTurnOff").is(':checked')) {
-
-		var weemoKey = $.trim($('#weemoKey').val());
-		if (weemoKey  === '') {	      
-		  errMessages.push($('#weemoKey').attr('label'));
-		}
-	        
-		var authId = $.trim($('#authId').val());
-		if (authId  === '') {	      
-		  errMessages.push($('#authId').attr('label'));
-		}
-	        
-		var authSecret = $.trim($('#authSecret').val());
-		if (authSecret  === '') {	      
-			errMessages.push($('#authSecret').attr('label'));
-		}
-	        
-		var customerCertificatePassphrase = $.trim($('#customerCertificatePassphrase').val());
-		if (customerCertificatePassphrase  === '') {	      
-		  errMessages.push($('#customerCertificatePassphrase').attr('label'));
-		}    
-	        
-		var p12Cert = $("#p12Cert");
-		if(p12Cert) {
-		  var fileVal = $(p12Cert).val(); 
-		  if(fileVal=='') 
-		  { 
-			var container = $(p12Cert).closest(".control-group");
-			var labelElem = $(container).find("label:first");
-			var label = $.trim($(labelElem).text());
-			if(label.indexOf(":") > 0) {
-			  label = label.substring(0,label.indexOf(":"));
-			}
-			errMessages.push(label);
-		  } 
-		}
-		    
-	        
-		var pemCert = $("#pemCert");
-		if(pemCert) {
-		  var fileVal = $(pemCert).val(); 
-		  if(fileVal=='') 
-		  { 
-			var container = $(pemCert).closest(".control-group");
-			var labelElem = $(container).find("label:first");
-			var label = $.trim($(labelElem).text());
-			if(label.indexOf(":") > 0) {
-			  label = label.substring(0,label.indexOf(":"));
-			}
-			errMessages.push(label);
-		  } 
-		}
-		
-		if (errMessages.length > 0) {
-			eXo.ecm.VideoCallsUtils.displayErrorAlert(errMessages);
-			return false;			
-		}
 	        
 		//Get list of permissions
 		var permissionData = "";
@@ -1088,9 +1031,9 @@
 				var tdPermission = $(this).find("td")[0];
 				var tdOnOff = $(this).find("td")[1];
 				var value = $(tdOnOff).find("input:first").val();
-        var tdGroupOnOff = $(this).find("td")[2];
-        var valueGroupOnOff = $(tdGroupOnOff).find("input:first").val();
-        permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value + "#" + valueGroupOnOff;
+				var tdGroupOnOff = $(this).find("td")[2];
+				var valueGroupOnOff = $(tdGroupOnOff).find("input:first").val();
+				permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value + "#" + valueGroupOnOff;
 			  }
 			});
 		  }

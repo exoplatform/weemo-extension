@@ -40,7 +40,7 @@ public class RESTAuthService implements ResourceContainer{
   @RolesAllowed("users")
   public Response auth() {
     authService = new AuthService(); 
-    String content = authService.authenticate(null, "basic");    
+    String content = authService.authenticate(null, "standard");    
     return Response.ok(content, MediaType.APPLICATION_JSON).build();    
   }
   

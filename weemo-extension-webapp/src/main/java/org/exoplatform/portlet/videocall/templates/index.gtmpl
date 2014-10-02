@@ -9,6 +9,12 @@
   call-label="&{exoplatform.videocall.Call}"
   make-call-label="&{exoplatform.videocall.makeCall}"
   is-same-user-logged="<%=isSameUserLogged%>"
+  data-trialstatus="<%=trialStatus%>"
+  data-trialday="<%=trialDay%>"
+  data-remainday="<%=remainDay%>"
+  data-tenantname="<%=tenantName%>"
+  data-userkey="<%=encodedKey%>" 
+  data-addonstatus="<%=addonstatus%>"
   style="display: none;"> 
 </div>
 
@@ -32,7 +38,7 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
   <div class="modal-dialog modal-vertical-centered">
     <div class="modal-content">
 		<div class="popupHeader clearfix modal-header">
-			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close" ></button>
+			<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="&{exoplatform.videocall.installer.close}" ></button>
 			<span id="groupModalTitle" class="PopupTitle popupTitle modal-title" style="cursor: auto;">&{exoplatform.videocall.installKey.title}</span>
 		</div>
 
@@ -43,8 +49,6 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
 				<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.installKey.cancelButton}</button>
 			</div>
 		</div>
-		
-      </div>
 		
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -67,6 +71,59 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
 		</div>
 		
       </div>
+		
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+<style>
+	.uiVideoCallIconError {
+	    background: url("/eXoResources/skin/images/Icons/uiIconColor.png") no-repeat scroll left top rgba(0, 0, 0, 0);
+	    width: 16px;
+	    vertical-align: text-top;
+	    height: 16px;
+	    display: inline-block;
+	}
+</style>
+
+<!-- Trial Interceptor -->
+<div id="trial-interceptor" class="uiPopup modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; position:fixed">
+  <div class="modal-dialog modal-vertical-centered">
+    <div class="modal-content">
+			<div class="popupHeader clearfix modal-header">
+				<button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="&{exoplatform.videocall.installer.close}" ></button>
+				<span id="groupModalTitle" class="PopupTitle popupTitle modal-title" style="cursor: auto;">&{popup.trial.title}</span>
+			</div>
+			<input type="hidden" id="singleday" name="singleday" value="&{popup.number.day}" />
+			<input type="hidden" id="plurialday" name="plurialday" value="&{popup.number.days}" />
+			<div class="PopupContent popupContent modal-body">
+				<div id="currentUser" data-username="" data-fullname="" style="display: none;"></div>
+			
+				<div id="noneStatus" style="display: none; margin-left: 10px;">
+					<i class="uiIconInformation uiIconBlue"></i><span> &{popup.starttrial.msg}</span>
+					<div class="uiAction uiActionBorder">
+						<button type="button" class="btn btn-primary startVideoCall" data-dismiss="modal">&{popup.starttrial.button}</button>
+						<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.installKey.cancelButton}</button>
+					</div>
+				</div>
+			
+				<div id="activeStatus" style="display: none; margin-left: 10px;">
+					<i class="uiVideoCallIconWarning"></i><span> &{popup.trial.status.msg}</span>
+					<div class="uiAction uiActionBorder">
+						<button type="button" class="btn btn-primary" onclick="window.open('/buy')">&{popup.buy.button}</button>
+						<button type="button" class="btn startVideoCall" data-dismiss="modal">&{popup.continue.button}</button>
+					</div>
+				</div>
+			
+				<div id="expiredStatus" style="display: none; margin-left: 10px;">
+					<i class="uiVideoCallIconError"></i><span> &{popup.trial.expired.msg}</span>
+					<div class="uiAction uiActionBorder">
+						<button type="button" class="btn btn-primary" onclick="window.open('/buy')">&{popup.buy.button}</button>
+						<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.installKey.cancelButton}</button>
+					</div>
+				</div>
+			
+			</div>
 		
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

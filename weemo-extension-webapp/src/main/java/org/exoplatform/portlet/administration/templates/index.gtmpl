@@ -1,5 +1,13 @@
 <script type="text/javascript" src="../../../eXoResources/javascript/jquery-1.7.1.js"></script>
 <script type="text/javascript" src="/weemo-extension/js/iphone-style-checkboxes-weemo.js"></script>
+<style>
+	.disable {
+		pointer-events: none;
+		cursor: default;
+		opacity: 0.7;
+		filter: alpha(opacity=40); /* For IE8 and earlier */
+	}
+</style>
 
 <%
   import org.apache.commons.lang.StringUtils;
@@ -23,116 +31,19 @@
  
   
 
-		  	<form id="videoCallsPermissionForm" enctype="multipart/form-data" action="@{VideoCallAdministration.save()}" method="POST" class="form-horizontal">
+		  	<form id="videoCallsPermissionForm" enctype="multipart/form-data" action="@{VideoCallAdministration.save()}" method="POST" class="form-horizontal" style="display: none;">
 			  <div class="control-group">			    
-				<span class="uiCheckbox">
+				<label for="chkTurnOff" class="uiCheckbox">
 				  <input id="chkTurnOff" class="checkbox" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">				  
 				  <span>&{exoplatform.videocall.turnoff}</span>				  
-				</span>				    
+				</label>				    
 				<div style="display:inline-block;" onmouseover="(function(elm) {eXo.ecm.VideoCallsUtils.showPopover(elm);})(this)"
 					onmouseout="(function(elm) {eXo.ecm.VideoCallsUtils.hidePopover(elm);})(this)" data-toggle="popover" data-placement="right" data-content="&{exoplatform.videocall.turnoff.help}">
 					  <i class="uiIconQuestion uiIconLightGray"></i>			
 				</div>
 				<input type="hidden" id="disableVideoCall" name="disableVideoCall" value="false">
 			  </div>
-			  <h4 class="titleWithBorder">Weemo</h4>
-			  <div class="row">
-			  
-			  	<div class="control-group" style="margin-left: 20px;">
-				    <label class="control-label" for="weemoKey">&{exoplatform.videocall.weemokey}: </label>
-				    <div class="controls" >
-				      <input class="span3" label="&{exoplatform.videocall.weemokey}" type="text" id="weemoKey" name="weemoKey" value="<%=weemoKey%>">
-				    </div>
-				</div>
-					
-					
-			  	<div class="span5">
-				  	
-					<div class="control-group">
-					    <label class="control-label" for="authId">&{exoplatform.videocall.authId}: </label>
-					    <div class="controls" >
-					      <input class="span3" label="&{exoplatform.videocall.authId}" type="text" id="authId" name="authId" value="<%=authId%>" >
-					    </div>
-					</div>
-			        <div class="control-group">
-			          <label for="p12Cert" class="control-label">&{exoplatform.videocall.p12Certificate}: </label>
-			          <div class="controls" style="position:relative;">
-					<%
-					  if(StringUtils.isEmpty(p12CertName)) {
-					%>
-					  
-						<div style="left: 0px; position: absolute; top: 0px; z-index: 1; white-space: nowrap;">
-						      <button onkeypress="return false;" class="btn btn-small" type="button">
-							  <i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
-							<span style="text-overflow: ellipsis; white-space: nowrap; width: 137px; overflow: hidden; height: 28px; display: inline-block; margin: 0px 10px; vertical-align: middle;">&{exoplatform.videocall.administration.noFile}</span>
-						</div>
-						<input style="margin: 0 8px 0 22px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.p12Certificate}" id="p12Cert" name="p12Cert">				  
-					  
-					 
-					<%  
-					  } else {
-					%>						  
-					  <strong><%=p12CertName%></strong>
-                      <div class="pull-right" onclick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);" >
-                        <a data-placement="bottom" rel="tooltip" class="actionIcon" href="#" data-original-title="&{exoplatform.videocall.administration.delete}"><i class="uiIconDelete uiIconLightGray"></i></a>
-                      </div>
-                    <%
-					  }
-					%>
-					  </div>
-					</div>
-					
-					<div class="control-group">
-			          <label for="pemCert" class="control-label">&{exoplatform.videocall.pemCertificate}: </label>
-			          <div class="controls" style="position:relative;">
-					<%  
-					  if(StringUtils.isEmpty(pemCertName)) {
-					%>
-					  			  
-					  
-					    <div style="left: 0px; position: absolute; top: 0px; z-index: 1; white-space: nowrap;">
-						      <button onkeypress="return false;" class="btn btn-small" type="button">
-							  <i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
-							<span style="text-overflow: ellipsis; white-space: nowrap; width: 137px; overflow: hidden; height: 28px; display: inline-block; margin: 0px 10px; vertical-align: middle;">&{exoplatform.videocall.administration.noFile}</span>
-						</div>
-						<input style="margin: 0 8px 0 22px;" type="file" onkeypress="return false;" class="file fileHidden" label="&{exoplatform.videocall.pemCertificate}" id="pemCert" name="pemCert">				  
-					  
-					  
-					<%  
-					  } else {
-					%>
-					  <strong><%=pemCertName%></strong>
-                      <div class="pull-right" onclick="eXo.ecm.VideoCallsUtils.removeUploadedFile(this);" >
-                        <a data-placement="bottom" rel="tooltip" class="actionIcon" href="#" data-original-title="&{exoplatform.videocall.administration.delete}"><i class="uiIconDelete uiIconLightGray"></i></a>
-                      </div>
-					<%
-					  }
-					%>					
-					  </div>
-					</div>
-					
-					
-					
-					
-			  	</div>
-			  	<div class="span5">
-				  	 
-			  	    <div class="control-group">
-					    <label  class="control-label" for="authSecret">&{exoplatform.videocall.authSecret}: </label>
-					    <div class="controls" >
-					      <input class="span3" type="password" label="&{exoplatform.videocall.authSecret}" id="authSecret" name="authSecret" value="<%=authSecret%>" >
-					    </div>
-					</div>
-					<div class="control-group">
-					    <label  class="control-label" for="customerCertificatePassphrase">&{exoplatform.videocall.passPhrase}: </label>
-					    <div class="controls" >
-					      <input class="span3" type="password" label="&{exoplatform.videocall.passPhrase}" id="customerCertificatePassphrase" name="customerCertificatePassphrase" value="<%=customerCertificatePassphrase%>">
-					    </div>
-					</div>
-			  	</div>
-			  </div>
-			  <div class="actionTestWeemo"><button id="authButton" type="button" linkAuth="@{VideoCallAdministration.auth()}" onClick="eXo.ecm.VideoCallsUtils.authWeemoConnection(this);" class="btn" > &{exoplatform.videocall.testWeemoConnection} </button></div>	  
-			  
+
 			  
 			<div class="UIViewPermissionContainer" id="UIViewPermissionContainer" style="padding-bottom: 20px;">
 
@@ -160,10 +71,10 @@
 						        <div permission="<%=arrs[0]%>" title="<%=arrs[3]%>" class="Text"><%=arrs[3]%></div>
 						      </td>
 						      <td class="center">				        
-		                        <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="&{exoplatform.videocall.administration.swither.yes}" data-no="&{exoplatform.videocall.administration.swither.no}" checked="checked" style="visibility: hidden;" class="yesno"></div>
+		                        <div class="onOffCheckbox"><div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="&{exoplatform.videocall.administration.swither.yes}" data-no="&{exoplatform.videocall.administration.swither.no}" checked="checked" style="visibility: hidden;" class="yesno"></div></div>
 		                      </td>
                               <td class="center">
-                                <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[2]%>" data-yes="&{exoplatform.videocall.administration.swither.yes}" data-no="&{exoplatform.videocall.administration.swither.no}" checked="checked" style="visibility: hidden;" class="yesno"></div>
+                                <div class="onOffCheckbox"><div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[2]%>" data-yes="&{exoplatform.videocall.administration.swither.yes}" data-no="&{exoplatform.videocall.administration.swither.no}" checked="checked" style="visibility: hidden;" class="yesno"></div></div>
 		                      </td>
                           <td class="center"><a data-original-title="&{exoplatform.videocall.administration.delete}" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete uiIconLightGray"></i></a></td>
 		                    </tr>
@@ -434,22 +345,25 @@
 	    if ($("#chkTurnOff").is(':checked')) {
 	      $("#disableVideoCall").val("true");
 	      $("#videoCallsPermissionForm input[type=text]").attr("disabled",true);
-	      $("#videoCallsPermissionForm input[type=password]").attr("disabled",true);
-	      $("#authButton").attr("disabled",true);
+	      $("#videoCallsPermissionForm .uiViewPermissionForm button").attr("disabled",true);
+	      $("#videoCallsPermissionForm a.actionIcon").addClass("disable");
+	      $("#videoCallsPermissionForm div.onOffCheckbox").addClass("disable");
 	      
 	    } else {
 	      $("#disableVideoCall").val("false");	  
 	      $("#videoCallsPermissionForm input[type=text]").attr("disabled",false);
-	      $("#videoCallsPermissionForm input[type=password]").attr("disabled",false);   
-	      $("#authButton").attr("disabled",false); 
+	      $("#videoCallsPermissionForm .uiViewPermissionForm button").attr("disabled",false);
+	      $("#videoCallsPermissionForm a.actionIcon").removeClass("disable");
+	      $("#videoCallsPermissionForm div.onOffCheckbox").removeClass("disable");
 	    }
 	  });
 	  
 	  //Disable some input text when turn off video calls
 	  if ($("#chkTurnOff").is(':checked')) {
-	    $("#disableVideoCall").val("true");
-	    $("#videoCallsPermissionForm input[type=text]").attr("disabled",true);
-	    $("#videoCallsPermissionForm input[type=password]").attr("disabled",true);	      
+	      $("#videoCallsPermissionForm input[type=text]").attr("disabled",true);
+	      $("#videoCallsPermissionForm .uiViewPermissionForm button").attr("disabled",true);
+	      $("#videoCallsPermissionForm a.actionIcon").addClass("disable");
+	      $("#videoCallsPermissionForm div.onOffCheckbox").addClass("disable");
 	  }
 	    
 	  $("#txtUserOrGroup").change(function() {
@@ -483,13 +397,12 @@
 
 	  $("div.spaceRole").each(function() {	 
 
-	     $(this).click(function()
-		 {
+	     $(this).click(function(){
 		   var input = $(this).find("#enableVideoCalls");
 		   var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
 		   input.attr("value", remembermeOpt);
-		 });
-		 var yeslabel;
+	     });
+	     var yeslabel;
 	     var nolabel;
 
 	     $(this).children('input:checkbox').each(function () {
@@ -498,11 +411,6 @@
 	        $(this).iphoneStyle({
 	                checkedLabel:yeslabel,
 	                uncheckedLabel:nolabel});
-
-	        $(this).change(function()
-	        {
-	            $(this).closest("div.spaceRole").trigger("click");
-	        });
 	     });
 	  });  
 	  
@@ -566,29 +474,6 @@
 	  var inputPem = $(controlsPem).find("input:first");
 	  var buttonPem = $(controlsPem).find("button:first");
 	  $(inputPem).width($(buttonPem).width());
-	  
-	  //Listen onchange event for 2 upload inputs
-	  $("#p12Cert").change(function (){
-        var fileName = $(this).val();
-        if(fileName.length > 0) {
-          fileName = eXo.ecm.VideoCallsUtils.getNameOfFile(fileName);
-        }
-        var containerElem = $(this).closest(".controls");
-        var spanElem = $(containerElem).find("span:first");
-        $(spanElem).html(fileName);
-      });
-      
-      $("#pemCert").change(function (){
-        var fileName = $(this).val();
-        if(fileName.length > 0) {
-          fileName = eXo.ecm.VideoCallsUtils.getNameOfFile(fileName);
-        }
-        var containerElem = $(this).closest(".controls");
-        var spanElem = $(containerElem).find("span:first");
-        $(spanElem).html(fileName);
-      });
-	  
-	  
 
 	});
     

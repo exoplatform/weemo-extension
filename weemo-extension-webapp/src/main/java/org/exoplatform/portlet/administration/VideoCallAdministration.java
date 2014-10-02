@@ -24,7 +24,6 @@ import org.exoplatform.services.organization.MembershipType;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.Query;
 import org.exoplatform.services.organization.User;
-import org.exoplatform.services.organization.idm.ExtGroup;
 import org.exoplatform.services.videocall.AuthService;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -155,10 +154,7 @@ public class VideoCallAdministration {
 
   @Action
   @Route("/save")
-  public Response save(String disableVideoCall, String weemoKey, String authId, String authSecret,
-                       String customerCertificatePassphrase,
-                       String videoCallPermissions, org.apache.commons.fileupload.FileItem p12Cert,
-                       org.apache.commons.fileupload.FileItem pemCert, HttpContext context) throws Exception {
+  public Response save(String disableVideoCall, String videoCallPermissions, HttpContext context) throws Exception{
     if (context.getMethod().equals(Method.GET)) {
       videoCalls.setDisplaySuccessMsg(false);
       return VideoCallAdministration_.index();
@@ -166,136 +162,29 @@ public class VideoCallAdministration {
     }
     VideoCallService videoCallService = new VideoCallService();
     VideoCallModel videoCallModel = new VideoCallModel();
-    if (StringUtils.isEmpty(disableVideoCall)) {
-      videoCallModel.setDisableVideoCall("false");
-    } else {
-      videoCallModel.setDisableVideoCall(disableVideoCall);
+    if (videoCallService != null) {
+    	VideoCallModel jcrModel = videoCallService.getVideoCallProfile();
+    	if (jcrModel != null){
+    		videoCallModel.setWeemoKey(jcrModel.getWeemoKey());
+    	    videoCallModel.setAuthId(jcrModel.getAuthId());
+    	    videoCallModel.setAuthSecret(jcrModel.getAuthSecret());
+    	    videoCallModel.setCustomerCertificatePassphrase(jcrModel.getCustomerCertificatePassphrase());
+    	    videoCallModel.setDomainId(jcrModel.getDomainId());
+    	    videoCallModel.setProfileId(jcrModel.getProfileId());
+    	    videoCallModel.setVideoCallPermissions(jcrModel.getVideoCallPermissions());
+    	}
     }
+    
+    boolean disableCall = StringUtils.isEmpty(disableVideoCall) ? false : Boolean.parseBoolean(disableVideoCall);
+    videoCallModel.setDisableVideoCall(disableVideoCall);
 
-    if (Boolean.parseBoolean(disableVideoCall)) {
-      videoCallModel = videoCallService.getVideoCallProfile();
-      videoCallModel.setDisableVideoCall(disableVideoCall);
-    } else {
-      if (weemoKey == null) weemoKey = "";
-      if (authId == null) authId = "";
-      if (authSecret == null) authSecret = "";
-      if (customerCertificatePassphrase == null) customerCertificatePassphrase = "";
-      if (videoCallPermissions == null) videoCallPermissions = "";
-
-      videoCallModel.setWeemoKey(weemoKey.trim());
-      videoCallModel.setAuthId(authId.trim());
-      videoCallModel.setAuthSecret(authSecret.trim());
-      videoCallModel.setCustomerCertificatePassphrase(customerCertificatePassphrase.trim());
+    if(!disableCall) {
+      if(videoCallPermissions == null) videoCallPermissions = "";
       videoCallModel.setVideoCallPermissions(videoCallPermissions.trim());
-      videoCallModel.setDomainId(PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID));
-      videoCallModel.setProfileId(PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE));
-      if (p12Cert != null) {
-        videoCallModel.setP12Cert(p12Cert.getInputStream());
-        videoCallModel.setP12CertName(p12Cert.getName());
-      }
-      if (pemCert != null) {
-        videoCallModel.setPemCert(pemCert.getInputStream());
-        videoCallModel.setPemCertName(pemCert.getName());
-      }
     }
     videoCallService.saveVideoCallProfile(videoCallModel);
     videoCalls.setDisplaySuccessMsg(true);
     return VideoCallAdministration_.index();
-  }
-
-  @Action
-  @Route("/auth")
-  public Response auth(String disableVideoCall, String weemoKey, String authId, String authSecret,
-                       String customerCertificatePassphrase,
-                       String videoCallPermissions, org.apache.commons.fileupload.FileItem p12Cert,
-                       org.apache.commons.fileupload.FileItem pemCert, HttpContext context) throws Exception {
-    PortalRequestContext requestContext = Util.getPortalRequestContext();
-    HttpSession httpSession = requestContext.getRequest().getSession();
-
-    if (context.getMethod().equals(Method.GET)) {
-      httpSession.removeAttribute(MODEL_FROM_AUTH);
-      return VideoCallAdministration_.index();
-    }
-
-    VideoCallModel videoCallModel = new VideoCallModel();
-    VideoCallService videoCallService = new VideoCallService();
-    String p12CertName = "";
-    String pemCertName = "";
-
-    InputStream isP12 = null;
-    InputStream isPem = null;
-
-    if (weemoKey == null) weemoKey = "";
-    if (authId == null) authId = "";
-    if (authSecret == null) authSecret = "";
-    if (customerCertificatePassphrase == null) customerCertificatePassphrase = "";
-    if (videoCallPermissions == null) videoCallPermissions = "";
-
-    VideoCallModel profile = videoCallService.getVideoCallProfile();
-    if (p12Cert == null) {
-      isP12 = videoCallService.getP12CertInputStream();
-      p12CertName = profile.getP12CertName();
-    } else {
-      isP12 = p12Cert.getInputStream();
-      p12CertName = p12Cert.getName();
-    }
-    if (pemCert == null) {
-      isPem = videoCallService.getPemCertInputStream();
-      pemCertName = profile.getPemCertName();
-    } else {
-      isPem = pemCert.getInputStream();
-      pemCertName = pemCert.getName();
-    }
-
-    videoCallModel.setWeemoKey(weemoKey);
-    videoCallModel.setDisableVideoCall(disableVideoCall);
-    videoCallModel.setAuthId(authId.trim());
-    videoCallModel.setAuthSecret(authSecret.trim());
-    videoCallModel.setCustomerCertificatePassphrase(customerCertificatePassphrase.trim());
-    videoCallModel.setP12Cert(isP12);
-    videoCallModel.setPemCert(isPem);
-    videoCallModel.setP12CertName(p12CertName);
-    videoCallModel.setPemCertName(pemCertName);
-    videoCallModel.setVideoCallPermissions(videoCallPermissions.trim());
-    videoCallModel.setDomainId(PropertyManager.getProperty(PropertyManager.PROPERTY_DOMAIN_ID));
-    videoCallModel.setProfileId(PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE));
-    videoCallModel.setVideoCallPermissions(videoCallPermissions);
-
-    //Check weemo key is right or not
-    if (StringUtils.isEmpty(weemoKey)) {
-      videoCalls.setAuthDisplaySuccessMsg(false);
-      httpSession.setAttribute(MODEL_FROM_AUTH, videoCallModel);
-      return VideoCallAdministration_.index();
-    } else {
-      URL url = new URL("https://cjs.weemo.com/js/webappid/" + weemoKey + "");
-      InputStream in = url.openStream();
-      Scanner scan = new Scanner(in);
-      StringBuffer sb = new StringBuffer();
-      while (scan.hasNext()) {
-        String str = scan.nextLine();
-        sb.append(str);
-      }
-      scan.close();
-      try {
-        JSONObject json = new JSONObject(sb.toString());
-        videoCalls.setAuthDisplaySuccessMsg(false);
-        httpSession.setAttribute(MODEL_FROM_AUTH, videoCallModel);
-        return VideoCallAdministration_.index();
-      } catch (JSONException ex) {
-        LOG.info("Weemo key is right");
-      }
-    }
-    //Check for other parametters in case weemoKey is right
-    AuthService authService = new AuthService();
-    String content = authService.authenticate(videoCallModel, "basic");
-    if (content != null && content.length() > 0) {
-      videoCalls.setAuthDisplaySuccessMsg(true);
-    } else {
-      videoCalls.setAuthDisplaySuccessMsg(false);
-    }
-    httpSession.setAttribute(MODEL_FROM_AUTH, videoCallModel);
-    return VideoCallAdministration_.index();
-
   }
 
   @Ajax
@@ -403,15 +292,15 @@ public class VideoCallAdministration {
       }
       sibblingsGroup = organizationService_.getGroupHandler().findGroups(parentGroup);
     }
-    if (sibblingsGroup != null && sibblingsGroup.size() > 0) {
-      for (Object obj : sibblingsGroup) {
-        String groupLabel = ((ExtGroup) obj).getLabel();
-        if (groupId != null && ((ExtGroup) obj).getId().equalsIgnoreCase(groupId)) {
+    if(sibblingsGroup != null && sibblingsGroup.size() > 0) {
+      for(Object obj : sibblingsGroup){
+        String groupLabel = ((Group)obj).getLabel();
+        if(groupId != null && ((Group)obj).getId().equalsIgnoreCase(groupId)) {
           String groupObj = loadChildrenGroups(groupId, groupLabel);
           sbGroups.append(groupObj).append(",");
         } else {
           sb = new StringBuffer();
-          sb.append("{\"group\":\"" + ((ExtGroup) obj).getId() + "\",\"label\":\"" + groupLabel + "\"}");
+          sb.append("{\"group\":\""+((Group)obj).getId()+"\",\"label\":\""+groupLabel+"\"}");
           sbGroups.append(sb.toString()).append(",");
         }
       }
@@ -439,9 +328,8 @@ public class VideoCallAdministration {
       if (collection.size() > 0) {
         StringBuffer sbChildren = new StringBuffer();
         sbChildren.append("[");
-        for (Object obj : collection) {
-          sbChildren.append("{\"group\":\"" + ((ExtGroup) obj).getId() + "\",\"label\":\"" + ((ExtGroup) obj)
-                  .getLabel() + "\"},");
+        for(Object obj : collection){
+          sbChildren.append("{\"group\":\""+((Group)obj).getId()+"\",\"label\":\""+((Group)obj).getLabel()+"\"},");
         }
         String childrenGroups = sbChildren.toString();
         if (childrenGroups.length() > 1) {
@@ -476,9 +364,9 @@ public class VideoCallAdministration {
             String memebershipLabel = membership;
             String groupId = permissionId.split(":")[1];
             Group group = organizationService_.getGroupHandler().findGroupById(groupId);
-            sb.append(",").append(capitalize(memebershipLabel) + " " + resoureBundle.getString("exoplatform.videocall" +
-                    ".administration.permission.in") + " " + group.getLabel()).append(" (").append(permissionId).
-                    append(")");
+            if (group != null) {
+              sb.append(",").append(capitalize(memebershipLabel) + " " + resoureBundle.getString("exoplatform.videocall.administration.permission.in") + " " + group.getLabel()).append(" (").append(permissionId).append(")");
+            }
           } else {
             User user = organizationService_.getUserHandler().findUserByName(permissionId.trim());
             if (user != null) {
