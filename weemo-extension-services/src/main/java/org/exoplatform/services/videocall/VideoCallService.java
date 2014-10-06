@@ -475,14 +475,14 @@ public class VideoCallService {
       String[] arrs = videoCallsPermissions.split(",");
       ArrayList<String> memberships = new ArrayList();
       for (String string : arrs) {
-        if(string.split("#").length < 3) continue;
+        if(string.split("#").length < 2) continue;
         String permission = string.split("#")[0];
         String value;
-        if (isGroupCall) {
-         value = string.split("#")[2];
-        } else {
+        //if (isGroupCall) {
+        // value = string.split("#")[2];
+        //} else {
          value = string.split("#")[1];
-        }
+        //}
         permissionsMap.put(permission, value);
         if(permission.contains(":")) {
           memberships.add(permission);

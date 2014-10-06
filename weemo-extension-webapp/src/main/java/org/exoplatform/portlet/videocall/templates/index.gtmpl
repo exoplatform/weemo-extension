@@ -5,7 +5,6 @@
   data-token-key="<%=tokenKey%>"
   data-weemo-turnoff="<%=turnOffVideoCall%>"
   data-weemo-turnoff-user="<%=turnOffVideoCallForUser%>"
-  data-weemo-turnoff-group="<%=turnOffVideoGroupCallForUser%>"
   call-label="&{exoplatform.videocall.Call}"
   make-call-label="&{exoplatform.videocall.makeCall}"
   is-same-user-logged="<%=isSameUserLogged%>"

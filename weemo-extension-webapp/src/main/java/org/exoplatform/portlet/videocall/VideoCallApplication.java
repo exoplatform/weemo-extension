@@ -102,7 +102,7 @@ public class VideoCallApplication {
       videoCallVersion = "";
     }
     boolean turnOffVideoCallForUser = videoCallService_.isTurnOffVideoCallForUser();
-    boolean turnOffVideoGroupCallForUser = videoCallService_.isTurnOffVideoCallForUser(true);
+    //boolean turnOffVideoGroupCallForUser = videoCallService_.isTurnOffVideoCallForUser(true);
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
     if (tokenKey == null) {
       String profile_id = videoCallModel.getProfileId();
@@ -161,7 +161,7 @@ public class VideoCallApplication {
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
             .set("turnOffVideoCallForUser", turnOffVideoCallForUser)
-            .set("turnOffVideoGroupCallForUser", turnOffVideoGroupCallForUser)
+            //.set("turnOffVideoGroupCallForUser", turnOffVideoGroupCallForUser)
             .set("turnOffVideoCall", turnOffVideoCall)
             .set("videoCallVersion", videoCallVersion)
             .set("isSameUserLogged", isSameUserLogged)
