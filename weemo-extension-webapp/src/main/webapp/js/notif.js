@@ -33,14 +33,17 @@ function WeemoExtension() {
   if (platform.indexOf("Linux") < 0) {
     var wsUri = "wss://localhost:34679";
     var protocol = "weemodriver-protocol";
-    if(typeof MozWebSocket == 'function') WebSocket = MozWebSocket;
-    var websock = new WebSocket(wsUri, protocol);     
-    websock.onerror = function(evt) {
-      weemoExtension.setNotInstallWeemoDriver();
-    };   
-    websock.onopen = function(evt) {
-      weemoExtension.setInstallWeemoDriver();
-    };
+    if ('WebSocket' in window) {
+      var websock = new WebSocket(wsUri, protocol);
+      websock.onerror = function (evt) {
+        weemoExtension.setNotInstallWeemoDriver();
+      };
+      websock.onopen = function (evt) {
+        weemoExtension.setInstallWeemoDriver();
+      };
+    } else {
+      console.log("WebSocket is NOT supported by this browser.");
+    }
   }
 
   try {
@@ -99,20 +102,23 @@ WeemoExtension.prototype.initOptions = function(options) {
   this.getStateURL = this.jzGetState;
 };
 
-WeemoExtension.prototype.checkWeemoDriver = function() {
-    var platform = navigator.platform;
-    if (platform.indexOf("Linux") < 0) {
-      var wsUri = "wss://localhost:34679";
-      var protocol = "weemodriver-protocol";
-      if(typeof MozWebSocket == 'function') WebSocket = MozWebSocket;
-      var websock = new WebSocket(wsUri, protocol);     
-      websock.onerror = function(evt) {
+WeemoExtension.prototype.checkWeemoDriver = function () {
+  var platform = navigator.platform;
+  if (platform.indexOf("Linux") < 0) {
+    var wsUri = "wss://localhost:34679";
+    var protocol = "weemodriver-protocol";
+    if ('WebSocket' in window) {
+      var websock = new WebSocket(wsUri, protocol);
+      websock.onerror = function (evt) {
         //weemoExtension.setNotInstallWeemoDriver();
-      };   
-      websock.onopen = function(evt) {
+      };
+      websock.onopen = function (evt) {
         weemoExtension.setInstallWeemoDriver();
-      };  
+      };
+    } else {
+      console.log("WebSocket is NOT supported by this browser.");
     }
+  }
 };
 
 WeemoExtension.prototype.log = function() {
