@@ -287,7 +287,8 @@ public class VideoCallAdministration {
     }
     //Check for other parametters in case weemoKey is right
     AuthService authService = new AuthService();
-    String content = authService.authenticate(videoCallModel, "basic");
+    String profileId = PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE);
+    String content = authService.authenticate(videoCallModel, profileId);
     if (content != null && content.length() > 0) {
       videoCalls.setAuthDisplaySuccessMsg(true);
     } else {

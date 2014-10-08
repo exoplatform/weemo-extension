@@ -18,6 +18,7 @@ package org.exoplatform.services.videocall;
 
 
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.utils.videocall.PropertyManager;
 import org.json.JSONObject;
 
 import javax.annotation.security.RolesAllowed;
@@ -39,8 +40,9 @@ public class RESTAuthService implements ResourceContainer{
   @Path("/auth/")
   @RolesAllowed("users")
   public Response auth() {
-    authService = new AuthService(); 
-    String content = authService.authenticate(null, "basic");    
+    authService = new AuthService();
+    String profileId = PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE);
+    String content = authService.authenticate(null, profileId);
     return Response.ok(content, MediaType.APPLICATION_JSON).build();    
   }
   
