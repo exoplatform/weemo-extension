@@ -279,7 +279,12 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     this.weemo.setDebugLevel(4); // Activate debug in JavaScript console
     this.weemo.setWebAppId(this.weemoKey);
     this.weemo.setToken("weemo"+$uid);
-    this.weemo.initialize();
+    try {
+      this.weemo.initialize();
+    } catch(err) {
+        if(window.console) 
+          console.log("Can not initialize weemo: " + err);
+    }
     var fn = jqchat(".label-user").text();
     var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
     if (fullname!=="") {
