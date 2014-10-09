@@ -127,8 +127,8 @@ public class PropertyManager {
           isPem = null;
         }
         if(isPem == null) {
-          isPem = videoCallService.getClass().getResourceAsStream("/cert/weemo-ca.pem");
-          if(isPem != null) pemName = "weemo-ca.pem"; 
+          isPem = videoCallService.getClass().getResourceAsStream("/cert/authCA.crt");
+          if(isPem != null) pemName = "authCA.crt";
         }
         //Load p12 file
         InputStream isP12 = null;

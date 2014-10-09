@@ -162,11 +162,10 @@ public class AuthService {
       URL url = null;
       try {
         String urlStr = authUrl + "?client_id=" + clientId + "&client_secret=" + clientSecret + "&uid=weemo" + userId;
-        LOG.info("Request URL: " + urlStr);
         url = new URL(urlStr);
       } catch (MalformedURLException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("Could not create valid URL with base (see log for full URL)");
+          LOG.error("Could not create valid URL with base", e);
         }
       }
       HttpsURLConnection connection = null;
@@ -174,13 +173,12 @@ public class AuthService {
         connection = (HttpsURLConnection) url.openConnection();
       } catch (IOException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("Could not connect (see log for full URL)");
+          LOG.error("Could not connect", e);
         }
       }
 
       String post = "identifier_client=" + URLEncoder.encode(domain_id, "UTF-8")
               + "&id_profile=" + URLEncoder.encode(profile_id, "UTF-8");
-      LOG.info("Post: " + post);
 
       TrustManager[] trustManagers = getTrustManagers(caFile, passphrase);
       KeyManager[] keyManagers = getKeyManagers("PKCS12", p12File, passphrase);
@@ -194,16 +192,15 @@ public class AuthService {
         connection.setRequestProperty("Content-Length", String.valueOf(post.getBytes().length));
       } catch (Exception e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("Could not configure request for POST (see log for full URL & post body)");
+          LOG.error("Could not configure request for POST", e);
         }
       }
 
       try {
-        LOG.info("Connecting");
         connection.connect();
       } catch (IOException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("Could not connect request (see log for full URL)");
+          LOG.error("Could not connect to weemo", e);
         }
       }
 
@@ -225,7 +222,7 @@ public class AuthService {
       }
       videoCallService.setTokenKey(tokenKey);
     } catch (Exception ex) {
-      LOG.error("Have problem during authenticating process.");
+      LOG.error("Have problem during authenticating process.", ex);
       videoCallService.setTokenKey("");
     }
     return responseContent;
@@ -295,15 +292,15 @@ public class AuthService {
       }
     } catch (NoSuchAlgorithmException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("Could not initialize truststore ", e.getMessage());
+        LOG.error("Could not initialize truststore ", e);
       }
     } catch (CertificateException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("Could not initialize truststore ", e.getMessage());
+        LOG.error("Could not initialize truststore ", e);
       }
     } catch (IOException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("Could not initialize truststore ", e.getMessage());
+        LOG.error("Could not initialize truststore ", e);
       }
     }
 
@@ -311,7 +308,7 @@ public class AuthService {
       trustStore.setCertificateEntry("CA", caCert);
     } catch (KeyStoreException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error(trustStoreFile + " cannot be used as a CA");
+        LOG.error(trustStoreFile + " cannot be used as a CA", e);
       }
     }
 
@@ -321,10 +318,10 @@ public class AuthService {
       tmf.init(trustStore);
     } catch (NoSuchAlgorithmException e) {
       if (LOG.isErrorEnabled()) {
-        LOG.error("Java implementation cannot manipulate " + KeyStore.getDefaultType() + " trusts");
+        LOG.error("Java implementation cannot manipulate " + KeyStore.getDefaultType() + " trusts", e);
       }
     } catch (KeyStoreException e) {
-      LOG.error("Java implementation cannot manipulate " + KeyStore.getDefaultType() + " trusts");
+      LOG.error("Java implementation cannot manipulate " + KeyStore.getDefaultType() + " trusts", e);
     }
     return tmf.getTrustManagers();
   }

@@ -30,7 +30,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/weemo/")
-public class RESTAuthService implements ResourceContainer{
+public class  RESTAuthService implements ResourceContainer{
   private AuthService authService;
   
   public RESTAuthService() {     
