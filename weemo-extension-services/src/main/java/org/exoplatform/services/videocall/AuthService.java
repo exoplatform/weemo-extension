@@ -161,8 +161,10 @@ public class AuthService {
       SSLContext ctx = SSLContext.getInstance("SSL");
       URL url = null;
       try {
-        String urlStr = authUrl + "?client_id=" + clientId + "&client_secret=" + clientSecret + "&uid=weemo" + userId;
-        url = new URL(urlStr);
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append(authUrl).append("?client_id=" + clientId).append("&client_secret=" + clientSecret).
+          append("&uid=weemo" + userId).append("&identifier_client=" + URLEncoder.encode(domain_id, "UTF-8")).append("&id_profile=" + URLEncoder.encode(profile_id, "UTF-8"));
+        url = new URL(urlBuilder.toString());
       } catch (MalformedURLException e) {
         if (LOG.isErrorEnabled()) {
           LOG.error("Could not create valid URL with base", e);
@@ -176,10 +178,6 @@ public class AuthService {
           LOG.error("Could not connect", e);
         }
       }
-
-      String post = "identifier_client=" + URLEncoder.encode(domain_id, "UTF-8")
-              + "&id_profile=" + URLEncoder.encode(profile_id, "UTF-8");
-
       TrustManager[] trustManagers = getTrustManagers(caFile, passphrase);
       KeyManager[] keyManagers = getKeyManagers("PKCS12", p12File, passphrase);
 
@@ -189,7 +187,6 @@ public class AuthService {
         connection.setRequestMethod("GET");
         connection.setDoOutput(true);
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        connection.setRequestProperty("Content-Length", String.valueOf(post.getBytes().length));
       } catch (Exception e) {
         if (LOG.isErrorEnabled()) {
           LOG.error("Could not configure request for POST", e);
