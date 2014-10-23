@@ -47,11 +47,11 @@ function WeemoExtension() {
   }
 
   try {
-    this.weemo = new Weemo('', '', 'internal', '', '1');
+    this.rtcc = new Rtcc('', '', 'internal', '');
 
   } catch (err) {
     console.log("WEEMO NOT AVAILABLE YET " + err);
-    this.weemo = undefined;
+    this.rtcc = undefined;
     this.isValidWeemoKey = false;
     jqchat(".btn-weemo-conf").css('display', 'none');
     jqchat(".btn-weemo").addClass('disabled');    
@@ -81,7 +81,7 @@ WeemoExtension.prototype.setNotInstallWeemoDriver = function() {
   if(!isNotInstallWeemoDriver || 0 === isNotInstallWeemoDriver.length) {
     weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
     var downloadUrl = "https://download.weemo.com/file/release/3";
-    if (this.weemo) downloadUrl = this.weemo.getDownloadUrl();
+    if (this.rtcc) downloadUrl = this.rtcc.getDownloadUrl();
     weemoExtension.setCookie("downloadUrl", downloadUrl, 365);    
   }
   weemoExtension.showWeemoInstaller();
@@ -273,14 +273,14 @@ WeemoExtension.prototype.changeStatus = function(status) {
 WeemoExtension.prototype.initCall = function($uid, $name) {
   this.displayVideoCallOnTopNav();
 
-  if (this.weemoKey!=="" && this.weemo !== undefined) {
+  if (this.weemoKey!=="" && this.rtcc !== undefined) {
     jqchat(".btn-weemo-conf").css('display', 'none');
 
-    this.weemo.setDebugLevel(4); // Activate debug in JavaScript console
-    this.weemo.setWebAppId(this.weemoKey);
-    this.weemo.setToken("weemo"+$uid);
+    this.rtcc.setDebugLevel(1); // Activate debug in JavaScript console
+    this.rtcc.setWebAppId(this.weemoKey);
+    this.rtcc.setToken("weemo"+$uid);
     try {
-      this.weemo.initialize();
+      this.rtcc.initialize();
     } catch(err) {
         if(window.console) 
           console.log("Can not initialize weemo: " + err);
@@ -288,9 +288,9 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     var fn = jqchat(".label-user").text();
     var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
     if (fullname!=="") {
-      this.weemo.setDisplayName(fullname); // Configure the display name
+      this.rtcc.setDisplayName(fullname); // Configure the display name
     } else if (fn!=="") {
-      this.weemo.setDisplayName(fn); // Configure the display name
+      this.rtcc.setDisplayName(fn); // Configure the display name
     }
     this.changeStatus("Red");
 
@@ -300,17 +300,17 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
      * @param message
      * @param code
      */
-    this.weemo.onConnectionHandler = function(message, code) {
+    this.rtcc.onConnectionHandler = function(message, code) {
       if(window.console)
         console.log(" =========== Connection Handler : " + message + ' ' + code);
       switch(message) {
-        case 'connectedWeemoDriver':
+        case 'connectedRtccDriver':
           weemoExtension.connectedWeemoDriver = true;
           weemoExtension.setInstallWeemoDriver();
           //this.authenticate();
           weemoExtension.changeStatus("Blue");
           break;
-        case 'disconnectedWeemoDriver':
+        case 'disconnectedRtccDriver':
           weemoExtension.isConnected = false;
           weemoExtension.setCallActive(false);
           if (weemoExtension.hasChatMessage() && (chatApplication !== undefined)) {
@@ -367,7 +367,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
      *
      * @param downloadUrl
      */
-    this.weemo.onWeemoDriverNotStarted = function(downloadUrl) {
+    this.rtcc.onRtccDriverNotStarted = function(downloadUrl) {
       weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
       weemoExtension.setCookie("downloadUrl", downloadUrl, 365);
       weemoExtension.showWeemoInstaller();
@@ -386,7 +386,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
      * @param type
      * @param status
      */
-    this.weemo.onCallHandler = function(callObj, args)
+    this.rtcc.onCallHandler = function(callObj, args)
     {
       weemoExtension.callObj = callObj;
       var type = args.type;
@@ -464,7 +464,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
                 messageWeemo,
                 optionsWeemo,
                 "true"
-              )
+              );
 
               if (status==="terminated") {
                 weemoExtension.initChatMessage();
@@ -496,12 +496,12 @@ WeemoExtension.prototype.createWeemoCall = function(targetUser, targetFullname, 
       this.setDisplaynameToCall(targetFullname);
       this.setCallType("internal");
     } else {
-      this.setUidToCall(this.weemo.getToken());
-      this.setDisplaynameToCall(this.weemo.getDisplayName());
+      this.setUidToCall(this.rtcc.getToken());
+      this.setDisplaynameToCall(this.rtcc.getDisplayName());
       this.setCallType("host");
     }
     this.setCallOwner(true);
-    this.weemo.createCall(this.uidToCall, this.callType, this.displaynameToCall);
+    this.rtcc.createCall(this.uidToCall, this.callType, this.displaynameToCall);
   }
 };
 
@@ -515,7 +515,7 @@ WeemoExtension.prototype.joinWeemoCall = function(chatMessage) {
     }
     this.setCallType("attendee");
     this.setCallOwner(false);
-    this.weemo.createCall(this.uidToCall, this.callType, this.displaynameToCall);
+    this.rtcc.createCall(this.uidToCall, this.callType, this.displaynameToCall);
   }
 };
 

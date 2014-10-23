@@ -30,7 +30,7 @@ var otherExtension = new OtherExtension();
         weemoExtension.setCallType("internal");
         weemoExtension.setCallOwner(true);
         weemoExtension.setCallActive(false);
-        weemoExtension.weemo.createCall(weemoExtension.uidToCall, weemoExtension.callType, weemoExtension.displaynameToCall);
+        weemoExtension.rtcc.createCall(weemoExtension.uidToCall, weemoExtension.callType, weemoExtension.displaynameToCall);
       }
     });
 
@@ -43,7 +43,7 @@ var otherExtension = new OtherExtension();
         weemoExtension.setCallType("host");
         weemoExtension.setCallOwner(true);
         weemoExtension.setCallActive(false);
-        weemoExtension.weemo.createCall(weemoExtension.uidToCall, weemoExtension.callType, weemoExtension.displaynameToCall);
+        weemoExtension.rtcc.createCall(weemoExtension.uidToCall, weemoExtension.callType, weemoExtension.displaynameToCall);
       }
     });
 
@@ -56,7 +56,7 @@ var otherExtension = new OtherExtension();
         weemoExtension.setCallType("attendee");
         weemoExtension.setCallOwner(false);
         weemoExtension.setCallActive(false);
-        weemoExtension.weemo.createCall(weemoExtension.uidToCall, weemoExtension.callType, weemoExtension.displaynameToCall);
+        weemoExtension.rtcc.createCall(weemoExtension.uidToCall, weemoExtension.callType, weemoExtension.displaynameToCall);
       }
     });
   });
