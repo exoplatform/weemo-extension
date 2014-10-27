@@ -31,19 +31,37 @@ function WeemoExtension() {
   //This block code for fix the issue PLF-5688
   var platform = navigator.platform;
   if (platform.indexOf("Linux") < 0) {
-    var wsUri = "wss://localhost:34679";
-    var protocol = "weemodriver-protocol";
-    if ('WebSocket' in window) {
-      var websock = new WebSocket(wsUri, protocol);
-      websock.onerror = function (evt) {
-        weemoExtension.setNotInstallWeemoDriver();
-      };
-      websock.onopen = function (evt) {
-        weemoExtension.setInstallWeemoDriver();
-      };
-    } else {
-      console.log("WebSocket is NOT supported by this browser.");
-    }
+      var wsUri = "wss://localhost:34679";
+      var protocol = "weemodriver-protocol";
+      if ('WebSocket' in window) {
+          var websock = new WebSocket(wsUri, protocol);
+          websock.onerror = function(evt) {
+              weemoExtension.setNotInstallWeemoDriver();
+          };
+          websock.onopen = function(evt) {
+              weemoExtension.setInstallWeemoDriver();
+          };
+      } else {
+          setInterval(function() {
+          var longpollId = Math.random().toString().substring(2);
+              jqchat.ajax({
+                  url: "https://localhost:34679",
+                  data: {
+                      command: longpollId + ":<poll></poll>"
+                  },
+                  success: function(data) {
+                      weemoExtension.setInstallWeemoDriver();
+                  },
+                  error: function(data) {
+                      weemoExtension.setNotInstallWeemoDriver();
+                  },
+
+                  dataType: "jsonp"
+              });
+          }, 10000);
+
+          console.log("WebSocket is NOT supported by this browser.");
+      }
   }
 
   try {
