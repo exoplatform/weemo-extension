@@ -1,5 +1,10 @@
 
 (function(gj, bts_alert, bts_modal, bts_popover) {
+  $(document).ready(function() {
+    $("button .uiIconUpload").parent().click(function(){
+      $(this).closest(".controls").children(".fileHidden").trigger("click");
+    });
+  });
 
   var Map = {};
 
@@ -1148,7 +1153,7 @@
     var id = $(label).attr("for");
     $(control).empty();    
     var divElem = $('<div/>', { 
-      "style":"left: 0px; position: absolute; top: 0px; z-index: 1; white-space: nowrap;"      
+      "style":"left: 0px; position: absolute; top: 0px; z-index: 999; white-space: nowrap;"
     });
 
     var buttonUpload = $('<button/>', { 
@@ -1194,6 +1199,9 @@
       var spanElem = $(containerElem).find("span:first");
       $(spanElem).html(fileName);
       
+    });
+    $(buttonUpload).click(function(){
+      $(this).closest(".controls").children(".fileHidden").trigger("click");
     });
 
   }

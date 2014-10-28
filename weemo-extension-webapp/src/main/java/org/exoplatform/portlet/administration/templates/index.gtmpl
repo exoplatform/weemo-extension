@@ -61,7 +61,7 @@
 					  if(StringUtils.isEmpty(p12CertName)) {
 					%>
 					  
-						<div style="left: 0px; position: absolute; top: 0px; z-index: 1; white-space: nowrap;">
+						<div style="left: 0px; position: absolute; top: 0px; z-index: 999; white-space: nowrap;">
 						      <button onkeypress="return false;" class="btn btn-small" type="button">
 							  <i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
 							<span style="text-overflow: ellipsis; white-space: nowrap; width: 137px; overflow: hidden; height: 28px; display: inline-block; margin: 0px 10px; vertical-align: middle;">&{exoplatform.videocall.administration.noFile}</span>
@@ -90,7 +90,7 @@
 					%>
 					  			  
 					  
-					    <div style="left: 0px; position: absolute; top: 0px; z-index: 1; white-space: nowrap;">
+					    <div style="left: 0px; position: absolute; top: 0px; z-index: 999; white-space: nowrap;">
 						      <button onkeypress="return false;" class="btn btn-small" type="button">
 							  <i class="uiIconUpload uiIconLightGray"></i>&nbsp;&{exoplatform.videocall.administration.upload}</button>
 							<span style="text-overflow: ellipsis; white-space: nowrap; width: 137px; overflow: hidden; height: 28px; display: inline-block; margin: 0px 10px; vertical-align: middle;">&{exoplatform.videocall.administration.noFile}</span>
