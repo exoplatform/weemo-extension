@@ -63,4 +63,13 @@ public class  RESTAuthService implements ResourceContainer{
     String content = authService.authenticate(null, profileId);    
     return Response.ok(content, MediaType.APPLICATION_JSON).build();    
   }
+
+  @GET
+  @Path("/hasOneOneCallPermission/{userId}/")
+  @RolesAllowed("users")
+  public Response hasOneOneCallPermission(@PathParam("userId") String userId) throws Exception {
+    VideoCallService videoCallService = new VideoCallService();
+    boolean hasOneOneCallPermission = !videoCallService.isTurnOffVideoCallForUser(false, userId);
+    return Response.ok(String.valueOf(hasOneOneCallPermission)).build();
+  }
 }

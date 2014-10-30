@@ -43,7 +43,11 @@
         && weemoExtension.tokenKey.length > 0) {
           var targetUser = gj(this).attr("data-username");
           var targetFullname = gj(this).attr("data-fullname");
-          weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+          if (weemoExtension.hasOneOneCallPermission(targetUser.trim()) === "false") {
+            eXo.ecm.VideoCalls.showReceivingPermissionInterceptor(targetFullname.trim());
+          } else {
+            weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+          }
         } else if(!jqchat(this).hasClass("disabled")) {
           if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
             eXo.ecm.VideoCalls.showInstallInterceptor();
@@ -72,7 +76,16 @@
     gj(interceptor).appendTo("body");       
     gj(interceptor).modal('show');
     gj(".modal-backdrop").remove();
-  } 
+  }
+
+  VideoCalls.prototype.showReceivingPermissionInterceptor = function(fullName) {
+    var interceptor = gj("#receive-permission-interceptor");
+    gj(interceptor).appendTo("body");
+    var $message = gj("#receive-permission-interceptor-message", interceptor);
+    $message.html(interceptor.attr("data-message").replace("{0}", fullName));
+    gj(interceptor).modal('show');
+    gj(".modal-backdrop").remove();
+  }
 
 
   gj(document).ready(function() {

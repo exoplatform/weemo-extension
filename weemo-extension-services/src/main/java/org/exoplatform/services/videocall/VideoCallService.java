@@ -16,18 +16,7 @@
  */
 package org.exoplatform.services.videocall;
 
-import java.io.InputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-
-import javax.jcr.LoginException;
-import javax.jcr.NoSuchWorkspaceException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.portal.config.UserACL;
@@ -41,9 +30,21 @@ import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.IdentityRegistry;
 import org.exoplatform.services.wcm.core.NodetypeConstant;
 import org.exoplatform.services.wcm.utils.WCMCoreUtils;
-import org.apache.commons.lang.StringUtils;
+
+import javax.jcr.LoginException;
+import javax.jcr.NoSuchWorkspaceException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 
 public class VideoCallService {
@@ -454,6 +455,16 @@ public class VideoCallService {
    * @return false if VideoCals is turn on.
    */
   public boolean isTurnOffVideoCallForUser(boolean isGroupCall) throws Exception {
+    return isTurnOffVideoCallForUser(isGroupCall, null);
+  }
+  /**
+   * Check if VideoCalls is turn off or not for current user.
+   * @param isGroupCall true: check for Video Group call; false: check for 1:1 call
+   * @param user user to check
+   * @return true if VideoCalls is turn off.
+   * @return false if VideoCals is turn on.
+   */
+  public boolean isTurnOffVideoCallForUser(boolean isGroupCall, String user) throws Exception {
     boolean isTurnOff = true;
     VideoCallModel videoCallModel = null;
     if(videoProfileCache != null && videoProfileCache.get(VIDEO_PROFILE_KEY) != null) {
@@ -469,7 +480,13 @@ public class VideoCallService {
       String videoCallsPermissions = videoCallModel.getVideoCallPermissions();
       if(StringUtils.isEmpty(videoCallsPermissions)) return true;
 
-      String userId = ConversationState.getCurrent().getIdentity().getUserId();
+      String userId = user;
+      if (StringUtils.isEmpty(user)) {
+        userId = ConversationState.getCurrent().getIdentity().getUserId();
+      }
+      Identity userIdentity = WCMCoreUtils.getService(IdentityRegistry.class).getIdentity(userId);
+      if (userIdentity == null) return true;
+
       //Put list of permission into a map
       HashMap<String, String> permissionsMap = new HashMap<String, String>();
       String[] arrs = videoCallsPermissions.split(",");
@@ -495,7 +512,7 @@ public class VideoCallService {
         //Check permission for membership
         UserACL userACL = WCMCoreUtils.getService(UserACL.class);
         for (String string : memberships) {
-          if(userACL.hasPermission(string)) {
+          if(userACL.hasPermission(userIdentity, string)) {
             boolean value = Boolean.valueOf(permissionsMap.get(string));
             if(value) return !value;
           }

@@ -71,3 +71,26 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div>
+
+
+<!--Receiving Permission Interceptor Modal -->
+<div data-message="&{exoplatform.videocall.permissions.message.receiving.user}" id="receive-permission-interceptor" class="uiPopup modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="popupHeader clearfix modal-header">
+                <button type="button" class="uiIconClose pull-right close" data-dismiss="modal" aria-hidden="true" rel="tooltip" data-placement="bottom" title="Close"></button>
+                <span id="groupModalTitle" class="PopupTitle popupTitle modal-title" style="cursor: auto;">&{exoplatform.videocall.permissions.title}</span>
+            </div>
+
+            <div class="PopupContent popupContent modal-body">
+                <i class="uiVideoCallIconWarning"></i>
+                <span id="receive-permission-interceptor-message">&{exoplatform.videocall.permissions.message.receiving.user}</span>
+                <div class="uiAction uiActionBorder">
+                    <button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.permissions.okButton}</button>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
