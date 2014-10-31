@@ -172,7 +172,7 @@ WeemoExtension.prototype.getCookie = function(cname)
 }
 
 WeemoExtension.prototype.showWeemoInstaller = function() {
-  if(!weemoExtension.isSupport || weemoExtension.connectedWeemoDriver) {
+  if(!weemoExtension.isSupport || weemoExtension.connectedWeemoDriver || weemoExtension.isTurnOff==="true") {
     jqchat("#weemo-alert").hide();
     return;
   }
