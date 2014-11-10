@@ -51,8 +51,11 @@ public class VideoCallApplication {
     PortalRequestContext requestContext = Util.getPortalRequestContext();
     HttpSession httpSession = requestContext.getRequest().getSession();
     remoteUser_ = renderContext.getSecurityContext().getRemoteUser();
+
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
     if (videoCallModel == null) videoCallModel = new VideoCallModel();
+
+    // Get Weemo Key, Token Key
     String weemoKey = videoCallModel.getWeemoKey();
     String tokenKey = null;
     if (httpSession.getAttribute("tokenKey") != null) {
@@ -60,25 +63,10 @@ public class VideoCallApplication {
     } else {
       tokenKey = videoCallService_.getTokenKey();
     }
-    //Load videocalls version
-    InputStream isProperties = null;
-    isProperties = videoCallService_.getClass().getResourceAsStream("/extension.properties");
 
-    String videoCallVersion = null;
-    if (isProperties != null) {
-      Properties properties = new Properties();
-      properties.load(isProperties);
-      videoCallVersion = properties.getProperty(PropertyManager.PROPERTY_VIDEOCALL_VERSION);
-    }
-    if (videoCallVersion == null) {
-      videoCallVersion = "";
-    }
-    boolean turnOffVideoCallForUser = videoCallService_.isTurnOffVideoCallForUser();
-    boolean turnOffVideoGroupCallForUser = videoCallService_.isTurnOffVideoCallForUser(true);
-    boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
+    AuthService authService = new AuthService();
     if (tokenKey == null) {
       String profile_id = videoCallModel.getProfileId();
-      AuthService authService = new AuthService();
       String content = authService.authenticate(null, profile_id);
       if (!StringUtils.isEmpty(content)) {
         JSONObject json = new JSONObject(content);
@@ -90,6 +78,21 @@ public class VideoCallApplication {
         videoCallService_.setTokenKey("");
       }
     }
+
+    // Load videocalls version
+    String videoCallVersion = null;
+    InputStream isProperties = videoCallService_.getClass().getResourceAsStream("/extension.properties");
+    if (isProperties != null) {
+      Properties properties = new Properties();
+      properties.load(isProperties);
+      videoCallVersion = properties.getProperty(PropertyManager.PROPERTY_VIDEOCALL_VERSION);
+    }
+    videoCallVersion = (videoCallVersion == null) ? StringUtils.EMPTY : videoCallVersion;
+
+    // Check permission for using weemo of user
+    boolean turnOffVideoCallForUser = videoCallService_.isTurnOffVideoCallForUser();
+    boolean turnOffVideoGroupCallForUser = videoCallService_.isTurnOffVideoCallForUser(true);
+    boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
 
     // Check if same account loggin on other place
     boolean isSameUserLogged = false;
