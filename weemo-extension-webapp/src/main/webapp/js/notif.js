@@ -662,8 +662,8 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
   }
 
   $tiptip_content.removeClass("DisabledEvent");
-  $tiptip_content.off("DOMNodeInserted", this.tiptipContentDOMNodeInsertedHandler);
-  $tiptip_content.on("DOMNodeInserted", this.tiptipContentDOMNodeInsertedHandler);
+  $tiptip_content.unbind("DOMNodeInserted", this.tiptipContentDOMNodeInsertedHandler);
+  $tiptip_content.bind("DOMNodeInserted", this.tiptipContentDOMNodeInsertedHandler);
 };
 
 WeemoExtension.prototype.attachWeemoToProfile = function() {
