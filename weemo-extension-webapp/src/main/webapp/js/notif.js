@@ -65,8 +65,15 @@ function WeemoExtension() {
       }
   }
 
+  var ieVersionNumber = GetIEVersion();
+
   try {
-    this.rtcc = new Rtcc('', '', 'internal', '');
+    if (ieVersionNumber < 11 && ieVersionNumber > 0 ) {
+      var options = { useJquery:true };
+      this.rtcc = new Rtcc('', '', 'internal', options);
+    } else {
+      this.rtcc = new Rtcc('', '', 'internal', '');
+    }
 
   } catch (err) {
     console.log("WEEMO NOT AVAILABLE YET " + err);
