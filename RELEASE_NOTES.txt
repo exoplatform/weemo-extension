@@ -1,0 +1,23 @@
+
+Release Notes - eXo Add-on Video Calls - Version 1.0.0
+
+
+** Bug
+    * [VIDEO-2] - In IE9/10, the installer weemo is displayed while it is already installed
+    * [VIDEO-5] - [Chrome] The browser still attempt to communicate with the weemo driver after turn off Video call
+    * [VIDEO-8] - Call button does not dissappear from Suggestion gadget after turning off Video Call 
+    * [VIDEO-9] - Cannot download Weemo on FF31 if not downloading Weemo on Chrome first yet
+    * [VIDEO-10] - Bad UI of Video Call installation message
+    * [VIDEO-11] - User without permission can still receive a call.
+    * [VIDEO-14] - Cannot see Weemo driver installer popup on IE9
+    * [VIDEO-15] - Call button is disappeared after providing correct Weemo key and click Test Weemo Connection button
+    * [VIDEO-16] - IE - The Call button is disabled for two online users
+    * [VIDEO-18] - Wrong position of "Email Notification" link when Video Calls addon is installed
+    * [VIDEO-24] - Conference calls doesn't work
+
+
+** Task
+    * [VIDEO-19] - Migration to SightCall 5.3 (JS API migration)
+    * [VIDEO-20] - Update Authenticate URL and certificates
+    * [VIDEO-21] - Update add-ons parent pom
+    * [VIDEO-23] - Replace default pem file by the rtc one and remove the LOG which contains the credentials
