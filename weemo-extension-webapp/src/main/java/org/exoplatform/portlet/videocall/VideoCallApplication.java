@@ -1,8 +1,9 @@
 package org.exoplatform.portlet.videocall;
 
 import juzu.Path;
+import juzu.Response;
 import juzu.View;
-import juzu.request.RenderContext;
+import juzu.request.SecurityContext;
 import juzu.template.Template;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.model.videocall.VideoCallModel;
@@ -47,10 +48,10 @@ public class VideoCallApplication {
   }
 
   @View
-  public void index(RenderContext renderContext) throws Exception {
+  public Response.Content index(SecurityContext securityContext) throws Exception {
     PortalRequestContext requestContext = Util.getPortalRequestContext();
     HttpSession httpSession = requestContext.getRequest().getSession();
-    remoteUser_ = renderContext.getSecurityContext().getRemoteUser();
+    remoteUser_ = securityContext.getRemoteUser();
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
     if (videoCallModel == null) videoCallModel = new VideoCallModel();
     String weemoKey = videoCallModel.getWeemoKey();
@@ -97,7 +98,7 @@ public class VideoCallApplication {
       isSameUserLogged = true;
     }
 
-    index.with().set("user", remoteUser_)
+    return index.with().set("user", remoteUser_)
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
             .set("turnOffVideoCallForUser", turnOffVideoCallForUser)
@@ -105,6 +106,6 @@ public class VideoCallApplication {
             .set("turnOffVideoCall", turnOffVideoCall)
             .set("videoCallVersion", videoCallVersion)
             .set("isSameUserLogged", isSameUserLogged)
-            .render();
+            .ok();
   }
 }

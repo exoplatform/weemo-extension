@@ -1,16 +1,9 @@
 package org.exoplatform.portlet.administration;
 
-import juzu.Action;
-import juzu.Method;
-import juzu.Path;
-import juzu.Resource;
-import juzu.Response;
-import juzu.Route;
-import juzu.View;
+import juzu.*;
 import juzu.impl.request.Request;
 import juzu.plugin.ajax.Ajax;
 import juzu.request.HttpContext;
-import juzu.request.RenderContext;
 import juzu.template.Template;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.commons.utils.ObjectPageList;
@@ -92,7 +85,7 @@ public class VideoCallAdministration {
 
   @View
   @Route("/")
-  public void index(RenderContext renderContext) throws Exception {
+  public Response.Content index() throws Exception {
     String weemoKey = "";
     String passPhrase = "";
     String authId = "";
@@ -136,7 +129,10 @@ public class VideoCallAdministration {
       videoPermissions = PropertyManager.getProperty(PropertyManager.PROPERTY_DEFAULT_PERMISSION);
     }
 
-    index.with().set("turnOffVideoCall", turnOffVideoCall)
+    videoCalls.setDisplaySuccessMsg(false);
+    videoCalls.setAuthDisplaySuccessMsg(false);
+
+    return index.with().set("turnOffVideoCall", turnOffVideoCall)
             .set("isDisplaySuccessMsg", videoCalls.isDisplaySuccessMsg())
             .set("isDisplayAuthSuccessMsg", videoCalls.isDisplayAuthSuccessMsg())
             .set("weemoKey", weemoKey)
@@ -147,10 +143,7 @@ public class VideoCallAdministration {
             .set("videoCallPermissions", getListOfPermissions(videoPermissions))
             .set("p12CertName", p12CertName)
             .set("pemCertName", pemCertName)
-            .render();
-    videoCalls.setDisplaySuccessMsg(false);
-    videoCalls.setAuthDisplaySuccessMsg(false);
-
+            .ok();
   }
 
   @Action
@@ -159,7 +152,7 @@ public class VideoCallAdministration {
                        String customerCertificatePassphrase,
                        String videoCallPermissions, org.apache.commons.fileupload.FileItem p12Cert,
                        org.apache.commons.fileupload.FileItem pemCert, HttpContext context) throws Exception {
-    if (context.getMethod().equals(Method.GET)) {
+    if (context.getMethod().equals(HttpMethod.GET)) {
       videoCalls.setDisplaySuccessMsg(false);
       return VideoCallAdministration_.index();
 
@@ -212,7 +205,7 @@ public class VideoCallAdministration {
     PortalRequestContext requestContext = Util.getPortalRequestContext();
     HttpSession httpSession = requestContext.getRequest().getSession();
 
-    if (context.getMethod().equals(Method.GET)) {
+    if (context.getMethod().equals(HttpMethod.GET)) {
       httpSession.removeAttribute(MODEL_FROM_AUTH);
       return VideoCallAdministration_.index();
     }
@@ -458,8 +451,8 @@ public class VideoCallAdministration {
   public String getListOfPermissions(String videoPermissions) {
     String result = "";
     Request request = Request.getCurrent();
-    Locale locale = request.getContext().getUserContext().getLocale();
-    ResourceBundle resoureBundle = request.getContext().getApplicationContext().resolveBundle(locale);
+    Locale locale = request.getUserContext().getLocale();
+    ResourceBundle resoureBundle = request.getApplicationContext().resolveBundle(locale);
 
     StringBuffer sb = new StringBuffer();
     try {
