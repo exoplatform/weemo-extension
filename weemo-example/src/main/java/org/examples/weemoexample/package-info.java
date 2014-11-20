@@ -16,17 +16,26 @@
 
 @juzu.Application
 @Portlet(name="WeemoExamplePortlet")
-@Assets(
+@Scripts(location = AssetLocation.SERVER,
+        value = {
+            @Script(value = "js/jquery-1.8.3.min.js", id = "jquery"),
+            @Script(value = "js/jquery-juzu-utils-0.1.0.js", depends = "jquery", id = "juzu-utils"),
+            @Script(value = "js/other-extension.js", depends = "juzu-utils", id = "other-extension")
+        }
+)
+/*@Assets(
         location = AssetLocation.SERVER,
         scripts = {
                 @Script(src = "js/jquery-1.8.3.min.js", id = "jquery"),
                 @Script(src = "js/jquery-juzu-utils-0.1.0.js", depends = "jquery", id = "juzu-utils"),
                 @Script(src = "js/other-extension.js", depends = "juzu-utils", id = "other-extension")
         }
-)
+)*/
+@Assets("*")
 package org.examples.weemoexample;
 
 import juzu.asset.AssetLocation;
 import juzu.plugin.asset.Assets;
 import juzu.plugin.asset.Script;
+import juzu.plugin.asset.Scripts;
 import juzu.plugin.portlet.Portlet;
