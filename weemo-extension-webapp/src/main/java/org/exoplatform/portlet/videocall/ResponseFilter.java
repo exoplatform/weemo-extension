@@ -16,6 +16,8 @@ import javax.portlet.filter.RenderFilter;
 
 import org.w3c.dom.Element;
 
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.videocall.VideoCallService;
 
 
@@ -24,7 +26,7 @@ public class ResponseFilter implements RenderFilter
 {
   
   public static final String INVALID_WEEMO_JS_MESSAGE = "/* Not allowed (disabled) */";
-  
+  private static final Log LOG = ExoLogger.getLogger(ResponseFilter.class.getName());
   public void init(FilterConfig filterConfig) throws PortletException
   {
   }
@@ -62,7 +64,7 @@ public class ResponseFilter implements RenderFilter
       br.close();
       return ! (stringBuilder.toString().toUpperCase().equals(INVALID_WEEMO_JS_MESSAGE.toUpperCase()));
     } catch (Exception e) {
-      e.printStackTrace();
+      LOG.error("Can not get " + "https://download.rtccloud.net/js/webappid/" + weemoKey,e);
     }
     return false;
   }
