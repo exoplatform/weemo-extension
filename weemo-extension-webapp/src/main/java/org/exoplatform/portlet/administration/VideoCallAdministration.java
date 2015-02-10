@@ -129,12 +129,16 @@ public class VideoCallAdministration {
       videoPermissions = PropertyManager.getProperty(PropertyManager.PROPERTY_DEFAULT_PERMISSION);
     }
 
+    boolean isDisplaySuccessMsg = videoCalls.isDisplaySuccessMsg();
+    boolean isDisplayAuthSuccessMsg = videoCalls.isDisplayAuthSuccessMsg();
+
+    // Reset message status
     videoCalls.setDisplaySuccessMsg(false);
     videoCalls.setAuthDisplaySuccessMsg(false);
 
     return index.with().set("turnOffVideoCall", turnOffVideoCall)
-            .set("isDisplaySuccessMsg", videoCalls.isDisplaySuccessMsg())
-            .set("isDisplayAuthSuccessMsg", videoCalls.isDisplayAuthSuccessMsg())
+            .set("isDisplaySuccessMsg", isDisplaySuccessMsg)
+            .set("isDisplayAuthSuccessMsg", isDisplayAuthSuccessMsg)
             .set("weemoKey", weemoKey)
             .set("isFromAuth", isFromAuth)
             .set("customerCertificatePassphrase", passPhrase)
