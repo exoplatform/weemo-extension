@@ -43,9 +43,6 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
 				<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.installKey.cancelButton}</button>
 			</div>
 		</div>
-		
-      </div>
-		
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div>
@@ -65,9 +62,6 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
 				<button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.permissions.okButton}</button>
 			</div>
 		</div>
-		
-      </div>
-		
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div>
