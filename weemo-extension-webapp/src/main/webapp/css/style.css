@@ -29,11 +29,6 @@
 	margin-right:4px;
 }
 
-button.close{
-	background-image: url("../img/uiIconsLightGray.png");
-	background-position: -160px -100px;
-}
-
 .weemo-alert{
 	 position: absolute; 
 	 top: 32px; 
