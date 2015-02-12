@@ -32,8 +32,8 @@ import java.util.Properties;
 public class PropertyManager {
   private static Properties properties = null;
 
-  private static final String PROPERTIES_PATH = System.getProperty("catalina.base")+"/gatein/conf/weemo/weemo.properties";
-  private static final String PROPERTIES_CERT_BASE_PATH = System.getProperty("catalina.base")+"/gatein/conf/weemo/";
+  private static final String PROPERTIES_PATH = System.getProperty("exo.conf.dir")+"/weemo/weemo.properties";
+  private static final String PROPERTIES_CERT_BASE_PATH = System.getProperty("exo.conf.dir")+"/weemo/";
   
   public static final String PROPERTY_WEEMO_KEY = "weemo.webappId";
   public static final String PROPERTY_CLIENT_KEY_AUTH = "weemo.authClientId";
@@ -81,7 +81,7 @@ public class PropertyManager {
       }
       catch (Exception e)
       {
-        LOG.warn("Can not find weemo.properties. Default values will be used instead");
+        LOG.warn("Cannot find " + PROPERTIES_PATH + ". Default values will be used instead.");
       }
             
       overridePropertyIfNotSet(PROPERTY_DOMAIN_ID, "");
