@@ -649,18 +649,15 @@
 	      var tdIcon = $('<td/>', {
 		"class":"center"
 	      });
-        /*var tdGroupIcon = $('<td/>', {
+        var tdGroupIcon = $('<td/>', {
           "class":"center"
-        });*/
-	      var divContainerIcon = $('<div/>', {        
-		"class":"onOffCheckbox"
-	      });
+        });
 	      var divIcon = $('<div/>', {        
 		"class":"spaceRole"
 	      });
-        /*var divGroupIcon = $('<div/>', {
+        var divGroupIcon = $('<div/>', {
           "class":"spaceRole"
-        });*/
+        });
 	      var yesLabel = $("#videocalls-label").attr("yesLabel");
 	      var noLabel = $("#videocalls-label").attr("noLabel");
 	      var inputIcon = $('<input/>', { 
@@ -674,7 +671,7 @@
 		"style":"visibility: hidden;",       
 		"class":"yesno"
 	      });
-        /*var inputGroupIcon = $('<input/>', {
+        var inputGroupIcon = $('<input/>', {
           "type":"checkbox",
           "id":"enableVideoCalls",
           "name":"enableVideoCalls",
@@ -684,15 +681,15 @@
           "checked":"checked",
           "style":"visibility: hidden;",
           "class":"yesno"
-        });*/
+        });
 	      $(divIcon).append(inputIcon);
-        //$(divGroupIcon).append(inputGroupIcon);
-        $(divContainerIcon).append(divIcon);
-        $(tdIcon).append(divContainerIcon);
-        //$(tdGroupIcon).append(divGroupIcon);
+        $(divGroupIcon).append(inputGroupIcon);
+
+        $(tdIcon).append(divIcon);
+        $(tdGroupIcon).append(divGroupIcon);
 
 	      $(tr).append(tdIcon);
-        //$(tr).append(tdGroupIcon);
+        $(tr).append(tdGroupIcon);
 
 	      
 	      $(divIcon).click(function()
@@ -702,12 +699,12 @@
 		    input.attr("value", remembermeOpt);
 		  });
 
-        /*$(divGroupIcon).click(function()
+        $(divGroupIcon).click(function()
         {
           var input = $(divGroupIcon).find("input");
           var remembermeOpt = input.attr("value") == "true" ? "false" : "true";
           input.attr("value", remembermeOpt);
-        });*/
+        });
 
     	  var yeslabel;
     	  var nolabel;
@@ -725,7 +722,7 @@
 	        });
     	  });
 
-        /*var yesGrouplabel;
+        var yesGrouplabel;
         var noGrouplabel;
         $(divGroupIcon).children('input:checkbox').each(function () {
           yesGrouplabel = $(divGroupIcon).data("yes");
@@ -738,7 +735,7 @@
           {
             $(divGroupIcon).closest("div.spaceRole").trigger("click");
           });
-        });*/
+        });
 
 
 
@@ -1034,9 +1031,9 @@
 				var tdPermission = $(this).find("td")[0];
 				var tdOnOff = $(this).find("td")[1];
 				var value = $(tdOnOff).find("input:first").val();
-				//var tdGroupOnOff = $(this).find("td")[2];
-				//var valueGroupOnOff = $(tdGroupOnOff).find("input:first").val();
-				permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value; //+ "#" + valueGroupOnOff;
+				var tdGroupOnOff = $(this).find("td")[2];
+				var valueGroupOnOff = $(tdGroupOnOff).find("input:first").val();
+				permissionData = permissionData + "," + $(tdPermission).find("div:first").attr("permission") + "#" + value + "#" + valueGroupOnOff;
 			  }
 			});
 		  }
