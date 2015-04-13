@@ -22,9 +22,9 @@
   </modules>
   
   <scm>
-    <connection>scm:git:git://github.com/exo-addons/weemo-extension.git</connection>
-    <developerConnection>scm:git:git@github.com:exo-addons/weemo-extension.git</developerConnection>
-    <url>https://github.com/exo-addons/weemo-extension</url>
+    <connection>scm:git:git://github.com/exoplatform/weemo-extension.git</connection>
+    <developerConnection>scm:git:git@github.com:exoplatform/weemo-extension.git</developerConnection>
+    <url>https://github.com/exoplatform/weemo-extension</url>
     <tag>HEAD</tag>
   </scm>
   <properties>
