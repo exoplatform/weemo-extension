@@ -32,7 +32,7 @@
     <commons-lang3.version>3.1</commons-lang3.version>
     <exoplatform.version>4.0.0</exoplatform.version>
     <javax.enterprise.cdi.version>1.0-SP4</javax.enterprise.cdi.version>
-    <juzu.version>1.0.0-cr2-SNAPSHOT</juzu.version>
+    <juzu.version>1.0.x-SNAPSHOT</juzu.version>
     <mongodb-java-driver.version>2.11.1</mongodb-java-driver.version> 
   </properties>
   <dependencyManagement>
