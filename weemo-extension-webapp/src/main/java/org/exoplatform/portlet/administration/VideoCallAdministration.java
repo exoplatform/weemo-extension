@@ -1,6 +1,12 @@
 package org.exoplatform.portlet.administration;
 
-import juzu.*;
+import juzu.Action;
+import juzu.HttpMethod;
+import juzu.Path;
+import juzu.Resource;
+import juzu.Response;
+import juzu.Route;
+import juzu.View;
 import juzu.impl.request.Request;
 import juzu.plugin.ajax.Ajax;
 import juzu.request.HttpContext;
@@ -17,7 +23,6 @@ import org.exoplatform.services.organization.MembershipType;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.Query;
 import org.exoplatform.services.organization.User;
-import org.exoplatform.services.organization.idm.ExtGroup;
 import org.exoplatform.services.videocall.AuthService;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -147,7 +152,43 @@ public class VideoCallAdministration {
             .set("videoCallPermissions", getListOfPermissions(videoPermissions))
             .set("p12CertName", p12CertName)
             .set("pemCertName", pemCertName)
+            .set("isCloudRunning", VideoCallService.isCloudRunning())
             .ok();
+  }
+
+  @Action
+  @Route("/saveCloud")
+  public Response saveCloud(String disableVideoCall, String videoCallPermissions, HttpContext context) throws Exception{
+    if (context.getMethod().equals(HttpMethod.GET)) {
+      videoCalls.setDisplaySuccessMsg(false);
+      return VideoCallAdministration_.index();
+
+    }
+    VideoCallService videoCallService = new VideoCallService();
+    VideoCallModel videoCallModel = new VideoCallModel();
+    if (videoCallService != null) {
+      VideoCallModel jcrModel = videoCallService.getVideoCallProfile();
+      if (jcrModel != null){
+        videoCallModel.setWeemoKey(jcrModel.getWeemoKey());
+        videoCallModel.setAuthId(jcrModel.getAuthId());
+        videoCallModel.setAuthSecret(jcrModel.getAuthSecret());
+        videoCallModel.setCustomerCertificatePassphrase(jcrModel.getCustomerCertificatePassphrase());
+        videoCallModel.setDomainId(jcrModel.getDomainId());
+        videoCallModel.setProfileId(jcrModel.getProfileId());
+        videoCallModel.setVideoCallPermissions(jcrModel.getVideoCallPermissions());
+      }
+    }
+
+    boolean disableCall = StringUtils.isEmpty(disableVideoCall) ? false : Boolean.parseBoolean(disableVideoCall);
+    videoCallModel.setDisableVideoCall(disableVideoCall);
+
+    if(!disableCall) {
+      if(videoCallPermissions == null) videoCallPermissions = "";
+      videoCallModel.setVideoCallPermissions(videoCallPermissions.trim());
+    }
+    videoCallService.saveVideoCallProfile(videoCallModel);
+    videoCalls.setDisplaySuccessMsg(true);
+    return VideoCallAdministration_.index();
   }
 
   @Action
@@ -403,18 +444,18 @@ public class VideoCallAdministration {
     }
     if (sibblingsGroup != null && sibblingsGroup.size() > 0) {
       for (Object obj : sibblingsGroup) {
-        String groupLabel = ((ExtGroup) obj).getLabel();
-        if (groupId != null && ((ExtGroup) obj).getId().equalsIgnoreCase(groupId)) {
+        String groupLabel = ((Group) obj).getLabel();
+        String groupIdObj = ((Group) obj).getId();
+        if (groupId != null && groupIdObj.equalsIgnoreCase(groupId)) {
           String groupObj = loadChildrenGroups(groupId, groupLabel);
           sbGroups.append(groupObj).append(",");
         } else {
           sb = new StringBuffer();
-          sb.append("{\"group\":\"" + ((ExtGroup) obj).getId() + "\",\"label\":\"" + groupLabel + "\"}");
+          sb.append("{\"group\":\"").append(groupIdObj).append("\",\"label\":\"").append(groupLabel).append("\"}");
           sbGroups.append(sb.toString()).append(",");
         }
       }
     }
-
 
     groups = groups.concat(sbGroups.toString());
     if (groups.length() > 1) {
@@ -422,7 +463,7 @@ public class VideoCallAdministration {
     }
     groups = groups.concat("]");
     StringBuffer sbResponse = new StringBuffer();
-    sbResponse.append("{\"memberships\":\"" + memberships + "\", \"groups\":" + groups + "}");
+    sbResponse.append("{\"memberships\":\"").append(memberships).append("\", \"groups\":").append(groups).append("}");
     return Response.ok(sbResponse.toString()).withMimeType("application/json; charset=UTF-8").withHeader
             ("Cache-Control", "no-cache");
   }
@@ -438,8 +479,10 @@ public class VideoCallAdministration {
         StringBuffer sbChildren = new StringBuffer();
         sbChildren.append("[");
         for (Object obj : collection) {
-          sbChildren.append("{\"group\":\"" + ((ExtGroup) obj).getId() + "\",\"label\":\"" + ((ExtGroup) obj)
-                  .getLabel() + "\"},");
+          String groupIdObj = ((Group) obj).getId();
+          String groupLabelObj = ((Group) obj).getLabel();
+          sbChildren.append("{\"group\":\"").append(groupIdObj).append("\",\"label\":\"").append(groupLabelObj)
+                  .append("\"},");
         }
         String childrenGroups = sbChildren.toString();
         if (childrenGroups.length() > 1) {
@@ -466,17 +509,21 @@ public class VideoCallAdministration {
           if (string.split("#").length < 3) continue;
           String permissionId = string.split("#")[0];
           String enableVideoCalls = string.split("#")[1];
+          sb.append("#").append(permissionId).append(",").append(enableVideoCalls);
           String enableVideoGroupCalls = string.split("#")[2];
-          sb.append("#").append(permissionId).append(",").append(enableVideoCalls).append("," +
-                  "").append(enableVideoGroupCalls);
+          sb.append(",").append(enableVideoGroupCalls);
+
           if (permissionId.indexOf(":") > 0) {
             String membership = permissionId.split(":")[0].trim();
             String memebershipLabel = membership;
             String groupId = permissionId.split(":")[1];
             Group group = organizationService_.getGroupHandler().findGroupById(groupId);
-            sb.append(",").append(capitalize(memebershipLabel) + " " + resoureBundle.getString("exoplatform.videocall" +
-                    ".administration.permission.in") + " " + group.getLabel()).append(" (").append(permissionId).
-                    append(")");
+            if (group != null) {
+              sb.append(",").append(capitalize(memebershipLabel)).append(" ").append(resoureBundle.getString
+                      ("exoplatform.videocall.administration.permission.in")).append(" ").append(group.getLabel())
+                      .append(" (").append(permissionId).
+                      append(")");
+            }
           } else {
             User user = organizationService_.getUserHandler().findUserByName(permissionId.trim());
             if (user != null) {

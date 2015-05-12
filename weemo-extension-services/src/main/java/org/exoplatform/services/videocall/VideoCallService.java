@@ -63,7 +63,8 @@ public class VideoCallService {
   public static String VIDEO_PEM_CERT_NODE_NAME = "pemCert";
   public static String VIDEO_CERT_MIXIN_NAME = "exo:videoCallCertificate";
   public static String VIDEO_PROFILE_ID = "exo:profileId";
-  public static String VIDEO_DOMAIN_ID = "exo:domainId";  
+  public static String VIDEO_DOMAIN_ID = "exo:domainId";
+  private static Boolean isCloudRunning = null;
   private static String tokenKey = null;
   
   private static final Log LOG = ExoLogger.getLogger(VideoCallService.class.getName());
@@ -320,7 +321,25 @@ public class VideoCallService {
             videoCallModel.setDomainId(videoCallNode.getProperty(VIDEO_DOMAIN_ID).getString());
           }          
           if(videoCallNode.hasProperty(VIDEO_PERMISSIONS_PROP)) {
-            videoCallModel.setVideoCallPermissions(videoCallNode.getProperty(VIDEO_PERMISSIONS_PROP).getString());
+            StringBuilder outputPermission = new StringBuilder();
+            String inputPermission = videoCallNode.getProperty(VIDEO_PERMISSIONS_PROP).getString();
+            if (VideoCallService.isCloudRunning()) {
+              String[] arrPermissions = inputPermission.split(",");
+              for (String permissions : arrPermissions) {
+                if (StringUtils.isNotBlank(outputPermission.toString())) {
+                  outputPermission.append(",");
+                }
+
+                if (permissions.split("#").length == 2) {
+                  permissions = permissions.concat("#true");
+                }
+
+                outputPermission.append(permissions);
+              }
+              videoCallModel.setVideoCallPermissions(outputPermission.toString());
+            } else {
+              videoCallModel.setVideoCallPermissions(inputPermission);
+            }
           }          
           videoCallModel.setCustomerCertificatePassphrase(videoCallNode.getProperty(VIDEO_PASSPHARSE).getString());
           videoCallModel.setAuthId(videoCallNode.getProperty(VIDEO_AUTH_ID).getString());
@@ -492,7 +511,7 @@ public class VideoCallService {
       String[] arrs = videoCallsPermissions.split(",");
       ArrayList<String> memberships = new ArrayList();
       for (String string : arrs) {
-        if(string.split("#").length < 3) continue;
+          if(string.split("#").length < 3) continue;
         String permission = string.split("#")[0];
         String value;
         if (isGroupCall) {
@@ -520,5 +539,18 @@ public class VideoCallService {
       }
     }
     return isTurnOff;
+  }
+
+  public static boolean isCloudRunning() {
+    if (isCloudRunning == null) {
+      isCloudRunning = false;
+
+      ConversationState current = ConversationState.getCurrent();
+
+      if (current != null) {
+        isCloudRunning = StringUtils.isNotEmpty((String) current.getAttribute("currentTenant"));
+      }
+    }
+    return isCloudRunning;
   }
 }
