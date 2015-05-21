@@ -28,6 +28,8 @@ function WeemoExtension() {
   this.isTurnOff = false;
   this.connectedWeemoDriver = false;
   this.videoCallVersion = "";
+  this.meetingPoint;
+  this.meetingPointId = "";
 
   //This block code for fix the issue PLF-5688
   var platform = navigator.platform;
@@ -244,6 +246,11 @@ WeemoExtension.prototype.setDisplaynameToCall = function(displaynameToCall) {
   this.displaynameToCall = displaynameToCall;
   jzStoreParam("displaynameToCall", displaynameToCall, 14400);
 };
+
+WeemoExtension.prototype.setMeetingPointId = function (meetingPointId) {
+  this.meetingPointId = meetingPointId;
+  jzStoreParam("meetingPointId", meetingPointId, 14400);
+};
 /**
  * A JSON Object like :
  * { "url" : url,
@@ -309,7 +316,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     try {
       this.rtcc.initialize();
     } catch(err) {
-        if(window.console) 
+        if(window.console)
           console.log("Can not initialize weemo: " + err);
     }
     var fn = jqchat(".label-user").text();
@@ -406,6 +413,11 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
         }
     });
 
+    this.rtcc.on('meetingpoint.create.success', function(meetinPointObject) {
+      meetinPointObject.autoaccept_mode();
+      meetinPointObject.host();
+    });
+
     this.rtcc.on('call.create', function(callObj) {
         if ("outgoing" !== callObj.getDirection()) return;
         weemoExtension.callObj = callObj;
@@ -425,6 +437,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
                 optionsWeemo.timestamp = ts;
                 optionsWeemo.uidToCall = weemoExtension.uidToCall;
                 optionsWeemo.displaynameToCall = weemoExtension.displaynameToCall;
+                optionsWeemo.meetingPointId = weemoExtension.meetingPoint.id;
             }
 
              if (eventName==="active" && weemoExtension.callActive) return; //Call already active, no need to push a new message
@@ -502,16 +515,23 @@ WeemoExtension.prototype.createWeemoCall = function(targetUser, targetFullname, 
     }
 
     if (targetUser.indexOf("space-")===-1 && targetUser.indexOf("team-")===-1) {
-      this.setUidToCall("weemo"+targetUser);
+      this.setUidToCall("weemo" + targetUser);
       this.setDisplaynameToCall(targetFullname);
       this.setCallType("internal");
+      this.setCallOwner(true);
+      this.rtcc.createCall(this.uidToCall, this.callType, this.displaynameToCall);
     } else {
       this.setUidToCall(this.rtcc.getToken());
       this.setDisplaynameToCall(this.rtcc.getDisplayName());
       this.setCallType("host");
+      this.setCallOwner(true);
+      var options = {
+        location: "on the cloud",
+        startDate: Math.round(new Date().valueOf() / 1000) + 100,
+        stopDate: Math.round(new Date().valueOf() / 1000) + 200
+      };
+      this.meetingPoint = this.rtcc.createMeetingPoint('scheduled', options);
     }
-    this.setCallOwner(true);
-    this.rtcc.createCall(this.uidToCall, this.callType, this.displaynameToCall);
   }
 };
 
@@ -525,7 +545,7 @@ WeemoExtension.prototype.joinWeemoCall = function(chatMessage) {
     }
     this.setCallType("attendee");
     this.setCallOwner(false);
-    this.rtcc.createCall(this.uidToCall, this.callType, this.displaynameToCall);
+    this.rtcc.joinConfCall(this.meetingPointId);
   }
 };
 
