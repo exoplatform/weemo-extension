@@ -328,13 +328,36 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     }
     this.changeStatus("Red");
 
-    this.rtcc.on('client.connect', function(connectionMode) {
-        if ("driver" === connectionMode) {
-            weemoExtension.connectedWeemoDriver = true;
-            weemoExtension.setInstallWeemoDriver();
-            //this.authenticate();
-            weemoExtension.changeStatus("Blue");
+    this.rtcc.on('client.connect', function (connectionMode) {
+      if ("driver" === connectionMode) {
+        weemoExtension.connectedWeemoDriver = true;
+        weemoExtension.setInstallWeemoDriver();
+        //this.authenticate();
+        weemoExtension.changeStatus("Blue");
+
+        if (weemoExtension.hasChatMessage() && (chatApplication !== undefined)) {
+          var roomToCheck = weemoExtension.chatMessage.room;
+          chatApplication.checkIfMeetingStarted(roomToCheck, function (callStatus) {
+            if (callStatus === 0) { // Already terminated
+              return;
+            }
+            var options = {};
+            options.timestamp = Math.round(new Date().getTime() / 1000);
+            options.type = "call-off";
+            chatApplication.chatRoom.sendFullMessage(
+              weemoExtension.chatMessage.user,
+              weemoExtension.chatMessage.token,
+              weemoExtension.chatMessage.targetUser,
+              roomToCheck,
+              chatBundleData.exoplatform_chat_call_terminated,
+              options,
+              "true"
+            );
+
+            weemoExtension.initChatMessage();
+          });
         }
+      }
     });
 
     this.rtcc.on('client.disconnect', function() {
@@ -358,7 +381,9 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
                         chatBundleData.exoplatform_chat_call_terminated,
                         options,
                         "true"
-                    )
+                    );
+
+                    weemoExtension.initChatMessage();
                 });
             }
         }
@@ -525,12 +550,7 @@ WeemoExtension.prototype.createWeemoCall = function(targetUser, targetFullname, 
       this.setDisplaynameToCall(this.rtcc.getDisplayName());
       this.setCallType("host");
       this.setCallOwner(true);
-      var options = {
-        location: "on the cloud",
-        startDate: Math.round(new Date().valueOf() / 1000) + 100,
-        stopDate: Math.round(new Date().valueOf() / 1000) + 200
-      };
-      this.meetingPoint = this.rtcc.createMeetingPoint('scheduled', options);
+      this.meetingPoint = this.rtcc.createMeetingPoint('adhoc');
     }
   }
 };
