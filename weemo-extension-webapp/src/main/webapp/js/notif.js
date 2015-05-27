@@ -61,8 +61,8 @@ function WeemoExtension() {
      
   this.callObj;
 
-  this.callOwner = jzGetParam("callOwner", false);
-  this.callActive = jzGetParam("callActive", "false").toLowerCase() === "true";
+  this.callOwner = false;//jzGetParam("callOwner", false);
+  this.callActive = false;//jzGetParam("callActive", "false").toLowerCase() === "true";
   this.callType = jzGetParam("callType", "");
 
   this.uidToCall = jzGetParam("uidToCall", "");
