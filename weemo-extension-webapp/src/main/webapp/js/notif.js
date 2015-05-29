@@ -267,20 +267,6 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     this.rtcc.setDebugLevel(1); // Activate debug in JavaScript console
     this.rtcc.setWebAppId(this.weemoKey);
     this.rtcc.setToken("weemo"+$uid);
-    try {
-      this.rtcc.initialize();
-    } catch(err) {
-        if(window.console)
-          console.log("Can not initialize weemo: " + err);
-    }
-    var fn = jqchat(".label-user").text();
-    var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
-    if (fullname!=="") {
-      this.rtcc.setDisplayName(fullname); // Configure the display name
-    } else if (fn!=="") {
-      this.rtcc.setDisplayName(fn); // Configure the display name
-    }
-    this.changeStatus("Red");
 
     this.rtcc.on('client.connect', function (connectionMode) {
       if ("plugin" === connectionMode || "webrtc" === connectionMode) {
@@ -526,6 +512,22 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
         });
     });
+
+    try {
+      this.rtcc.initialize();
+    } catch(err) {
+        if(window.console)
+          console.log("Can not initialize weemo: " + err);
+    }
+    var fn = jqchat(".label-user").text();
+    var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
+    if (fullname!=="") {
+      this.rtcc.setDisplayName(fullname); // Configure the display name
+    } else if (fn!=="") {
+      this.rtcc.setDisplayName(fn); // Configure the display name
+    }
+    this.changeStatus("Red");
+    
   }
 };
 
