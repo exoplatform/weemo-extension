@@ -8,7 +8,13 @@
   
   VideoCalls.prototype.showPopover = function (element,place) {
     var isTurnOff = weemoExtension.isTurnOff;
-    if (isTurnOff.indexOf("true") != -1) return;
+    if (weemoExtension.isCloudRunning === 'true') {
+      var weemoAddonStatus = jqchat("#weemo-status").attr("data-addonstatus");
+      var trialStatus = jqchat("#weemo-status").attr("data-trialstatus");
+      if ((isTurnOff === "true") || (weemoAddonStatus === "false") || (weemoAddonStatus.indexOf("neutral") != -1 && trialStatus.indexOf("disable") != -1)) return;
+    } else {
+      if (isTurnOff === "true") return;
+    }
     var userElem = gj(element).find("a:first");
     var userName = gj(userElem).attr("href");
     var popElem = gj(element).find(".avatarXSmall:first");
@@ -43,10 +49,21 @@
         && weemoExtension.tokenKey.length > 0) {
           var targetUser = gj(this).attr("data-username");
           var targetFullname = gj(this).attr("data-fullname");
-          if (weemoExtension.hasOneOneCallPermission(targetUser.trim()) === "false") {
-            eXo.ecm.VideoCalls.showReceivingPermissionInterceptor(targetFullname.trim());
+          if (weemoExtension.isCloudRunning === 'true') {
+            var trialStatus = jqchat("#weemo-status").attr("data-trialstatus");
+            if (trialStatus.indexOf("disable") != -1) {
+              weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+            } else {
+              eXo.ecm.VideoCalls.showTrialInterceptor();
+              gj("#currentUser").attr("data-username", targetUser);
+              gj("#currentUser").attr("data-fullname", targetFullname);
+            }
           } else {
-            weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+            if (weemoExtension.hasOneOneCallPermission(targetUser.trim()) === "false") {
+              eXo.ecm.VideoCalls.showReceivingPermissionInterceptor(targetFullname.trim());
+            } else {
+              weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+            }
           }
         } else if(!jqchat(this).hasClass("disabled")) {
           if(weemoExtension.isValidWeemoKey == false || weemoExtension.tokenKey.length == 0) {
@@ -69,14 +86,14 @@
     gj(interceptor).appendTo("body");       
     gj(interceptor).modal('show');
     gj(".modal-backdrop").remove();
-  } 
+  };
 
   VideoCalls.prototype.showPermissionInterceptor = function(title, message) {
     var interceptor = gj("#permission-interceptor");
     gj(interceptor).appendTo("body");       
     gj(interceptor).modal('show');
     gj(".modal-backdrop").remove();
-  }
+  };
 
   VideoCalls.prototype.showReceivingPermissionInterceptor = function(fullName) {
     var interceptor = gj("#receive-permission-interceptor");
@@ -85,8 +102,39 @@
     $message.html(interceptor.attr("data-message").replace("{0}", fullName));
     gj(interceptor).modal('show');
     gj(".modal-backdrop").remove();
-  }
+  };
 
+  VideoCalls.prototype.showTrialInterceptor = function() {
+    var interceptor = gj("#trial-interceptor");
+    gj(interceptor).modal('show');
+    var weemoStatus = gj("#weemo-status");
+    var trialStatus = weemoStatus.attr("data-trialstatus");
+    if (trialStatus.indexOf("none") != -1){
+      var info = gj("#noneStatus");
+      info.css("display", "block");
+      var trialDay = weemoStatus.attr("data-trialday");
+      var dayText = trialDay + " ";
+      if (parseInt(trialDay) > 1) dayText += gj("#plurialday").val();
+      else dayText += gj("#singleday").val();
+      var msg = gj("span",info).text();
+      msg = msg.replace("{0}", dayText).replace("{1}", dayText);
+      gj("span",info).text(msg);
+    }
+    if (trialStatus.indexOf("active") != -1){
+      var warning = gj("#activeStatus");
+      warning.css("display", "block");
+      var remainDay = weemoStatus.attr("data-remainday");
+      var replaceText = remainDay + " ";
+      if (parseInt(remainDay) > 1) replaceText += gj("#plurialday").val();
+      else replaceText += gj("#singleday").val();
+      var msg = gj("span",warning).text();
+      msg = msg.replace("{0}", replaceText);
+      gj("span",warning).text(msg);
+    }
+    if (trialStatus.indexOf("expired") != -1) gj("#expiredStatus").css("display", "block");
+
+    gj(".modal-backdrop").remove();
+  };
 
   gj(document).ready(function() {
 

@@ -163,7 +163,10 @@ public class AuthService {
       try {
         StringBuilder urlBuilder = new StringBuilder();
         urlBuilder.append(authUrl).append("?client_id=" + clientId).append("&client_secret=" + clientSecret).
-          append("&uid=weemo" + userId).append("&identifier_client=" + URLEncoder.encode(domain_id, "UTF-8")).append("&id_profile=" + URLEncoder.encode(profile_id, "UTF-8"));
+          append("&uid=weemo" + userId);
+        if (!VideoCallService.isCloudRunning()) {
+          urlBuilder.append("&identifier_client=" + URLEncoder.encode(domain_id, "UTF-8")).append("&id_profile=" + URLEncoder.encode(profile_id, "UTF-8"));
+        }
         url = new URL(urlBuilder.toString());
       } catch (MalformedURLException e) {
         if (LOG.isErrorEnabled()) {

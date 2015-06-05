@@ -657,6 +657,9 @@
         var tdGroupIcon = $('<td/>', {
           "class":"center"
         });
+        if (weemoExtension.isCloudRunning === 'true') {
+          tdGroupIcon.css('display', 'none');
+        }
 	      var divIcon = $('<div/>', {        
 		"class":"spaceRole"
 	      });
@@ -981,7 +984,7 @@
 	  } 
 	} 
 	
-	if (errMessages.length > 0) {
+	if (errMessages.length > 0 && weemoExtension.isCloudRunning === "false") {
 		eXo.ecm.VideoCallsUtils.displayErrorAlert(errMessages);
 		return false;			
 	}	
@@ -1075,7 +1078,7 @@
 		  } 
 		}
 		
-		if (errMessages.length > 0) {
+		if (errMessages.length > 0 && weemoExtension.isCloudRunning === 'false') {
 			eXo.ecm.VideoCallsUtils.displayErrorAlert(errMessages);
 			return false;			
 		}
@@ -1104,6 +1107,9 @@
 
 		$("#videoCallPermissions").val(permissionData);   
 		
+    }
+    if (weemoExtension.isCloudRunning === 'true') {
+      $(formVideoAdmin).attr("action",$(formVideoAdmin).attr("actionCloud"));
     }
     $(formVideoAdmin).submit();
   }
