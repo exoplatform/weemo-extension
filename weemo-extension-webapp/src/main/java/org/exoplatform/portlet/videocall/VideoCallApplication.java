@@ -6,9 +6,16 @@ import juzu.View;
 import juzu.request.SecurityContext;
 import juzu.template.Template;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.security.ConversationRegistry;
 import org.exoplatform.services.videocall.AuthService;
@@ -18,29 +25,45 @@ import org.exoplatform.utils.videocall.PropertyManager;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
 
 public class VideoCallApplication {
 
   @Inject
   @Path("index.gtmpl")
-  Template index;
+  Template                 index;
 
-  String remoteUser_ = null;
+  String                   REST_URL         = "/rest/cloud/addons/";
 
-  OrganizationService organizationService_;
+  String                   DEFAULT_PROTOCOL = "http";
 
-  SpaceService spaceService_;
+  String                   WEEMO_ADDON_ID   = "EXO_VIDEO_CALL";
 
-  VideoCallService videoCallService_;
+  String                   remoteUser_      = null;
 
-  ConversationRegistry conversationRegistry_;
+  private static final Log LOG = ExoLogger.getLogger(VideoCallApplication.class.getName());
+
+  OrganizationService      organizationService_;
+
+  SpaceService             spaceService_;
+
+  VideoCallService         videoCallService_;
+
+  ConversationRegistry     conversationRegistry_;
 
   @Inject
-  public VideoCallApplication(OrganizationService organizationService, SpaceService spaceService,
-                              VideoCallService videoCallService, ConversationRegistry conversationRegistry) {
+  public VideoCallApplication(OrganizationService organizationService,
+                              SpaceService spaceService,
+                              VideoCallService videoCallService,
+                              ConversationRegistry conversationRegistry) {
     organizationService_ = organizationService;
     spaceService_ = spaceService;
     videoCallService_ = videoCallService;
@@ -50,7 +73,10 @@ public class VideoCallApplication {
   @View
   public Response.Content index(SecurityContext securityContext) throws Exception {
     PortalRequestContext requestContext = Util.getPortalRequestContext();
-    HttpSession httpSession = requestContext.getRequest().getSession();
+
+    HttpServletRequest request = requestContext.getRequest();
+    HttpSession httpSession = request.getSession();
+
     remoteUser_ = securityContext.getRemoteUser();
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
     if (videoCallModel == null) videoCallModel = new VideoCallModel();
@@ -64,9 +90,9 @@ public class VideoCallApplication {
       tokenKey = videoCallService_.getTokenKey();
     }
 
-    AuthService authService = new AuthService();
     if (tokenKey == null) {
       String profile_id = videoCallModel.getProfileId();
+      AuthService authService = new AuthService();
       String content = authService.authenticate(null, profile_id);
       if (!StringUtils.isEmpty(content)) {
         JSONObject json = new JSONObject(content);
@@ -91,7 +117,6 @@ public class VideoCallApplication {
 
     // Check permission for using weemo of user
     boolean turnOffVideoCallForUser = videoCallService_.isTurnOffVideoCallForUser();
-    boolean turnOffVideoGroupCallForUser = videoCallService_.isTurnOffVideoCallForUser(true);
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
 
     // Check if same account loggin on other place
@@ -100,14 +125,129 @@ public class VideoCallApplication {
       isSameUserLogged = true;
     }
 
-    return index.with().set("user", remoteUser_)
+    juzu.template.Template.Builder builder =  index.with().set("user", remoteUser_)
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
             .set("turnOffVideoCallForUser", turnOffVideoCallForUser)
-            .set("turnOffVideoGroupCallForUser", turnOffVideoGroupCallForUser)
             .set("turnOffVideoCall", turnOffVideoCall)
             .set("videoCallVersion", videoCallVersion)
             .set("isSameUserLogged", isSameUserLogged)
-            .ok();
+            .set("isCloudRunning", VideoCallService.isCloudRunning());
+
+    // Get trial information from BO
+    if (VideoCallService.isCloudRunning()) {
+
+      String serverName = request.getServerName();
+      String tenantName = "";
+      if (serverName.indexOf(".") != -1) {
+        tenantName = serverName.substring(0, serverName.indexOf("."));
+      } else {
+        tenantName = serverName;
+      }
+
+      String trialStatus = "";
+      int trialDay = 0;
+      int remainDay = 0;
+
+      String username = System.getProperty("cloud.management.username");
+      String password = System.getProperty("cloud.management.password");
+
+      String restUrl = getBaseUrl() + "trial/" + tenantName + "/" + WEEMO_ADDON_ID;
+      String trialInformation = callBOService(restUrl, username, password);
+      String encodedKey = "Basic "
+              + new sun.misc.BASE64Encoder().encode((username + ":" + password).getBytes());
+      if (!StringUtils.isEmpty(trialInformation)) {
+        JSONObject output = new JSONObject(trialInformation);
+        trialStatus = output.getString("status");
+        trialDay = output.getInt("trialDay");
+        long endDate = output.getLong("endDate");
+        long currentTime = System.currentTimeMillis();
+        if ((currentTime > endDate) && trialStatus.equals("active")) {
+          trialStatus = "expired";
+          callBOService(restUrl + "/" + trialStatus, username, password);
+        }
+        if (trialStatus.equals("active")) {
+          remainDay = (int) ((endDate - currentTime) / (24 * 60 * 60 * 1000)) + 1;
+        }
+      }
+
+      // Get addon status on tenant from BO
+      String statusRestUrl = getBaseUrl() + "isActive/" + tenantName + "/" + WEEMO_ADDON_ID;
+      String addonstatus = callBOService(statusRestUrl, username, password);
+      if (addonstatus == null)
+        addonstatus = StringUtils.EMPTY;
+
+      builder.set("trialStatus", trialStatus)
+              .set("trialDay", trialDay)
+              .set("remainDay", remainDay)
+              .set("tenantName", tenantName)
+              .set("encodedKey", encodedKey)
+              .set("addonstatus", addonstatus)
+              .set("turnOffVideoGroupCallForUser", true);;
+
+    } else {
+      boolean turnOffVideoGroupCallForUser = videoCallService_.isTurnOffVideoCallForUser(true);
+      builder.set("turnOffVideoGroupCallForUser", turnOffVideoGroupCallForUser);
+    }
+
+    return builder.ok();
+  }
+
+  private String callBOService(String url, String username, String password) {
+    try {
+      URI uri = new URI(url);
+      DefaultHttpClient client = new DefaultHttpClient();
+
+      client.getCredentialsProvider().setCredentials(new AuthScope(uri.getHost(), uri.getPort()),
+              new UsernamePasswordCredentials(username,
+                      password));
+      HttpGet request = new HttpGet(url);
+      HttpResponse response = null;
+      StringBuilder sb = new StringBuilder();
+      String line;
+
+      try {
+        response = client.execute(request);
+        if (response.getStatusLine().getStatusCode() != 200) {
+          throw new Exception("Couldn't get information from backoffice. Response status code - "
+                  + response.getStatusLine().getStatusCode());
+        }
+        InputStream in = response.getEntity().getContent();
+        BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+        while ((line = rd.readLine()) != null) {
+          sb.append(line);
+        }
+        rd.close();
+
+      } finally {
+        if (response != null) {
+          response.getEntity().getContent().close();
+        }
+      }
+      return sb.toString();
+
+    } catch (URISyntaxException urie) {
+      LOG.error("The service url " + url + " is in wrong format", urie);
+    } catch (IOException ioe) {
+      LOG.error("Cannot read data from response - Cause : " + ioe.getMessage(), ioe);
+    } catch (Exception e) {
+      LOG.error("A problem happened while calling backoffice service - Cause : " + e.getMessage(),
+              e);
+    }
+    return null;
+  }
+
+  private String getBaseUrl() {
+    String mgtHost = System.getProperty("cloud.management.host");
+    String mgtPort = System.getProperty("cloud.management.tomcat.port");
+
+    String baseUrl = new StringBuilder(DEFAULT_PROTOCOL).append("://")
+            .append(mgtHost)
+            .append(":")
+            .append(mgtPort)
+            .append(REST_URL)
+            .toString();
+
+    return baseUrl;
   }
 }

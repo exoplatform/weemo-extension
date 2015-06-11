@@ -1,6 +1,15 @@
 <script type="text/javascript" src="../../../eXoResources/javascript/jquery-1.7.1.js"></script>
 <script type="text/javascript" src="/weemo-extension/js/iphone-style-checkboxes-weemo.js"></script>
 
+<style>
+	.disable {
+		pointer-events: none;
+		cursor: default;
+		opacity: 0.7;
+		filter: alpha(opacity=40); /* For IE8 and earlier */
+	}
+</style>
+
 <%
   import org.apache.commons.lang.StringUtils;
   
@@ -23,18 +32,19 @@
  
   
 
-		  	<form id="videoCallsPermissionForm" enctype="multipart/form-data" action="@{VideoCallAdministration.save()}" method="POST" class="form-horizontal">
-			  <div class="control-group">			    
-				<span class="uiCheckbox">
+		  	<form id="videoCallsPermissionForm" enctype="multipart/form-data" action="@{VideoCallAdministration.save()}" actionCloud="@{VideoCallAdministration.saveCloud()}" method="POST" class="form-horizontal" <%if (isCloudRunning) out.println("style=\"display: none;\"");%>>
+			  <div class="control-group">
+				<label for="chkTurnOff" class="uiCheckbox">
 				  <input id="chkTurnOff" class="checkbox" value="true" <%if(turnOffVideoCall) out.println("checked");%> type="checkbox">				  
 				  <span>&{exoplatform.videocall.turnoff}</span>				  
-				</span>				    
+				</label>
 				<div style="display:inline-block;" onmouseover="(function(elm) {eXo.ecm.VideoCallsUtils.showPopover(elm);})(this)"
 					onmouseout="(function(elm) {eXo.ecm.VideoCallsUtils.hidePopover(elm);})(this)" data-toggle="popover" data-placement="right" data-content="&{exoplatform.videocall.turnoff.help}">
 					  <i class="uiIconQuestion uiIconLightGray"></i>			
 				</div>
 				<input type="hidden" id="disableVideoCall" name="disableVideoCall" value="false">
 			  </div>
+			<%if (!isCloudRunning) {%>
 			  <h4 class="titleWithBorder">Weemo</h4>
 			  <div class="row">
 			  
@@ -133,7 +143,7 @@
 			  </div>
 			  <div class="actionTestWeemo"><button id="authButton" type="button" linkAuth="@{VideoCallAdministration.auth()}" onClick="eXo.ecm.VideoCallsUtils.authWeemoConnection(this);" class="btn" > &{exoplatform.videocall.testWeemoConnection} </button></div>	  
 			  
-			  
+			<%}%>
 			<div class="UIViewPermissionContainer" id="UIViewPermissionContainer" style="padding-bottom: 20px;">
 
 			<div id="UIViewPermissionList">
@@ -143,7 +153,7 @@
 				    <tr>
 				          <th>&{exoplatform.videocall.owner}</th>
 				          <th class="span2 center">&{exoplatform.videocall.1_1profile}</th>
-                          <th class="span2 center">&{exoplatform.videocall.group_calls_profile}</th>
+                          <th <%if (isCloudRunning) out.println("style=\"display: none;\"");%> class="span2 center">&{exoplatform.videocall.group_calls_profile}</th>
 				          <th class="span1 center">&{exoplatform.videocall.action}</th>
 				    </tr>
 				  </thead>
@@ -159,11 +169,11 @@
 						      <td class="left">
 						        <div permission="<%=arrs[0]%>" title="<%=arrs[3]%>" class="Text"><%=arrs[3]%></div>
 						      </td>
-						      <td class="center">				        
-		                        <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="&{exoplatform.videocall.administration.swither.yes}" data-no="&{exoplatform.videocall.administration.swither.no}" checked="checked" style="visibility: hidden;" class="yesno"></div>
+						      <td class="center">
+								  <div class="onOffCheckbox"><div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[1]%>" data-yes="&{exoplatform.videocall.administration.swither.yes}" data-no="&{exoplatform.videocall.administration.swither.no}" checked="checked" style="visibility: hidden;" class="yesno"></div></div>
 		                      </td>
-                              <td class="center">
-                                <div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[2]%>" data-yes="&{exoplatform.videocall.administration.swither.yes}" data-no="&{exoplatform.videocall.administration.swither.no}" checked="checked" style="visibility: hidden;" class="yesno"></div>
+                              <td class="center" <%if (isCloudRunning) out.println("style=\"display: none;\"");%>>
+								<div class="onOffCheckbox"><div class="spaceRole"><input type="checkbox" id="enableVideoCalls" name="enableVideoCalls" value="<%=arrs[2]%>" data-yes="&{exoplatform.videocall.administration.swither.yes}" data-no="&{exoplatform.videocall.administration.swither.no}" checked="checked" style="visibility: hidden;" class="yesno"></div></div>
 		                      </td>
                           <td class="center"><a data-original-title="&{exoplatform.videocall.administration.delete}" data-placement="bottom" rel="tooltip" onclick="eXo.ecm.VideoCallsUtils.showDeleteConfirm(this);" class="actionIcon"><i class="uiIconDelete uiIconLightGray"></i></a></td>
 		                    </tr>
@@ -434,12 +444,18 @@
 	    if ($("#chkTurnOff").is(':checked')) {
 	      $("#disableVideoCall").val("true");
 	      $("#videoCallsPermissionForm input[type=text]").attr("disabled",true);
+			$("#videoCallsPermissionForm .uiViewPermissionForm button").attr("disabled",true);
+			$("#videoCallsPermissionForm a.actionIcon").addClass("disable");
+			$("#videoCallsPermissionForm div.onOffCheckbox").addClass("disable");
 	      $("#videoCallsPermissionForm input[type=password]").attr("disabled",true);
 	      $("#authButton").attr("disabled",true);
 	      
 	    } else {
 	      $("#disableVideoCall").val("false");	  
 	      $("#videoCallsPermissionForm input[type=text]").attr("disabled",false);
+			$("#videoCallsPermissionForm .uiViewPermissionForm button").attr("disabled",false);
+			$("#videoCallsPermissionForm a.actionIcon").removeClass("disable");
+			$("#videoCallsPermissionForm div.onOffCheckbox").removeClass("disable");
 	      $("#videoCallsPermissionForm input[type=password]").attr("disabled",false);   
 	      $("#authButton").attr("disabled",false); 
 	    }
@@ -449,6 +465,9 @@
 	  if ($("#chkTurnOff").is(':checked')) {
 	    $("#disableVideoCall").val("true");
 	    $("#videoCallsPermissionForm input[type=text]").attr("disabled",true);
+		  $("#videoCallsPermissionForm .uiViewPermissionForm button").attr("disabled",true);
+		  $("#videoCallsPermissionForm a.actionIcon").addClass("disable");
+		  $("#videoCallsPermissionForm div.onOffCheckbox").addClass("disable");
 	    $("#videoCallsPermissionForm input[type=password]").attr("disabled",true);	      
 	  }
 	    
