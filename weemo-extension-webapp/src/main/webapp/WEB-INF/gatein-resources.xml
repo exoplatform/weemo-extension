@@ -27,7 +27,7 @@
 
   <portlet>
     <name>VideoCallAdministration</name>
-    <module>      
+    <module>
       <depends>
         <module>videoCallsAdmin</module>
       </depends>     
@@ -39,7 +39,10 @@
     <module>      
       <depends>
         <module>videoCalls</module>
-      </depends>     
+      </depends>
+      <depends>
+        <module>SightCallNotification</module>
+      </depends>
     </module>
   </portlet>
   
@@ -77,6 +80,23 @@
     </depends>  
     <depends>
       <module>bts_popover</module>
+    </depends>
+  </module>
+
+  <module>
+    <name>SightCallNotification</name>
+    <script>
+      <path>/js/SightCallNotification.js</path>
+    </script>
+    <depends>
+      <module>jquery</module>
+      <as>gj</as>
+    </depends>
+    <depends>
+      <module>webNotifications</module>
+    </depends>
+    <depends>
+      <module>commons-cometd3</module>
     </depends>
   </module>
   

@@ -67,8 +67,38 @@
        </preference>
      </portlet-preferences>
    </portlet>
-   
 
+    <portlet>
+      <portlet-name>VideoCallPopupApplication</portlet-name>
+      <display-name xml:lang="EN">Video Call Popup Application</display-name>
+      <portlet-class>org.exoplatform.portlet.videocallpopup.VideoCallPopupApplicationPortlet</portlet-class>
+      <init-param>
+        <name>juzu.run_mode</name>
+        <value>prod</value>
+      </init-param>
+      <supports>
+        <mime-type>text/html</mime-type>
+      </supports>
+      <supported-locale>en</supported-locale>
+      <supported-locale>fr</supported-locale>
+      <resource-bundle>locale.portlet.videocall.Resource</resource-bundle>
+      <portlet-info>
+        <title>Video Call Popup Application</title>
+        <keywords>Video Call</keywords>
+      </portlet-info>
+      <portlet-preferences>
+        <preference>
+          <name>view</name>
+          <value>normal</value>
+          <read-only>false</read-only>
+        </preference>
+        <preference>
+          <name>fullscreen</name>
+          <value>false</value>
+          <read-only>false</read-only>
+        </preference>
+      </portlet-preferences>
+    </portlet>
 	 
    <filter>
      <filter-name>ResponseFilterWeemo</filter-name>

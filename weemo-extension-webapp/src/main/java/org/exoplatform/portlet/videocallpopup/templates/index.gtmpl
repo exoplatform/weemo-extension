@@ -1,0 +1,30 @@
+<div id="sightcall-status"
+     data-username="<%=user%>"
+     videoCallVersion="<%=videoCallVersion%>"
+     data-weemo-key="<%=weemoKey%>"
+     data-token-key="<%=tokenKey%>"
+     cometd-user-token="<%=cometdUserToken%>"
+     cometd-context-name="<%=cometdContextName%>"
+     data-call-mode="<%=mode%>"
+     data-callee="<%=callee%>"
+     data-caller="<%=caller%>"
+     style="display: none;">
+</div>
+
+<div id="sightcall-alert" class="alert sightcallonone" style="display:none;">
+    <a href="#" style="margin-right: 6px; margin-top: 3px;" title="&{exoplatform.videocall.installer.close}" data-dismiss="alert" class="uiIconClose pull-right"></a>
+    <strong>&{exoplatform.videocall.installer.message}</strong>
+    <a id="sightcall-alert-download" href="javascript:void(0);"><strong>&{exoplatform.videocall.installer.download}</strong></a> |
+    <a id="sightcall-alert-dismiss" href="javascript:void(0);">&{exoplatform.videocall.installer.dismiss}</a>
+</div>
+<% if (mode.equals("one")) {%>
+<img/>
+<div id="sightCallConnectionStatus">Calling <%=callee%></div>
+<a id="sightCallCallButton">Call</a>|<a id="sightCallCloseButton">Close</a>
+<% } %>
+
+<% if (mode.equals("one_callee")) {%>
+<div id="sightCallConnectionStatus">connecting...</div>
+
+<% } %>
+<div id="video-container"></div>

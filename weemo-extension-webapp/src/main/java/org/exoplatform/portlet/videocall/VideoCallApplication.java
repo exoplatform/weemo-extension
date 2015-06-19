@@ -23,7 +23,9 @@ import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.utils.videocall.PropertyManager;
 import org.json.JSONException;
+import org.exoplatform.ws.frameworks.cometd.ContinuationService;
 import org.json.JSONObject;
+import org.mortbay.cometd.continuation.EXoContinuationBayeux;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -60,15 +62,20 @@ public class VideoCallApplication {
 
   ConversationRegistry     conversationRegistry_;
 
+  ContinuationService continuationService_;
+
+  EXoContinuationBayeux exoContinuationBayeux_;
+
   @Inject
-  public VideoCallApplication(OrganizationService organizationService,
-                              SpaceService spaceService,
-                              VideoCallService videoCallService,
-                              ConversationRegistry conversationRegistry) {
+  public VideoCallApplication(OrganizationService organizationService, SpaceService spaceService,
+                              VideoCallService videoCallService, ConversationRegistry conversationRegistry,
+                              ContinuationService continuationService, EXoContinuationBayeux exoContinuationBayeux) {
     organizationService_ = organizationService;
     spaceService_ = spaceService;
     videoCallService_ = videoCallService;
     conversationRegistry_ = conversationRegistry;
+    continuationService_ = continuationService;
+    exoContinuationBayeux_ = exoContinuationBayeux;
   }
 
   @View
@@ -133,7 +140,9 @@ public class VideoCallApplication {
             .set("turnOffVideoCall", turnOffVideoCall)
             .set("videoCallVersion", videoCallVersion)
             .set("isSameUserLogged", isSameUserLogged)
-            .set("isCloudRunning", VideoCallService.isCloudRunning());
+            .set("isCloudRunning", VideoCallService.isCloudRunning())
+            .set("cometdUserToken", continuationService_.getUserToken(remoteUser_))
+            .set("cometdContextName", (exoContinuationBayeux_ == null ? "cometd" : exoContinuationBayeux_.getCometdContextName()));
 
     // Get trial information from BO
     if (VideoCallService.isCloudRunning()) {

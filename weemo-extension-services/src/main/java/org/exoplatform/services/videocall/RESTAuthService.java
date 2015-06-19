@@ -17,7 +17,9 @@
 package org.exoplatform.services.videocall;
 
 
+import org.exoplatform.model.videocall.MessageInfo;
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.utils.videocall.PropertyManager;
 import org.json.JSONObject;
 
@@ -26,6 +28,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -71,5 +74,20 @@ public class  RESTAuthService implements ResourceContainer{
     VideoCallService videoCallService = new VideoCallService();
     boolean hasOneOneCallPermission = !videoCallService.isTurnOffVideoCallForUser(false, userId);
     return Response.ok(String.valueOf(hasOneOneCallPermission)).build();
+  }
+
+  @GET
+  @Path("/sendMessage/{callee}/{messageType}/{callMode}")
+  @RolesAllowed("users")
+  public Response sendMessage(@PathParam("callee") String callee, @PathParam("messageType") String messageType,
+                              @PathParam("callMode") String callMode) throws Exception {
+    CacheControl cacheControl = new CacheControl();
+    cacheControl.setNoCache(true);
+
+    MessageInfo messageInfo = new MessageInfo(messageType, ConversationState
+            .getCurrent().getIdentity().getUserId(), callee, "one");
+
+    WebNotificationSender.sendJsonMessage(callee, messageInfo);
+    return Response.ok().cacheControl(cacheControl).build();
   }
 }
