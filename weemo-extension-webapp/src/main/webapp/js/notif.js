@@ -764,29 +764,24 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
 WeemoExtension.prototype.attachWeemoToProfile = function() {
   if (window.location.href.indexOf("/portal/intranet/profile")==-1) return;
 
-  var headerSecion = jqchat("#UIHeaderSection");
-  if(headerSecion.html() === undefined) {
+  var $UIStatusProfilePortlet = jqchat("#UIStatusProfilePortlet");
+  if($UIStatusProfilePortlet.html() === undefined) {
     setTimeout(jqchat.proxy(this.attachWeemoToProfile, this), 250);
     return;
   }
-  
-  var infoSection = jqchat("UIBasicInfoSection");
-  var $h3Elem = jqchat(headerSecion).find("h3:first");
-  var buttonInvite = jqchat(headerSecion).find("button:first");
-  var fullName = $h3Elem.html();
-  fullName = fullName.substring(0, fullName.indexOf("<"));
-  var userName = window.location.href;
-  userName = userName.substring(userName.lastIndexOf("/")+1, userName.length);
 
-  if (userName != weemoExtension.username && userName !== "" && $h3Elem.has(".weemoCallOverlay").size()===0 && weemoExtension.isSupport) {
+  var userName = jqchat(".user-status", $UIStatusProfilePortlet).attr('data-userid');
+  var fullName = jqchat(".user-status span", $UIStatusProfilePortlet).text();
+  var $userActions = jqchat("#UIActionProfilePortlet .user-actions");
+
+  if (userName != weemoExtension.username && userName !== "" && $userActions.has(".weemoCallOverlay").length===0 && weemoExtension.isSupport && $userActions.has("button").length) {
 	  var callLabel = jqchat("#weemo-status").attr("call-label");
 	  var makeCallLabel = jqchat("#weemo-status").attr("make-call-label");
 	  var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+userName.replace('.', '-')+' disabled"   id="weemoCall-'+userName.replace('.', '-')+'" title="'+makeCallLabel+'"';
 	  html += ' data-username="'+userName+'" data-fullname="'+fullName+'"';
-	  html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
+	  html += ' style=""><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
 
-  	  $h3Elem.append(html);
-
+     $userActions.prepend(html);
 	  
       jqchat(".weemoCallOverlay").unbind( "click" );
 	  jqchat(".weemoCallOverlay").on("click", function() {                
