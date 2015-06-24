@@ -23,13 +23,14 @@
     var peopleName = gj(peopleInfo).find(".peopleName:first");
     var peopleLink = gj(peopleName).find("a:first");
     var fullName = gj(peopleName).find("a:first").html();
+    var avatarUrl = popElem.find("img").attr("src");
 
     var realPopElem = place ? peopleLink: popElem;
     gj(realPopElem).popover({placement: 'left', html:true,template: '<div class="popover left" style="width: 240px;"><div class="arrow"></div><div class="inner"><h3 class="popover-title" style="display:none;"></h3><div class="popover-content" style="padding: 0px;"><p></p></div></div></div>',
     					 content:function (){ 
 						    var callLabel = gj("#weemo-status").attr("call-label");
 						    var makeCallLabel = gj("#weemo-status").attr("make-call-label");
-						    return '<div id="tiptip_content" style="border: none; box-shadown: none;"><table id="tipName"><tbody><tr><td style="width: 50px;"><a target="_parent" href="/portal/intranet/activities/"'+userName+'><img src="/social-resources/skin/images/ShareImages/UserAvtDefault.png"></a></td><td><a target="_parent" href="/portal/intranet/activities/'+userName+'">'+fullName+'</a></td></tr></tbody></table><div class="connectAction"><a type="button" class="btn weemoCallOverlay weemoCall-'+userName+' disabled" title="'+makeCallLabel+'" data-fullname="'+fullName+'" data-username="'+userName+'" style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a></div></div>';
+						    return '<div id="tiptip_content" style="border: none; box-shadown: none;"><table id="tipName"><tbody><tr><td style="width: 50px;"><a target="_parent" href="/portal/intranet/activities/"'+userName+'><img src="'+avatarUrl+'"></a></td><td><a target="_parent" href="/portal/intranet/activities/'+userName+'">'+fullName+'</a></td></tr></tbody></table><div class="connectAction"><a type="button" class="btn weemoCallOverlay weemoCall-'+userName+' disabled" title="'+makeCallLabel+'" data-fullname="'+fullName+'" data-username="'+userName+'" style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a></div></div>';
     					 }
     					});
     gj(realPopElem).popover('show');

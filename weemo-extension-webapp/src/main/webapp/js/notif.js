@@ -338,10 +338,22 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
         if (weemoExtension.hasChatMessage() && (chatApplication !== undefined)) {
           var roomToCheck = weemoExtension.chatMessage.room;
-          chatApplication.checkIfMeetingStarted(roomToCheck, function (callStatus) {
+            chatApplication.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
             if (callStatus === 0) { // Already terminated
               return;
             }
+
+            // Also Update record status
+            if (recordStatus !== 0) {
+                var msgType = "type-meeting-stop";
+                var options = {
+                    type: msgType,
+                    fromUser: chatApplication.username,
+                    fromFullname: chatApplication.fullname
+                };
+                chatApplication.chatRoom.sendMessage("", options, "true");
+            }
+
             var options = {};
             options.timestamp = Math.round(new Date().getTime() / 1000);
             options.type = "call-off";
@@ -367,10 +379,22 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
             weemoExtension.setCallActive(false);
             if (weemoExtension.hasChatMessage() && (chatApplication !== undefined)) {
                 var roomToCheck = weemoExtension.chatMessage.room;
-                chatApplication.checkIfMeetingStarted(roomToCheck, function(callStatus) {
+                chatApplication.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
                     if (callStatus === 0) { // Already terminated
                         return;
                     }
+
+                    // Also Update record status
+                    if (recordStatus !== 0) {
+                        var msgType = "type-meeting-stop";
+                        var options = {
+                            type: msgType,
+                            fromUser: chatApplication.username,
+                            fromFullname: chatApplication.fullname
+                        };
+                        chatApplication.chatRoom.sendMessage("", options, "true");
+                    }
+
                     var options = {};
                     options.timestamp = Math.round(new Date().getTime() / 1000);
                     options.type = "call-off";
@@ -447,7 +471,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     this.rtcc.on('call.create', function(callObj) {
         if ("outgoing" !== callObj.getDirection()) return;
         weemoExtension.callObj = callObj;
-        callObj.on(['active', 'proceed', 'terminate'], function() {
+        callObj.on(['active', 'terminate'], function() {
             var eventName = this.eventName;
             var messageWeemo = "";
             var optionsWeemo = {};
@@ -494,7 +518,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
               if (chatApplication !== undefined) {
                 var roomToCheck = "";
                 if (weemoExtension.chatMessage.room !== undefined)  roomToCheck = weemoExtension.chatMessage.room;
-                chatApplication.checkIfMeetingStarted(roomToCheck, function(callStatus) {
+                  chatApplication.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
                   if (callStatus === 1 && optionsWeemo.type==="call-on") {
                     // Call is already created, not allowed.
                     weemoExtension.initChatMessage();
@@ -506,6 +530,17 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
                     return;
                   }
 
+                  // Also Update record status
+                  if (optionsWeemo.type === "call-off" && recordStatus !== 0) {
+                      var msgType = "type-meeting-stop";
+                      var options = {
+                          type: msgType,
+                          fromUser: chatApplication.username,
+                          fromFullname: chatApplication.fullname
+                      };
+                      chatApplication.chatRoom.sendMessage("", options, "true");
+                  }
+
                   chatApplication.chatRoom.sendFullMessage(
                     weemoExtension.chatMessage.user,
                     weemoExtension.chatMessage.token,
@@ -515,6 +550,19 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
                     optionsWeemo,
                     "true"
                   );
+
+                  // Also Update record status
+                  if (optionsWeemo.type === "call-on" && recordStatus !== 1) {
+                      var msgType = "type-meeting-start";
+                      var options = {
+                          type: msgType,
+                          fromUser: chatApplication.username,
+                          fromFullname: chatApplication.fullname
+                      };
+
+                      chatApplication.chatRoom.sendMessage("", options, "true");
+
+                  }
 
                   if (eventName==="terminate") {
                     weemoExtension.initChatMessage();
@@ -716,29 +764,24 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
 WeemoExtension.prototype.attachWeemoToProfile = function() {
   if (window.location.href.indexOf("/portal/intranet/profile")==-1) return;
 
-  var headerSecion = jqchat("#UIHeaderSection");
-  if(headerSecion.html() === undefined) {
+  var $UIStatusProfilePortlet = jqchat("#UIStatusProfilePortlet");
+  if($UIStatusProfilePortlet.html() === undefined) {
     setTimeout(jqchat.proxy(this.attachWeemoToProfile, this), 250);
     return;
   }
-  
-  var infoSection = jqchat("UIBasicInfoSection");
-  var $h3Elem = jqchat(headerSecion).find("h3:first");
-  var buttonInvite = jqchat(headerSecion).find("button:first");
-  var fullName = $h3Elem.html();
-  fullName = fullName.substring(0, fullName.indexOf("<"));
-  var userName = window.location.href;
-  userName = userName.substring(userName.lastIndexOf("/")+1, userName.length);
 
-  if (userName != weemoExtension.username && userName !== "" && $h3Elem.has(".weemoCallOverlay").size()===0 && weemoExtension.isSupport) {
+  var userName = jqchat(".user-status", $UIStatusProfilePortlet).attr('data-userid');
+  var fullName = jqchat(".user-status span", $UIStatusProfilePortlet).text();
+  var $userActions = jqchat("#UIActionProfilePortlet .user-actions");
+
+  if (userName != weemoExtension.username && userName !== "" && $userActions.has(".weemoCallOverlay").length===0 && weemoExtension.isSupport && $userActions.has("button").length) {
 	  var callLabel = jqchat("#weemo-status").attr("call-label");
 	  var makeCallLabel = jqchat("#weemo-status").attr("make-call-label");
 	  var html = '<a type="button" class="btn weemoCallOverlay weemoCall-'+userName.replace('.', '-')+' disabled"   id="weemoCall-'+userName.replace('.', '-')+'" title="'+makeCallLabel+'"';
 	  html += ' data-username="'+userName+'" data-fullname="'+fullName+'"';
-	  html += ' style="margin-left:5px;"><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
+	  html += ' style=""><i class="uiIconWeemoVideoCalls uiIconLightGray"></i> '+callLabel+'</a>';
 
-  	  $h3Elem.append(html);
-
+     $userActions.prepend(html);
 	  
       jqchat(".weemoCallOverlay").unbind( "click" );
 	  jqchat(".weemoCallOverlay").on("click", function() {                
