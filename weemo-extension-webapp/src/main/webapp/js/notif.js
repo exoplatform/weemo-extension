@@ -38,14 +38,12 @@ function WeemoExtension() {
     if (ieVersionNumber < 11 && ieVersionNumber > 0) {
         var options = {
             useJquery: true,
-            mode_parameter: 'plugin_webrtc',
-            uiVersion: '1.4.4'
+            mode_parameter: 'plugin_webrtc'
         };
         this.rtcc = new Rtcc('', '', 'internal', options);
     } else {
         var options = {
-            mode_parameter: 'plugin_webrtc',
-            uiVersion: '1.4.4'
+            mode_parameter: 'plugin_webrtc'
         };
         this.rtcc = new Rtcc('', '', 'internal', options);
     }
@@ -284,13 +282,20 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
             // Also Update record status
             if (recordStatus !== 0) {
-                var msgType = "type-meeting-stop";
                 var options = {
-                    type: msgType,
+                    type: "type-meeting-stop",
                     fromUser: chatApplication.username,
                     fromFullname: chatApplication.fullname
                 };
-                chatApplication.chatRoom.sendMessage("", options, "true");
+                chatApplication.chatRoom.sendFullMessage(
+                  weemoExtension.chatMessage.user,
+                  weemoExtension.chatMessage.token,
+                  weemoExtension.chatMessage.targetUser,
+                  roomToCheck,
+                  "",
+                  options,
+                  "true"
+                );
             }
 
             var options = {};
@@ -325,13 +330,20 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
                     // Also Update record status
                     if (recordStatus !== 0) {
-                        var msgType = "type-meeting-stop";
                         var options = {
-                            type: msgType,
+                            type: "type-meeting-stop",
                             fromUser: chatApplication.username,
                             fromFullname: chatApplication.fullname
                         };
-                        chatApplication.chatRoom.sendMessage("", options, "true");
+                        chatApplication.chatRoom.sendFullMessage(
+                          weemoExtension.chatMessage.user,
+                          weemoExtension.chatMessage.token,
+                          weemoExtension.chatMessage.targetUser,
+                          roomToCheck,
+                          "",
+                          options,
+                          "true"
+                        );
                     }
 
                     var options = {};
@@ -419,10 +431,10 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
             if (eventName === "terminate") weemoExtension.setCallOwner(false);
 
             if (weemoExtension.callType === "internal" || eventName === "terminate") {
-                messageWeemo = "Call " + status;
+                messageWeemo = "Call " + eventName;
                 optionsWeemo.timestamp = ts;
             } else if (weemoExtension.callType === "host") {
-                messageWeemo = "Call " + status;
+                messageWeemo = "Call " + eventName;
                 optionsWeemo.timestamp = ts;
                 optionsWeemo.uidToCall = weemoExtension.uidToCall;
                 optionsWeemo.displaynameToCall = weemoExtension.displaynameToCall;
@@ -471,13 +483,20 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
                   // Also Update record status
                   if (optionsWeemo.type === "call-off" && recordStatus !== 0) {
-                      var msgType = "type-meeting-stop";
                       var options = {
-                          type: msgType,
+                          type: "type-meeting-stop",
                           fromUser: chatApplication.username,
                           fromFullname: chatApplication.fullname
                       };
-                      chatApplication.chatRoom.sendMessage("", options, "true");
+                      chatApplication.chatRoom.sendFullMessage(
+                        weemoExtension.chatMessage.user,
+                        weemoExtension.chatMessage.token,
+                        weemoExtension.chatMessage.targetUser,
+                        weemoExtension.chatMessage.room,
+                        "",
+                        options,
+                        "true"
+                      );
                   }
 
                   chatApplication.chatRoom.sendFullMessage(
@@ -492,15 +511,21 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
                   // Also Update record status
                   if (optionsWeemo.type === "call-on" && recordStatus !== 1) {
-                      var msgType = "type-meeting-start";
                       var options = {
-                          type: msgType,
+                          type: "type-meeting-start",
                           fromUser: chatApplication.username,
                           fromFullname: chatApplication.fullname
                       };
 
-                      chatApplication.chatRoom.sendMessage("", options, "true");
-
+                     chatApplication.chatRoom.sendFullMessage(
+                        weemoExtension.chatMessage.user,
+                        weemoExtension.chatMessage.token,
+                        weemoExtension.chatMessage.targetUser,
+                        weemoExtension.chatMessage.room,
+                        "",
+                        options,
+                        "true"
+                      );
                   }
 
                   if (eventName==="terminate") {
@@ -527,7 +552,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
       this.rtcc.setDisplayName(fn); // Configure the display name
     }
     this.changeStatus("Red");
-    
+
   }
 };
 
