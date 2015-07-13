@@ -27,7 +27,7 @@
 
 
             window.setTimeout(function() {
-                if (SightCallNotification.isTimeoutForCalleeAnswer()) {
+                if (SightCallNotification.isCalleeAnswerTimeout()) {
                     SightCallNotification.showNoAnswer();
                 }
             }, 15000);
@@ -111,12 +111,6 @@
                 gj("#sightCallConnectionStatus").text(message.fromUser + " is Busy");
             }
         },
-        log: function() {
-            console.log("Message type:" + jzGetParam("messageType"));
-            console.log("Call Mode:" + jzGetParam("callMode"));
-            console.log("To User:" + jzGetParam("toUser"));
-            console.log("Is Busy:" + jzGetParam("isBusy"));
-        },
         showIncomming: function(fromUser) {
             if (window.location.href.indexOf("videocallpopup") > -1) return; // Not show this on popup
             jzStoreParam("isBusy", true, 15);
@@ -144,7 +138,7 @@
             });
 
             gj("#sightCallAcceptButton").click(function(e) {
-                window.open('/portal/intranet/videocallpopup?caller=' + fromUser + '&mode=one_callee', "MyWindow", "top=100, left=100,toolbar=no, menubar=no,scrollbars=no,resizable=no,location=no,directories=no,status=no, height=300, width=500");
+                weemoExtension.showVideoPopup('/portal/intranet/videocallpopup?caller=' + fromUser + '&mode=one_callee');
 
                 SightCallNotification.sendAccepting(fromUser);
                 SightCallNotification.hideIncomming();
@@ -186,7 +180,7 @@
             var lastSentTime = Math.floor(jzGetParam("stTime", 0));
             return (currentTime >= lastSentTime + 15);
         },
-        isTimeoutForCalleeAnswer: function() {
+        isCalleeAnswerTimeout: function() {
             var currentTime = Math.floor(new Date() / 1000);
             var lastReceivedTime = Math.floor(jzGetParam("rvTime", 0));
             return (currentTime >= lastReceivedTime + 15);
@@ -200,6 +194,9 @@
             var currentTime = Math.floor(new Date() / 1000);
             var lastReceivedTime = Math.floor(jzGetParam("stTime", 0));
             return (currentTime >= lastReceivedTime + 30);
+        },
+        isBeingOnPopup: function() {
+            return (jqchat("#sightcall-status").length > 0);
         }
 
     };

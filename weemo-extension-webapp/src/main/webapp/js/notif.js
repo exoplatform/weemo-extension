@@ -173,7 +173,6 @@ WeemoExtension.prototype.attachWeemoToPopups = function() {
             jqchat("#currentUser").attr("data-fullname", targetFullname);
           }
         } else {
-          
             weemoExtension.showVideoPopup('/portal/intranet/videocallpopup?callee=' + targetUser.trim() + '&mode=one');
           }
         }
@@ -376,7 +375,6 @@ WeemoExtension.prototype.showVideoPopup = function(url) {
   sightCallPopup = window.open(url, 'VideoCall', 'toolbar=no, menubar=no,scrollbars=no,resizable=no,location=no,directories=no,status=no, width='+w+', height='+h+', top='+top+', left='+left);
   sightCallPopup.focus();
 };
-
 
 /**
  ##################                           ##################

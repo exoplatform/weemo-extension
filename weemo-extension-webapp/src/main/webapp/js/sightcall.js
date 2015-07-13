@@ -502,6 +502,13 @@ var console = console || {
  */
 SightCallExtension.prototype.initPopup = function() {
     jqchat("#PlatformAdminToolbarContainer").css("display", "none");
+
+    // Set popup title
+    if ("one" === sightcallExtension.callMode) {
+        document.title = "Video Call : " + sightcallExtension.callee;
+    } else if ("one_callee" === sightcallExtension.callMode) {
+        document.title = "Video Call : " + sightcallExtension.caller;
+    }
 };
 
 
