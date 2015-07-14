@@ -108,7 +108,7 @@
         },
         receivingBusy: function(message) {
             if (!this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
-                gj("#sightCallConnectionStatus").text(message.fromUser + " is Busy");
+                SightCallNotification.showBusy();
             }
         },
         showIncomming: function(fromUser) {
@@ -153,6 +153,12 @@
             gj("#sightCallOneOneIncommingForm").remove();
             jzStoreParam("isBusy", false, 15);
 
+        },
+        showBusy: function() {
+            gj("#sightCallConnectionStatus").text(message.fromUser + " is Busy");
+        },
+        showCallDroped: function() {
+            
         },
         showNoAnswer: function() {
             gj("#sightCallConnectionStatus").text("No answer");

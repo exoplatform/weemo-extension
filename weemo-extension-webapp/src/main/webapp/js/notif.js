@@ -228,13 +228,14 @@ WeemoExtension.prototype.attachWeemoToProfile = function() {
 	  
       jqchat(".weemoCallOverlay").unbind( "click" );
 	  jqchat(".weemoCallOverlay").on("click", function() {                
-		  if (weemoExtension.hasOneOneCallPermission(targetUser.trim()) === "false") {
-	          eXo.ecm.VideoCalls.showReceivingPermissionInterceptor(targetFullname.trim());
-	        } else {
+		  
 		if (!jqchat(this).hasClass("disabled") && weemoExtension.isTurnOffForUser == "false" && weemoExtension.tokenKey.length > 0) {
 		  var targetUser = jqchat(this).attr("data-username");
 		  var targetFullname = jqchat(this).attr("data-fullname");
           console.log(targetUser + " == " + targetFullname.trim());
+          if (weemoExtension.hasOneOneCallPermission(targetUser.trim()) === "false") {
+	          eXo.ecm.VideoCalls.showReceivingPermissionInterceptor(targetFullname.trim());
+	        } else {
       if (weemoExtension.isCloudRunning === 'true') {
         var trialStatus = jqchat("#weemo-status").attr("data-trialstatus");
         if (trialStatus.indexOf("disable") != -1) {
