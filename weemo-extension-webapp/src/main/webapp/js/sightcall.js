@@ -515,7 +515,14 @@ SightCallExtension.prototype.initPopup = function() {
     }
 };
 
-
+SightCallExtension.prototype.checkConnectingTimeout = function() {
+    window.setTimeout(function() {
+        if (sightcallExtension.isConnected == false) {
+            SightCallNotification.showConnectionLost();
+            sightcallExtension.rtcc.destroy();
+        }
+    }, 30000);
+};
 
 /**
  ##################                           ##################
@@ -533,6 +540,8 @@ var sightcallExtension = new SightCallExtension();
 (function($) {
 
     $(document).ready(function() {
+        // Check conneting to sight call server timeout
+        sightcallExtension.checkConnectingTimeout();
 
         //GETTING DOM CONTEXT
         var $sightcallApplication = $("#sightcall-status");
