@@ -7,24 +7,65 @@
      cometd-context-name="<%=cometdContextName%>"
      data-call-mode="<%=mode%>"
      data-callee="<%=callee%>"
+     data-callee-full-name="<%=calleeFullName%>"
      data-caller="<%=caller%>"
+     data-caller-full-name="<%=callerFullName%>"
      style="display: none;">
 </div>
 
-<div id="sightcall-alert" class="alert sightcallonone" style="display:none;">
+<!--<div id="sightcall-alert" class="alert sightcallonone" style="display:none;">
     <a href="#" style="margin-right: 6px; margin-top: 3px;" title="&{exoplatform.videocall.installer.close}" data-dismiss="alert" class="uiIconClose pull-right"></a>
     <strong>&{exoplatform.videocall.installer.message}</strong>
     <a id="sightcall-alert-download" href="javascript:void(0);"><strong>&{exoplatform.videocall.installer.download}</strong></a> |
     <a id="sightcall-alert-dismiss" href="javascript:void(0);">&{exoplatform.videocall.installer.dismiss}</a>
 </div>
+-->
 <% if (mode.equals("one")) {%>
 <img/>
 <div id="sightCallConnectionStatus">Calling <%=callee%></div>
 <a id="sightCallCallButton">Call</a>|<a id="sightCallCloseButton">Close</a>
+<div id="video-container"></div>
 <% } %>
 
 <% if (mode.equals("one_callee")) {%>
 <div id="sightCallConnectionStatus">connecting...</div>
-
-<% } %>
 <div id="video-container"></div>
+<% } %>
+
+<% if (mode.equals("busy")) {%>
+<div id="sightCallConnectionStatus">busy...</div>
+<% } %>
+
+<% if (mode.equals("lost")) {%>
+<div id="sightCallConnectionStatus">lost...</div>
+<% } %>
+
+<% if (mode.equals("noAnswer")) {%>
+<div id="sightCallConnectionStatus">noAnswer...</div>
+<% } %>
+
+
+<% if (mode.equals("connecting")) {%>
+<div id="sightCallConnectionStatus">connecting...</div>
+<% } %>
+
+
+<% if (mode.equals("calling")) {%>
+<div id="sightCallConnectionStatus">calling...</div>
+<% } %>
+
+
+<% if (mode.equals("plugin_mac")) {%>
+<div id="sightCallConnectionStatus">plugin_mac...</div>
+<% } %>
+
+
+<% if (mode.equals("plugin_window")) {%>
+<div id="sightCallConnectionStatus">plugin_window...</div>
+<% } %>
+
+
+<% if (mode.equals("video")) {%>
+<div id="sightCallConnectionStatus">video...</div>
+<% } %>
+

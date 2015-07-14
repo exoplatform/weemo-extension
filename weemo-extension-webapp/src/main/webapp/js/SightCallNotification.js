@@ -91,12 +91,12 @@
             this.showIncomming(message.fromUser);
         },
         receivingDecline: function(message) {
-            if (!this.isReceivingCallingTimeoutForCaller() && jzGetParam("stMessageType", "") === "calling") {
+            if (!this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
                 SightCallNotification.showNoAnswer();
             }
         },
         receivingAccepted: function(message) {
-            if (!this.isReceivingCallingTimeoutForCaller() && jzGetParam("stMessageType", "") === "calling") {
+            if (!this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
             }
         },
         receivingReady: function(message) {
@@ -107,7 +107,7 @@
             }
         },
         receivingBusy: function(message) {
-            if (!this.isReceivingCallingTimeoutForCaller() && jzGetParam("stMessageType", "") === "calling") {
+            if (!this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
                 gj("#sightCallConnectionStatus").text(message.fromUser + " is Busy");
             }
         },
@@ -175,7 +175,7 @@
             jzStoreParam("rvFromUser", message.fromUser, 14400);
             jzStoreParam("rvTime", Math.floor(new Date() / 1000), 14400);
         },
-        isReceivingCallingTimeoutForCaller: function() {
+        isCallerReceivingCallingTimeout: function() {
             var currentTime = Math.floor(new Date() / 1000);
             var lastSentTime = Math.floor(jzGetParam("stTime", 0));
             return (currentTime >= lastSentTime + 15);

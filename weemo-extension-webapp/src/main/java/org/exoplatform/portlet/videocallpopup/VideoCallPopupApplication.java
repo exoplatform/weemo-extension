@@ -10,7 +10,9 @@ import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
 import org.exoplatform.services.security.ConversationRegistry;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.videocall.AuthService;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -68,7 +70,9 @@ public class VideoCallPopupApplication {
     // Process parameters
     String callMode = getParam("mode");
     String callee = getParam("callee");
+    String calleeFullName = getFullName(callee);
     String caller = getParam("caller");
+    String callerFullName = getFullName(caller);
 
 
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
@@ -113,7 +117,9 @@ public class VideoCallPopupApplication {
     return index.with().set("user", remoteUser_)
             .set("mode", callMode)
             .set("callee", callee)
+            .set("calleeFullName", calleeFullName)
             .set("caller", caller)
+            .set("callerFullName", callerFullName)
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
             .set("videoCallVersion", videoCallVersion)
@@ -129,5 +135,14 @@ public class VideoCallPopupApplication {
     String paramValue = requestContext.getParameter(paramName);
     if (paramValue == null) paramValue = StringUtils.EMPTY;
     return paramValue;
+  }
+
+  private String getFullName(String userId) throws Exception {
+    String fullName = StringUtils.EMPTY;
+    User user = organizationService_.getUserHandler().findUserByName(userId);
+    if (user != null) {
+      fullName = user.getFirstName().concat(" ").concat(user.getLastName());
+    }
+    return fullName;
   }
 }

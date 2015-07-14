@@ -27,6 +27,8 @@ function SightCallExtension() {
     this.callee = "";
     this.firstLoad = true;
     this.caller = "";
+    this.calleeFullName = "";
+    this.callerFullName = "";
 
     var ieVersionNumber = GetIEVersion();
 
@@ -75,6 +77,8 @@ SightCallExtension.prototype.initOptions = function(options) {
     this.callMode = options.callMode;
     this.callee = options.callee;
     this.caller = options.caller;
+    this.calleeFullName = options.calleeFullName;
+    this.callerFullName = options.callerFullName;
 };
 
 
@@ -505,9 +509,9 @@ SightCallExtension.prototype.initPopup = function() {
 
     // Set popup title
     if ("one" === sightcallExtension.callMode) {
-        document.title = "Video Call : " + sightcallExtension.callee;
+        document.title = "Video Call : " + sightcallExtension.calleeFullName;
     } else if ("one_callee" === sightcallExtension.callMode) {
-        document.title = "Video Call : " + sightcallExtension.caller;
+        document.title = "Video Call : " + sightcallExtension.callerFullName;
     }
 };
 
@@ -539,7 +543,9 @@ var sightcallExtension = new SightCallExtension();
             "username": $sightcallApplication.attr("data-username"),
             "callMode": $sightcallApplication.attr("data-call-mode"),
             "callee": $sightcallApplication.attr("data-callee"),
-            "caller": $sightcallApplication.attr("data-caller")
+            "caller": $sightcallApplication.attr("data-caller"),
+            "callerFullName": $sightcallApplication.attr("data-caller-full-name"),
+            "calleeFullName": $sightcallApplication.attr("data-callee-full-name")
         });
 
         if (navigator.platform.indexOf("Linux") >= 0 && !jqchat.browser.chrome) return;
