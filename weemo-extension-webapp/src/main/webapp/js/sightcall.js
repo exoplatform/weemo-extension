@@ -519,6 +519,9 @@ SightCallExtension.prototype.checkConnectingTimeout = function() {
     window.setTimeout(function() {
         if (sightcallExtension.isConnected == false) {
             SightCallNotification.showConnectionLost();
+            if ("one_callee" === sightcallExtension.callMode) {
+                SightCallNotification.sendConnectionLost(sightcallExtension.caller);
+            }
             sightcallExtension.rtcc.destroy();
         }
     }, 30000);

@@ -22,36 +22,59 @@
             }
         },
         sendCalling: function(toUser) {
+            if (this.isBeingOnPopup()) {
 
-            this.sendMessage(toUser, "calling", "one");
+                this.sendMessage(toUser, "calling", "one");
 
 
-            window.setTimeout(function() {
-                if (SightCallNotification.isCalleeAnswerTimeout()) {
-                    SightCallNotification.showNoAnswer();
-                }
-            }, 15000);
-
+                window.setTimeout(function() {
+                    if (SightCallNotification.isCalleeAnswerTimeout()) {
+                        SightCallNotification.showNoAnswer();
+                    }
+                }, 15000);
+            }
         },
         sendDecline: function(toUser) {
+            if (!this.isBeingOnPopup()) {
+
             // Hide imcomming message
 
             // Update state
 
             // Send
-            this.sendMessage(toUser, "decline", "one");
+                this.sendMessage(toUser, "decline", "one");
+            }
         },
 
         sendAccepting: function(toUser) {
-            this.sendMessage(toUser, "accepted", "one");
-
+            if (!this.isBeingOnPopup()) {
+                this.sendMessage(toUser, "accepted", "one");
+            }
+        },
+        sendMute: function(toUser) {
+            if (!this.isBeingOnPopup()) {
+                this.sendMessage(toUser, "mute", "one");
+            }
+        },
+        sendPluginNotInstalled: function(toUser) {
+            if (this.isBeingOnPopup() && jzGetParam("stMessageType", "") === "accepted" && jzGetParam("rvMessageType","") === "calling") {
+                this.sendMessage(toUser, "notinstalled", "one");
+            }
         },
         sendReady: function(toUser) {
-            this.sendMessage(toUser, "ready", "one");
-
+            if (this.isBeingOnPopup()) {
+                this.sendMessage(toUser, "ready", "one");
+            }
         },
         sendBusy: function(toUser) {
-            this.sendMessage(toUser, "busy", "one");
+            if (!this.isBeingOnPopup()) {
+              this.sendMessage(toUser, "busy", "one");
+            }
+        },
+        sendConnectionLost: function(toUser) {
+            if (this.isBeingOnPopup()) {
+               this.sendMessage(toUser, "connectionlost", "one");
+            }
         },
         sendMessage: function(toUser, messageType, callMode) {
 
@@ -61,6 +84,7 @@
                     SightCallNotification.storeLastSentMessage(SightCallNotification.currentUser, toUser, callMode, messageType);
                 })
                 .fail(function() {
+                    SightCallNotification.showConnectionLost();
                     console.log("Cannot send " + toUser + "  " + messageType);
                 });
 
@@ -81,34 +105,76 @@
                 this.receivingReady(message);
             } else if (message.type === "accepted") {
                 this.receivingAccepted(message);
+            } else if (message.type === "notinstalled") {
+                this.receivingNotInstalled(message);
+            } else if (message.type === "mute") {
+                this.receivingMute(message);
+            } else if (message.type === "connectionlost") {
+                this.receivingConnectionLost(message);
             }
 
-            this.storeLastReceivedMessage(message);
         },
         receivingCalling: function(message) {
+            if (!this.isBeingOnPopup()) {
+              // Show incomming
+              this.showIncomming(message.fromUser);
 
-            // Show incomming
-            this.showIncomming(message.fromUser);
+              SightCallNotification.storeLastReceivedMessage(message);
+
+            }
         },
         receivingDecline: function(message) {
-            if (!this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
+            if (this.isBeingOnPopup() && !this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
                 SightCallNotification.showNoAnswer();
+
+                SightCallNotification.storeLastReceivedMessage(message);
+
             }
         },
         receivingAccepted: function(message) {
-            if (!this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
+            if (this.isBeingOnPopup() && !this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
+                SightCallNotification.storeLastReceivedMessage(message);
+            }
+        },
+        receivingMute: function(message) {
+            if (this.isBeingOnPopup() && !this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
+                SightCallNotification.showNoAnswer();
+
+                SightCallNotification.storeLastReceivedMessage(message);
+
+            }
+        },
+        receivingNotInstalled: function(message) {
+            if (this.isBeingOnPopup() && jzGetParam("stMessageType", "") === "calling" && jzGetParam("rvMessageType","") === "accepted") {
+                SightCallNotification.showCallDroped();
+
+                SightCallNotification.storeLastReceivedMessage(message);
+
+            }
+        },
+        receivingConnectionLost: function(message) {
+            if (this.isBeingOnPopup() && jzGetParam("stMessageType", "") === "calling" && jzGetParam("rvMessageType","") === "accepted") {
+                SightCallNotification.showConnectionLost();
+                SightCallNotification.storeLastReceivedMessage(message);
             }
         },
         receivingReady: function(message) {
-            if (!this.isCalleeConnectingTimeout() && jzGetParam("rvMessageType", "") === "accepted") {
-                sightcallExtension.createWeemoCall(message.fromUser, message.fromUser);
-            } else if (this.isCalleeConnectingTimeout()) {
-                SightCallNotification.showConnectionLost();
+            if (this.isBeingOnPopup() && jzGetParam("rvMessageType", "") === "accepted" && jzGetParam("stMessageType","") === "calling") {
+                if (!this.isCalleeConnectingTimeout()) {
+                    sightcallExtension.createWeemoCall(message.fromUser, message.fromUser);
+                } else if (this.isCalleeConnectingTimeout()) {
+                    SightCallNotification.showConnectionLost();
+                }
+
+                SightCallNotification.storeLastReceivedMessage(message);
             }
         },
         receivingBusy: function(message) {
-            if (!this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
+            if (this.isBeingOnPopup() && !this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling" ) {
                 SightCallNotification.showBusy();
+
+                SightCallNotification.storeLastReceivedMessage(message);
+
             }
         },
         showIncomming: function(fromUser) {
@@ -156,15 +222,18 @@
         },
         showBusy: function() {
             gj("#sightCallConnectionStatus").text(message.fromUser + " is Busy");
+            this.clearHistory();
         },
         showCallDroped: function() {
-            
+            this.clearHistory();
         },
         showNoAnswer: function() {
             gj("#sightCallConnectionStatus").text("No answer");
+            this.clearHistory();
         },
         showConnectionLost: function() {
             gj("#sightCallConnectionStatus").text("Connection Lost");
+            this.clearHistory();
         },
         storeLastSentMessage: function(fromUser, toUser, callMode, messageType) {
             jzStoreParam("stCallMode", callMode, 14400);
@@ -180,6 +249,18 @@
             jzStoreParam("rvToUser", message.toUser, 14400);
             jzStoreParam("rvFromUser", message.fromUser, 14400);
             jzStoreParam("rvTime", Math.floor(new Date() / 1000), 14400);
+        },
+        clearHistory: function() {
+            localStorage.removeItem("stCallMode");
+            localStorage.removeItem("stMessageType");
+            localStorage.removeItem("stToUser");
+            localStorage.removeItem("stFromUser");
+            localStorage.removeItem("stTime");
+            localStorage.removeItem("rvCallMode");
+            localStorage.removeItem("rvMessageType");
+            localStorage.removeItem("rvToUser");
+            localStorage.removeItem("rvFromUser");
+            localStorage.removeItem("rvTime");
         },
         isCallerReceivingCallingTimeout: function() {
             var currentTime = Math.floor(new Date() / 1000);

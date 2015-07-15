@@ -90,7 +90,7 @@ public class VideoCallPopupApplication {
     }
 
     AuthService authService = new AuthService();
-    if (tokenKey == null) {
+    if (StringUtils.isEmpty(tokenKey)) {
       String profile_id = videoCallModel.getProfileId();
       String content = authService.authenticate(null, profile_id);
       if (!StringUtils.isEmpty(content)) {
@@ -99,8 +99,8 @@ public class VideoCallPopupApplication {
         httpSession.setAttribute("tokenKey", tokenKey);
         videoCallService_.setTokenKey(tokenKey);
       } else {
-        tokenKey = "";
-        videoCallService_.setTokenKey("");
+        tokenKey = StringUtils.EMPTY;
+        videoCallService_.setTokenKey(StringUtils.EMPTY);
       }
     }
 
