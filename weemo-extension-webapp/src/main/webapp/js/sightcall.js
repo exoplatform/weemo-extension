@@ -517,12 +517,13 @@ SightCallExtension.prototype.initPopup = function() {
 
 SightCallExtension.prototype.checkConnectingTimeout = function() {
     window.setTimeout(function() {
-        if (sightcallExtension.isConnected == false) {
+        if (sightcallExtension.isConnected == false && sightcallExtension.weemoKey !== "" && sightcallExtension.tokenKey.length > 0 ) {
             SightCallNotification.showConnectionLost();
             if ("one_callee" === sightcallExtension.callMode) {
                 SightCallNotification.sendConnectionLost(sightcallExtension.caller);
             }
-            sightcallExtension.rtcc.destroy();
+            if (sightcallExtension.rtcc !== undefined)
+                sightcallExtension.rtcc.destroy();
         }
     }, 30000);
 };
@@ -543,9 +544,6 @@ var sightcallExtension = new SightCallExtension();
 (function($) {
 
     $(document).ready(function() {
-        // Check conneting to sight call server timeout
-        sightcallExtension.checkConnectingTimeout();
-
         //GETTING DOM CONTEXT
         var $sightcallApplication = $("#sightcall-status");
 
@@ -561,6 +559,7 @@ var sightcallExtension = new SightCallExtension();
         });
 
         if (navigator.platform.indexOf("Linux") >= 0 && !jqchat.browser.chrome) return;
+
         sightcallExtension.cometdUserToken = $sightcallApplication.attr("cometd-user-token");
         sightcallExtension.cometdContextName = $sightcallApplication.attr("cometd-context-name");
 
@@ -592,6 +591,8 @@ var sightcallExtension = new SightCallExtension();
         var tokenKey = $sightcallApplication.attr("data-token-key");
         sightcallExtension.setTokenKey(tokenKey);
 
+        // Check conneting to sight call server timeout
+        sightcallExtension.checkConnectingTimeout();
 
         var username = $sightcallApplication.attr("data-username");
         sightcallExtension.initCall(username, username);

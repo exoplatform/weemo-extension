@@ -46,8 +46,7 @@
 
     gj(".weemoCallOverlay").unbind( "click" );
     gj(".weemoCallOverlay").on("click", function() {
-        if (!gj(this).hasClass("disabled") && weemoExtension.isTurnOffForUser == "false" && weemoExtension.isValidWeemoKey == true
-        && weemoExtension.tokenKey.length > 0) {
+        if (!gj(this).hasClass("disabled") && weemoExtension.isTurnOffForUser == "false" && weemoExtension.tokenKey.length > 0) {
           var targetUser = gj(this).attr("data-username");
           var targetFullname = gj(this).attr("data-fullname");
           if (weemoExtension.isCloudRunning === 'true') {
@@ -63,7 +62,7 @@
             if (weemoExtension.hasOneOneCallPermission(targetUser.trim()) === "false") {
               eXo.ecm.VideoCalls.showReceivingPermissionInterceptor(targetFullname.trim());
             } else {
-              weemoExtension.createWeemoCall(targetUser.trim(), targetFullname.trim());
+              weemoExtension.showVideoPopup('/portal/intranet/videocallpopup?callee=' + targetUser.trim() + '&mode=one');
             }
           }
         } else if(!jqchat(this).hasClass("disabled")) {
