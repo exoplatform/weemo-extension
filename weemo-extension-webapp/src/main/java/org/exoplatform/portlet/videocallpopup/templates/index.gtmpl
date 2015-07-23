@@ -26,19 +26,18 @@
 <!--<a id="sightCallCallButton">Call</a>|<a id="sightCallCloseButton">Close</a>-->
 <!--<div id="video-container"></div>-->
 <div id="sightCallConnectionStatus" class="callling center">
-    <div class="calleeAvatar">
-        <img src="/rest/weemo/getAvatarURL/<%=callee%>" alt="callee's avatar" />
-    </div>
-    <div class="inProgress">Calling...</div>
+    <div class="calleeAvatar"><i class="iconChatLarge"></i></div>
+    <div class="inProgress">Connecting...</div>
 </div>
 <% } %>
 
 <% if (mode.equals("one_callee")) {%>
-<div id="sightCallConnectionStatus">connecting...</div>
-<div id="video-container"></div>
+<div id="sightCallConnectionStatus" class="callling center">
+    <div class="calleeAvatar"><i class="iconChatLarge"></i></div>
+    <div class="inProgress">Connecting...</div>
+</div>
 <% } %>
-
-
+<div id="video-container"></div>
 
 <% if (mode.equals("busy")) {%>
 <div id="sightCallConnectionStatus" class="callling center">

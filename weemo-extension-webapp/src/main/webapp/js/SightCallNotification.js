@@ -218,6 +218,17 @@
             jzStoreParam("isBusy", false, 15);
 
         },
+        showCalling: function() {
+            var callingForm =
+                             '<div id="sightCallConnectionStatus" class="callling center">';
+            callingForm  +=  '  <div class="calleeAvatar">';
+            callingForm  +=  '    <img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee  + '" alt="' + sightcallExtension.calleeFullName + '" />';
+            callingForm  +=  '  </div>';
+            callingForm  +=  '<div class="inProgress">Calling...</div>';
+
+            gj("#sightCallConnectionStatus").replaceWith(callingForm);
+
+        },
         showBusy: function() {
             var busyForm =
                          '<div id="sightCallConnectionStatus" class="callling center">';

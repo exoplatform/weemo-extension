@@ -288,6 +288,7 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
                     sightcallExtension.rtcc.setDisplayName(fn); // Configure the display name
                 }
                 if (sightcallExtension.firstLoad && sightcallExtension.callMode === "one") {
+                    SightCallNotification.showCalling();
                     SightCallNotification.sendCalling(sightcallExtension.callee);
                     sightcallExtension.firstLoad = false;
                 } else if (sightcallExtension.callMode === "one_callee" && sightcallExtension.firstLoad) {
