@@ -84,7 +84,7 @@
                     SightCallNotification.storeLastSentMessage(SightCallNotification.currentUser, toUser, callMode, messageType);
                 })
                 .fail(function() {
-                    SightCallNotification.showConnectionLost();
+                    SightCallNotification.showConnectionLost(toUser);
                     console.log("Cannot send " + toUser + "  " + messageType);
                 });
 
@@ -117,7 +117,7 @@
         receivingCalling: function(message) {
             if (!this.isBeingOnPopup()) {
               // Show incomming
-              this.showIncomming(message.fromUser);
+              this.showIncomming(message.fromUser, message.fromFullName);
 
               SightCallNotification.storeLastReceivedMessage(message);
 
@@ -145,8 +145,8 @@
             }
         },
         receivingNotInstalled: function(message) {
-            if (this.isBeingOnPopup() && jzGetParam("stMessageType", "") === "calling" && jzGetParam("rvMessageType","") === "accepted") {
-                SightCallNotification.showCallDroped();
+            if (this.isBeingOnPopup() && !this.isCalleeConnectingTimeout() && jzGetParam("stMessageType", "") === "calling" && jzGetParam("rvMessageType","") === "accepted") {
+                SightCallNotification.showCallDroped(message.fromUser);
 
                 SightCallNotification.storeLastReceivedMessage(message);
 
@@ -154,7 +154,7 @@
         },
         receivingConnectionLost: function(message) {
             if (this.isBeingOnPopup() && jzGetParam("stMessageType", "") === "calling" && jzGetParam("rvMessageType","") === "accepted") {
-                SightCallNotification.showConnectionLost();
+                SightCallNotification.showConnectionLost(message.fromUser);
                 SightCallNotification.storeLastReceivedMessage(message);
             }
         },
@@ -163,7 +163,7 @@
                 if (!this.isCalleeConnectingTimeout()) {
                     sightcallExtension.createWeemoCall(message.fromUser, message.fromUser);
                 } else if (this.isCalleeConnectingTimeout()) {
-                    SightCallNotification.showConnectionLost();
+                    SightCallNotification.showConnectionLost(message.fromUser);
                 }
 
                 SightCallNotification.storeLastReceivedMessage(message);
@@ -177,17 +177,17 @@
 
             }
         },
-        showIncomming: function(fromUser) {
+        showIncomming: function(fromUser, fromFullName) {
             if (window.location.href.indexOf("videocallpopup") > -1) return; // Not show this on popup
             jzStoreParam("isBusy", true, 15);
 
             var incommingHtml = '<div id="sightCallOneOneIncommingForm" class=" incoming-call" style="position:fixed; bottom: 0; right: 0; cursor: move;">';
             
             incommingHtml += '    <div class="picto clearfix">';
-            incommingHtml += '    	<div class="avatar pull-left">';
-            incommingHtml += '    		<img src="/weemo-extension/img/MaryJane36x36.png" alt="#" />';
+            incommingHtml += '    	<div class="calleeAvatar avatar pull-left">';
+            incommingHtml += '    		<img src="/rest/weemo/getAvatarURL/' + fromUser + '" alt="' + fromFullName + '" />';
             incommingHtml += '    	</div>';
-            incommingHtml += '    	<div class="name pull-left">' + fromUser + ' Calling</div>';
+            incommingHtml += '    	<div class="name pull-left">' + fromFullName + ' Calling</div>';
             incommingHtml += '    </div>';
             incommingHtml += '    <div class="actionBtn">';
             incommingHtml += '    	<a class="btn btn-primary video" href="#" id ="sightCallAcceptButton">Accept</a>';
@@ -219,18 +219,73 @@
 
         },
         showBusy: function() {
-            gj("#sightCallConnectionStatus").text(message.fromUser + " is Busy");
+            var busyForm =
+                         '<div id="sightCallConnectionStatus" class="callling center">';
+            busyForm +=  '  <div class="calleeAvatar">';
+            busyForm +=  '    <img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee  + '" alt="' + sightcallExtension.calleeFullName + '" />';
+            busyForm +=  '  </div>';
+            busyForm +=  '  <div class="calleeStatus">' + sightcallExtension.calleeFullName + ' is busy</div>';
+            busyForm +=  '  <div class="callingStt"><i class="iconCallDropped"></i>Call dropped</div>';
+            busyForm +=  '  <div class="actionBtn">';
+            busyForm +=  '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>';
+            busyForm +=  '    <button class="btn">Close</button>';
+            busyForm +=  '  </div>';
+            busyForm +=  '</div>';
+
+            gj("#sightCallConnectionStatus").replaceWith(busyForm);
+
             this.clearHistory();
         },
-        showCallDroped: function() {
+        showCallDroped: function(toUserId) {
+            var callDropForm =
+                             '<div id="sightCallConnectionStatus" class="callling center">';
+            callDropForm +=  '  <div class="calleeAvatar">';
+            callDropForm +=  '    <img src="/rest/weemo/getAvatarURL/' + toUserId  + '" alt="' + toUserId + '" />';
+            callDropForm +=  '  </div>';
+            callDropForm +=  '  <div class="callingStt"><i class="iconCallDropped"></i>Call dropped</div>';
+            callDropForm +=  '  <div class="actionBtn">';
+            callDropForm +=  '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>';
+            callDropForm +=  '    <button class="btn">Close</button>';
+            callDropForm +=  '  </div>';
+            callDropForm +=  '</div>';
+
+            gj("#sightCallConnectionStatus").replaceWith(callDropForm);
+
             this.clearHistory();
         },
         showNoAnswer: function() {
-            gj("#sightCallConnectionStatus").text("No answer");
+            var noAnserForm  =
+                           '<div id="sightCallConnectionStatus" class="callling center">';
+            noAnserForm += '  <div class="calleeAvatar">';
+            noAnserForm += '    <img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee  + '" alt="' + sightcallExtension.calleeFullName + '" />';
+            noAnserForm += '  </div>';
+            noAnserForm += '  <div class="callingStt"><i class="iconCallIdle"></i>No answer</div>';
+            noAnserForm += '  <div class="actionBtn">';
+            noAnserForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>';
+            noAnserForm += '    <button class="btn">Close</button>';
+            noAnserForm += '  </div>';
+            noAnserForm += '</div>';
+
+            gj("#sightCallConnectionStatus").replaceWith(noAnserForm);
+
             this.clearHistory();
         },
-        showConnectionLost: function() {
-            gj("#sightCallConnectionStatus").text("Connection Lost");
+        showConnectionLost: function(toUserId) {
+            var connectionLostForm =
+                                  '<div id="sightCallConnectionStatus" class="callling center">';
+            connectionLostForm += '  <div class="calleeAvatar">';
+            connectionLostForm += '    <img src="/rest/weemo/getAvatarURL/' + toUserId  + '" alt="' + toUserId + '" />';
+            connectionLostForm += '  </div>';
+            connectionLostForm += '  <div class="calleeStatus">Connection Lost</div>';
+            connectionLostForm += '  <div class="callingStt"><i class="iconCallDropped"></i>Call dropped</div>';
+            connectionLostForm += '  <div class="actionBtn">';
+            connectionLostForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>';
+            connectionLostForm += '    <button class="btn">Close</button>';
+            connectionLostForm += '  </div>';
+            connectionLostForm += '</div>';
+
+            gj("#sightCallConnectionStatus").replaceWith(connectionLostForm);
+
             this.clearHistory();
         },
         storeLastSentMessage: function(fromUser, toUser, callMode, messageType) {

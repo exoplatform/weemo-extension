@@ -518,9 +518,11 @@ SightCallExtension.prototype.initPopup = function() {
 SightCallExtension.prototype.checkConnectingTimeout = function() {
     window.setTimeout(function() {
         if (sightcallExtension.isConnected == false && sightcallExtension.weemoKey !== "" && sightcallExtension.tokenKey.length > 0 ) {
-            SightCallNotification.showConnectionLost();
             if ("one_callee" === sightcallExtension.callMode) {
+                SightCallNotification.showConnectionLost(sightcallExtension.caller);
                 SightCallNotification.sendConnectionLost(sightcallExtension.caller);
+            } else if ("one" === sightcallExtension.callMode) {
+                SightCallNotification.showConnectionLost(sightcallExtension.callee);
             }
             if (sightcallExtension.rtcc !== undefined)
                 sightcallExtension.rtcc.destroy();

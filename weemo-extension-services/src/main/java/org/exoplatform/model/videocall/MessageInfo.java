@@ -1,11 +1,14 @@
 package org.exoplatform.model.videocall;
 
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.services.videocall.VideoCallService;
 
 public class MessageInfo {
   private String type = StringUtils.EMPTY;
   private String fromUser = StringUtils.EMPTY;
+  private String fromFullName = StringUtils.EMPTY;
   private String toUser = StringUtils.EMPTY;
+  private String toFullName = StringUtils.EMPTY;
   private String callMode = StringUtils.EMPTY;
   private long createdTime;
 
@@ -15,6 +18,8 @@ public class MessageInfo {
     this.toUser = toUser;
     this.callMode = mode;
     this.createdTime = System.currentTimeMillis();
+    toFullName = VideoCallService.getFullName(toUser);
+    fromFullName = VideoCallService.getFullName(fromUser);
   }
 
   public String getCallMode() {
@@ -57,6 +62,13 @@ public class MessageInfo {
     this.type = type;
   }
 
+  public String getFromFullName() {
+    return fromFullName;
+  }
+
+  public String getToFullName() {
+    return toFullName;
+  }
 
   @Override
   public boolean equals(Object o) {

@@ -70,9 +70,9 @@ public class VideoCallPopupApplication {
     // Process parameters
     String callMode = getParam("mode");
     String callee = getParam("callee");
-    String calleeFullName = getFullName(callee);
+    String calleeFullName = VideoCallService.getFullName(callee);
     String caller = getParam("caller");
-    String callerFullName = getFullName(caller);
+    String callerFullName = VideoCallService.getFullName(caller);
 
 
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
@@ -135,14 +135,5 @@ public class VideoCallPopupApplication {
     String paramValue = requestContext.getParameter(paramName);
     if (paramValue == null) paramValue = StringUtils.EMPTY;
     return paramValue;
-  }
-
-  private String getFullName(String userId) throws Exception {
-    String fullName = StringUtils.EMPTY;
-    User user = organizationService_.getUserHandler().findUserByName(userId);
-    if (user != null) {
-      fullName = user.getFirstName().concat(" ").concat(user.getLastName());
-    }
-    return fullName;
   }
 }

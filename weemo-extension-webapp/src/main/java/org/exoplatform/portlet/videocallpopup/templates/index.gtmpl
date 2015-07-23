@@ -21,10 +21,16 @@
 </div>
 -->
 <% if (mode.equals("one")) {%>
-<img/>
-<div id="sightCallConnectionStatus">Calling <%=callee%></div>
-<a id="sightCallCallButton">Call</a>|<a id="sightCallCloseButton">Close</a>
-<div id="video-container"></div>
+<!--<img/>-->
+<!--<div id="sightCallConnectionStatus">Calling <%=callee%></div>-->
+<!--<a id="sightCallCallButton">Call</a>|<a id="sightCallCloseButton">Close</a>-->
+<!--<div id="video-container"></div>-->
+<div id="sightCallConnectionStatus" class="callling center">
+    <div class="calleeAvatar">
+        <img src="/rest/weemo/getAvatarURL/<%=callee%>" alt="callee's avatar" />
+    </div>
+    <div class="inProgress">Calling...</div>
+</div>
 <% } %>
 
 <% if (mode.equals("one_callee")) {%>

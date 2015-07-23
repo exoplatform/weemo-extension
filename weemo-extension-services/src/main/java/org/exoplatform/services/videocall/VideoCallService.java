@@ -16,7 +16,7 @@
  */
 package org.exoplatform.services.videocall;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.model.videocall.VideoCallModel;
 import org.exoplatform.portal.config.UserACL;
@@ -29,6 +29,8 @@ import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.IdentityRegistry;
@@ -532,5 +534,18 @@ public class VideoCallService {
       isCloudRunning = false;
     }
     return isCloudRunning;
+  }
+
+  public static String getFullName(String userId) {
+    String fullName = StringUtils.EMPTY;
+    try {
+      User user = WCMCoreUtils.getService(OrganizationService.class).getUserHandler().findUserByName(userId);
+      if (user != null) {
+        fullName = user.getFirstName().concat(" ").concat(user.getLastName());
+      }
+      return fullName;
+    } catch (Exception e) {
+      return fullName;
+    }
   }
 }
