@@ -32,40 +32,109 @@
 <div id="video-container"></div>
 <% } %>
 
+
+
 <% if (mode.equals("busy")) {%>
-<div id="sightCallConnectionStatus">busy...</div>
+<div id="sightCallConnectionStatus" class="callling center">
+  <div class="calleeAvatar">
+    <img src="/weemo-extension/img/MaryJane.png" alt="callee's avatar" />
+  </div>
+  <div class="calleeStatus">Mary Jane is busy</div>
+  <div class="callingStt"><i class="iconCallDropped"></i>Call dropped</div>
+  <div class="actionBtn">
+    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>
+    <button class="btn">Close</button>
+  </div>
+</div>
 <% } %>
 
 <% if (mode.equals("lost")) {%>
-<div id="sightCallConnectionStatus">lost...</div>
+<div id="sightCallConnectionStatus" class="callling center">
+  <div class="calleeAvatar">
+    <img src="/weemo-extension/img/MaryJane.png" alt="callee's avatar" />
+  </div>
+  <div class="calleeStatus">Mary Jane is busy</div>
+  <div class="callingStt"><i class="iconCallDropped"></i>Connection lost</div>
+  <div class="actionBtn">
+    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>
+    <button class="btn">Close</button>
+  </div>
+</div>
 <% } %>
 
 <% if (mode.equals("noAnswer")) {%>
-<div id="sightCallConnectionStatus">noAnswer...</div>
+<div id="sightCallConnectionStatus" class="callling center">
+  <div class="calleeAvatar">
+    <img src="/weemo-extension/img/MaryJane.png" alt="callee's avatar" />
+  </div>
+  <div class="callingStt"><i class="iconCallIdle"></i>No answer</div>
+  <div class="actionBtn">
+    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>
+    <button class="btn">Close</button>
+  </div>
+</div>
 <% } %>
 
 
 <% if (mode.equals("connecting")) {%>
-<div id="sightCallConnectionStatus">connecting...</div>
+<div id="sightCallConnectionStatus" class="callling center">
+  <div class="calleeAvatar"><i class="iconChatLarge"></i></div>
+  <div class="inProgress">Connecting...</div>
+</div>
 <% } %>
 
 
 <% if (mode.equals("calling")) {%>
-<div id="sightCallConnectionStatus">calling...</div>
+<div id="sightCallConnectionStatus" class="callling center">
+  <div class="calleeAvatar">
+    <img src="/weemo-extension/img/MaryJane.png" alt="callee's avatar" />
+  </div>
+  <div class="inProgress">Calling...</div>
+</div>
 <% } %>
 
 
 <% if (mode.equals("plugin_mac")) {%>
-<div id="sightCallConnectionStatus">plugin_mac...</div>
+<div id="sightCallConnectionStatus" class="center">
+  <div class="suggestion">
+    You will need to install the plugin to enable video calls.
+    <br/>
+    <a href="#" title="Download the plugin">Download the plugin</a>
+  </div>
+  <div class="instruction">
+    <div class="center"><img src="/weemo-extension/img/macInstructionImg.png" alt="instruction image" /></div>
+    <ul>
+      <li>1<br/>Open the plugin </li>
+      <li>2<br/>Follow the instructions</li>
+      <li>3<br/>Enjoy Video Calls</li>
+    </ul>
+  </div>
+</div>
 <% } %>
 
 
 <% if (mode.equals("plugin_window")) {%>
-<div id="sightCallConnectionStatus">plugin_window...</div>
+<div id="sightCallConnectionStatus" class="center">
+  <div class="suggestion">
+    You will need to install the plugin to enable video calls.
+    <br/>
+    <a href="#" title="Download the plugin">Download the plugin</a>
+  </div>
+  <div class="instruction">
+    <div class="center"><img src="/weemo-extension/img/windowInstructionImg.png" alt="instruction image" /></div>
+    <ul>
+      <li>1<br/>Open the plugin </li>
+      <li>2<br/>Follow the instructions</li>
+      <li>3<br/>Enjoy Video Calls</li>
+    </ul>
+  </div>
+</div>
 <% } %>
 
 
 <% if (mode.equals("video")) {%>
-<div id="sightCallConnectionStatus">video...</div>
+<div id="sightCallConnectionStatus" class="center">
+  <iframe src="https://player.vimeo.com/video/133325732?color=b9ab97&title=0&byline=0&portrait=0" width="645" height="362" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+</div>
 <% } %>
 

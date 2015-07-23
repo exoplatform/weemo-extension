@@ -181,19 +181,17 @@
             if (window.location.href.indexOf("videocallpopup") > -1) return; // Not show this on popup
             jzStoreParam("isBusy", true, 15);
 
-            var incommingHtml = '<div id="sightCallOneOneIncommingForm" class=" incoming-call" style="position:fixed; top:100px;cursor: move;">';
-            incommingHtml += '    <h4 class="name">' + fromUser + ' Calling</h4>';
-            incommingHtml += '    <div class="picto"></div>';
-            incommingHtml += '    <div class="button-actions">';
-            incommingHtml += '        <div class="container">';
-            incommingHtml += '            <a class="video" href="#" id ="sightCallAcceptButton">Accept</a>';
-            incommingHtml += '        </div>';
-            incommingHtml += '        <div class="container">';
-            incommingHtml += '            <a class="ignore" href="#" id="sightCallDecleinButton">decline</a>';
-            incommingHtml += '        </div>';
-            incommingHtml += '        <div class="container">';
-            incommingHtml += '            <a class="hangup" href="#"></a>';
-            incommingHtml += '        </div>';
+            var incommingHtml = '<div id="sightCallOneOneIncommingForm" class=" incoming-call" style="position:fixed; bottom: 0; right: 0; cursor: move;">';
+            
+            incommingHtml += '    <div class="picto clearfix">';
+            incommingHtml += '    	<div class="avatar pull-left">';
+            incommingHtml += '    		<img src="/weemo-extension/img/MaryJane36x36.png" alt="#" />';
+            incommingHtml += '    	</div>';
+            incommingHtml += '    	<div class="name pull-left">' + fromUser + ' Calling</div>';
+            incommingHtml += '    </div>';
+            incommingHtml += '    <div class="actionBtn">';
+            incommingHtml += '    	<a class="btn btn-primary video" href="#" id ="sightCallAcceptButton">Accept</a>';
+            incommingHtml += '    	<a class="btn ignore" href="#" id="sightCallDecleinButton">decline</a>';
             incommingHtml += '    </div>';
             incommingHtml += '</div>';
             gj('body').append(incommingHtml);

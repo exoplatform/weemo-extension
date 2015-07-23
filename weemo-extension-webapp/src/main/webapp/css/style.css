@@ -163,3 +163,56 @@
 .rtcc-startcallbox {
 	display: none;
 }
+
+
+/** video call **/
+
+#sightCallConnectionStatus {
+  background: #333;
+  position: fixed;
+  height: 100%;    
+  width: 100%;
+  color: #fff;
+}
+
+.callling {
+    padding: 50px 0;  
+}
+
+.callling .calleeAvatar img {
+  background: #333 none repeat scroll 0 0;
+  border-radius: 60px;
+  display: inline-block;
+  height: 120px;
+  width: 120px;
+}
+
+.callling .status {
+  font-size: 16px;
+  font-weight: bold;  
+}
+
+.iconCallDropped {
+  background: url('/weemo-extension/img/iconCallDropped.png') no-repeat;
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+}
+
+.iconCallIdle {
+  background: url('/weemo-extension/img/iconCallIdle.png') no-repeat;
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+}
+
+.iconChatLarge {
+  background: url('/weemo-extension/img/iconChatLarge.png') no-repeat;
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+}
+.suggestion {
+  background: url('/weemo-extension/img/iconWarningLarge.png') no-repeat;
+  padding: 20px 0 20px 100px;
+}
