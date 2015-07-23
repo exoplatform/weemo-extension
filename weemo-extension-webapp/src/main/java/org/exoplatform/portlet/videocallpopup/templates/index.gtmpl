@@ -45,9 +45,9 @@
     <img src="/weemo-extension/img/MaryJane.png" alt="callee's avatar" />
   </div>
   <div class="calleeStatus">Mary Jane is busy</div>
-  <div class="callingStt"><i class="iconCallDropped"></i>Call dropped</div>
+  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>
   <div class="actionBtn">
-    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>
+    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>
     <button class="btn">Close</button>
   </div>
 </div>
@@ -59,22 +59,22 @@
     <img src="/weemo-extension/img/MaryJane.png" alt="callee's avatar" />
   </div>
   <div class="calleeStatus">Mary Jane is busy</div>
-  <div class="callingStt"><i class="iconCallDropped"></i>Connection lost</div>
+  <div class="callingStt"><i class="iconCallDropped"></i><span>Connection lost</span></div>
   <div class="actionBtn">
-    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>
+    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>
     <button class="btn">Close</button>
   </div>
 </div>
 <% } %>
 
 <% if (mode.equals("noAnswer")) {%>
-<div id="sightCallConnectionStatus" class="callling center">
+<div id="sightCallConnectionStatus" class="callling noAnswer center">
   <div class="calleeAvatar">
     <img src="/weemo-extension/img/MaryJane.png" alt="callee's avatar" />
   </div>
-  <div class="callingStt"><i class="iconCallIdle"></i>No answer</div>
+  <div class="callingStt"><i class="iconCallIdle"></i><span>No answer</span></div>
   <div class="actionBtn">
-    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>
+    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>
     <button class="btn">Close</button>
   </div>
 </div>
@@ -100,38 +100,48 @@
 
 
 <% if (mode.equals("plugin_mac")) {%>
-<div id="sightCallConnectionStatus" class="center">
-  <div class="suggestion">
-    You will need to install the plugin to enable video calls.
-    <br/>
-    <a href="#" title="Download the plugin">Download the plugin</a>
-  </div>
-  <div class="instruction">
-    <div class="center"><img src="/weemo-extension/img/macInstructionImg.png" alt="instruction image" /></div>
-    <ul>
-      <li>1<br/>Open the plugin </li>
-      <li>2<br/>Follow the instructions</li>
-      <li>3<br/>Enjoy Video Calls</li>
-    </ul>
+<div id="sightCallConnectionStatus">
+  <div class="pluginIntro">
+    <div class="info">
+      <i class="iconWarning"></i>
+      <p>
+        You will need to install the plugin to enable video calls.
+        <br/>
+        <a href="#" title="Download the plugin">Download the plugin</a>
+      </p>
+    </div>
+    <div class="instruction center">
+      <img src="/weemo-extension/img/macInstructionImg.png" alt="instruction image" />
+      <ul>
+        <li><span>1</span><br/>Open the plugin </li>
+        <li><span>2</span><br/>Follow the instructions</li>
+        <li><span>3</span><br/>Enjoy Video Calls</li>
+      </ul>
+    </div>
   </div>
 </div>
 <% } %>
 
 
 <% if (mode.equals("plugin_window")) {%>
-<div id="sightCallConnectionStatus" class="center">
-  <div class="suggestion">
-    You will need to install the plugin to enable video calls.
-    <br/>
-    <a href="#" title="Download the plugin">Download the plugin</a>
-  </div>
-  <div class="instruction">
-    <div class="center"><img src="/weemo-extension/img/windowInstructionImg.png" alt="instruction image" /></div>
-    <ul>
-      <li>1<br/>Open the plugin </li>
-      <li>2<br/>Follow the instructions</li>
-      <li>3<br/>Enjoy Video Calls</li>
-    </ul>
+<div id="sightCallConnectionStatus">
+  <div class="pluginIntro">
+    <div class="info">
+      <i class="iconWarning"></i>
+      <p>
+        You will need to install the plugin to enable video calls.
+        <br/>
+        <a href="#" title="Download the plugin">Download the plugin</a>
+       </p>
+    </div>
+    <div class="instruction center">
+      <img src="/weemo-extension/img/windowInstructionImg.png" alt="instruction image" />
+      <ul>
+        <li><span>1</span><br/>Open the plugin </li>
+        <li><span>2</span><br/>Follow the instructions</li>
+        <li><span>3</span><br/>Enjoy Video Calls</li>
+      </ul>
+    </div>
   </div>
 </div>
 <% } %>

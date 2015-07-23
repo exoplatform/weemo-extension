@@ -16,8 +16,10 @@
   background-image: url('/weemo-extension/img/uiIconWeemoLightGray.png');
 }
 
-.uiIconWeemoWhite
- {
+.uiIconWeemoWhite,
+.btn-primary .uiIconWeemoWhite, 
+.btn-primary:hover .uiIconWeemoWhite, 
+.btn-primary:hover .uiIconWeemoWhite:hover {
   background-image: url('/weemo-extension/img/uiIconWeemoWhite.png');
 }
 
@@ -169,7 +171,6 @@
 
 #sightCallConnectionStatus {
   background: #333;
-  position: fixed;
   height: 100%;    
   width: 100%;
   color: #fff;
@@ -187,32 +188,99 @@
   width: 120px;
 }
 
-.callling .status {
+.callling .calleeStatus {
   font-size: 16px;
-  font-weight: bold;  
+  font-weight: bold;
+  margin: 20px 0;
 }
 
-.iconCallDropped {
+.callling .callingStt {
+    line-height: 32px;
+    vertical-align: text-top;
+}
+
+.callling .callingStt span {
+  display: inline-block;
+  vertical-align: text-top;
+}
+
+.callling .callingStt .iconCallDropped {
   background: url('/weemo-extension/img/iconCallDropped.png') no-repeat;
-  width: 32px;
-  height: 32px;
   display: inline-block;
+  height: 32px;
+  margin-right: 5px;
+  vertical-align: text-top;
+  width: 32px;
 }
 
-.iconCallIdle {
+.callling .callingStt .iconCallIdle {
   background: url('/weemo-extension/img/iconCallIdle.png') no-repeat;
-  width: 32px;
+  display: inline-block;
   height: 32px;
+  margin-right: 5px;
+  vertical-align: text-top;
+  width: 32px;
+}
+
+.callling.noAnswer .callingStt {
+  margin: 20px 0;  
+}
+
+.callling .actionBtn .btn {
+  margin: 20px 5px;    
+}
+
+.callling .inProgress {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 25px 0;
+}
+.callling .iconChatLarge {
+  background: url('/weemo-extension/img/iconChatLarge.png') no-repeat;
+  width: 132px;
+  height: 132px;
   display: inline-block;
 }
 
-.iconChatLarge {
-  background: url('/weemo-extension/img/iconChatLarge.png') no-repeat;
-  width: 32px;
-  height: 32px;
-  display: inline-block;
+#sightCallConnectionStatus .pluginIntro {
+  width: 830px;
+  margin: 0 auto;
+} 
+
+#sightCallConnectionStatus .pluginIntro .info {
+  padding: 35px 100px 50px;
+  vertical-align: text-top;
 }
-.suggestion {
+
+#sightCallConnectionStatus .pluginIntro .info .iconWarning {
   background: url('/weemo-extension/img/iconWarningLarge.png') no-repeat;
-  padding: 20px 0 20px 100px;
+  display: inline-block;
+  height: 144px;
+  vertical-align: text-top;
+  width: 144px;
+}
+
+#sightCallConnectionStatus .pluginIntro .info p {
+  display: inline-block;
+  font-size: 18px;
+  line-height: 25px;
+  padding: 50px 0 50px 20px;
+  vertical-align: text-top;
+}
+
+#sightCallConnectionStatus .pluginIntro .instruction ul {
+  padding: 40px 0;
+}
+
+#sightCallConnectionStatus .pluginIntro .instruction ul li {
+  display: inline-block;
+  font-weight: bold;
+}
+
+#sightCallConnectionStatus .pluginIntro .instruction ul li:nth-child(2) {
+  margin: 0 170px;
+}
+
+#sightCallConnectionStatus .pluginIntro .instruction ul li span {
+  font-size: 24px;
 }
