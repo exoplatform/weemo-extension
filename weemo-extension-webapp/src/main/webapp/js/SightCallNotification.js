@@ -76,6 +76,11 @@
                this.sendMessage(toUser, "connectionlost", "one");
             }
         },
+        sendCallDrop: function(toUser) {
+            if (this.isBeingOnPopup() && (jzGetParam("stMessageType","") === "accepted" || jzGetParam("rvMessageType","") === "accepted")) {
+                this.sendMessage(toUser, "callDropped", "one");
+            }
+        },
         sendMessage: function(toUser, messageType, callMode) {
 
             // Send message
@@ -111,6 +116,8 @@
                 this.receivingMute(message);
             } else if (message.type === "connectionlost") {
                 this.receivingConnectionLost(message);
+            } else if (message.type === "callDropped") {
+                this.receivingCallDropped(message);
             }
 
         },
@@ -156,6 +163,11 @@
             if (this.isBeingOnPopup() && jzGetParam("stMessageType", "") === "calling" && jzGetParam("rvMessageType","") === "accepted") {
                 SightCallNotification.showConnectionLost(message.fromUser);
                 SightCallNotification.storeLastReceivedMessage(message);
+            }
+        },
+        receivingCallDropped: function(message) {
+            if (this.isBeingOnPopup() && (jzGetParam("stMessageType","") === "ready" || jzGetParam("rvMessageType","") === "ready")) {
+                SightCallNotification.showCallDroped(message.fromUser);
             }
         },
         receivingReady: function(message) {
@@ -221,31 +233,20 @@
 
         },
         showCalling: function() {
-            var callingForm =
-                             '<div id="sightCallConnectionStatus" class="callling center">';
-            callingForm  +=  '  <div class="calleeAvatar">';
-            callingForm  +=  '    <img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee  + '" alt="' + sightcallExtension.calleeFullName + '" />';
-            callingForm  +=  '  </div>';
-            callingForm  +=  '<div class="inProgress">Calling...</div>';
-
-            gj("#sightCallConnectionStatus").replaceWith(callingForm);
-
+            var $sightCallConnectionStatus = gj("#sightCallConnectionStatus");
+            gj(".calleeAvatar", $sightCallConnectionStatus).html('<img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee  + '" alt="' + sightcallExtension.calleeFullName + '" />');
+            gj(".inProgress", $sightCallConnectionStatus).text("Calling...");
         },
         showBusy: function() {
-            var busyForm =
-                         '<div id="sightCallConnectionStatus" class="callling center">';
-            busyForm +=  '  <div class="calleeAvatar">';
-            busyForm +=  '    <img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee  + '" alt="' + sightcallExtension.calleeFullName + '" />';
-            busyForm +=  '  </div>';
-            busyForm +=  '  <div class="calleeStatus">' + sightcallExtension.calleeFullName + ' is busy</div>';
-            busyForm +=  '  <div class="callingStt"><i class="iconCallDropped"></i>Call dropped</div>';
-            busyForm +=  '  <div class="actionBtn">';
-            busyForm +=  '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>';
-            busyForm +=  '    <button class="btn">Close</button>';
-            busyForm +=  '  </div>';
-            busyForm +=  '</div>';
-
-            gj("#sightCallConnectionStatus").replaceWith(busyForm);
+            var $sightCallConnectionStatus = gj("#sightCallConnectionStatus");
+            gj(".inProgress", $sightCallConnectionStatus).remove();
+            var $calleeAvatar = gj(".calleeAvatar", $sightCallConnectionStatus);
+            $calleeAvatar.after('<div class="calleeStatus">' + sightcallExtension.calleeFullName + ' is busy</div>');
+            $calleeAvatar.after('<div class="callingStt"><i class="iconCallDropped"></i>Call dropped</div>');
+            $calleeAvatar.after('<div class="actionBtn">');
+            $calleeAvatar.after('  <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>');
+            $calleeAvatar.after('  <button class="btn">Close</button>');
+            $calleeAvatar.after('</div>');
 
             this.clearHistory();
         },
@@ -263,6 +264,9 @@
             callDropForm +=  '</div>';
 
             gj("#sightCallConnectionStatus").replaceWith(callDropForm);
+
+            var $sightCallConnectionStatus = gj("#sightCallConnectionStatus");
+
 
             this.clearHistory();
         },
@@ -300,6 +304,12 @@
             gj("#sightCallConnectionStatus").replaceWith(connectionLostForm);
 
             this.clearHistory();
+        },
+        showVideoToCenter: function() {
+            var $sightCallConnectionStatus = gj("#sightCallConnectionStatus");
+            gj(".calleeAvatar", $sightCallConnectionStatus).remove();
+            gj(".inProgress", $sightCallConnectionStatus).remove();
+            gj("#video-container").show();
         },
         storeLastSentMessage: function(fromUser, toUser, callMode, messageType) {
             jzStoreParam("stCallMode", callMode, 14400);
@@ -349,9 +359,8 @@
             return (currentTime >= lastReceivedTime + 30);
         },
         isBeingOnPopup: function() {
-            return (jqchat("#sightcall-status").length > 0);
+            return (gj("#sightcall-status").length > 0);
         }
-
     };
     return SightCallNotification;
 })(gj, webNotifications, cCometD);

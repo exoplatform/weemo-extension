@@ -58,8 +58,6 @@ function SightCallExtension() {
 
     this.callObj;
 
-    this.callOwner = false; //jzGetParam("callOwner", false);
-    this.callActive = false; //jzGetParam("callActive", "false").toLowerCase() === "true";
     this.callType = jzGetParam("callType", "");
 
     this.uidToCall = jzGetParam("uidToCall", "");
@@ -146,19 +144,9 @@ SightCallExtension.prototype.setTokenKey = function(tokenKey) {
 };
 
 
-SightCallExtension.prototype.setCallOwner = function(callOwner) {
-    this.callOwner = callOwner;
-    jzStoreParam("callOwner", callOwner, 14400);
-};
-
 SightCallExtension.prototype.setCallType = function(callType) {
     this.callType = callType;
     jzStoreParam("callType", callType, 14400);
-};
-
-SightCallExtension.prototype.setCallActive = function(callActive) {
-    this.callActive = callActive;
-    jzStoreParam("callActive", callActive, 14400);
 };
 
 SightCallExtension.prototype.setUidToCall = function(uidToCall) {
@@ -249,7 +237,6 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
         this.rtcc.on('client.disconnect', function() {
             if (sightcallExtension.rtcc.getConnectionMode() === "plugin" || sightcallExtension.rtcc.getConnectionMode() === "webrtc") {
                 sightcallExtension.isConnected = false;
-                sightcallExtension.setCallActive(false);
                 if (sightcallExtension.hasChatMessage() && (chatApplication !== undefined)) {
                     var roomToCheck = sightcallExtension.chatMessage.room;
                     chatApplication.checkIfMeetingStarted(roomToCheck, function(callStatus) {
@@ -341,82 +328,17 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
         this.rtcc.on('call.create', function(callObj) {
             if ("outgoing" !== callObj.getDirection()) {
                 callObj.accept();
-                return;
             }
             sightcallExtension.callObj = callObj;
             callObj.on(['active', 'proceed', 'terminate'], function() {
                 var eventName = this.eventName;
-                var messageWeemo = "";
-                var optionsWeemo = {};
-                ts = Math.round(new Date().getTime() / 1000);
 
-                if (eventName === "terminate") sightcallExtension.setCallOwner(false);
-
-                if (sightcallExtension.callType === "internal" || eventName === "terminate") {
-                    messageWeemo = "Call " + status;
-                    optionsWeemo.timestamp = ts;
-                } else if (sightcallExtension.callType === "host") {
-                    messageWeemo = "Call " + status;
-                    optionsWeemo.timestamp = ts;
-                    optionsWeemo.uidToCall = sightcallExtension.uidToCall;
-                    optionsWeemo.displaynameToCall = sightcallExtension.displaynameToCall;
-                    optionsWeemo.meetingPointId = sightcallExtension.meetingPoint.id;
-                }
-
-                if (eventName === "active" && sightcallExtension.callActive) return; //Call already active, no need to push a new message
-                if (eventName === "terminate" && (!sightcallExtension.callActive || sightcallExtension.callType === "attendee")) //Terminate a non started call or a joined call, no message needed
-                {
-                    sightcallExtension.setCallActive(false);
-                    return;
-                }
-                if (sightcallExtension.callType === "attendee" && eventName === "active") {
-                    sightcallExtension.setCallActive(true);
-                    optionsWeemo.type = "call-join";
-                    optionsWeemo.username = sightcallExtension.chatMessage.user;
-                    optionsWeemo.fullname = sightcallExtension.chatMessage.fullname;
-
-                } else if (eventName === "active") {
-                    sightcallExtension.setCallActive(true);
-                    optionsWeemo.type = "call-on";
+                if (eventName === "active") {
+                    SightCallNotification.showVideoToCenter();
                 } else if (eventName === "terminate") {
-                    sightcallExtension.setCallActive(false);
-                    optionsWeemo.type = "call-off";
-                } else if (eventName === "proceed") {
-                    sightcallExtension.setCallActive(false);
-                    optionsWeemo.type = "call-proceed";
-                }
-
-                if (sightcallExtension.hasChatMessage()) {
-                    console.log("WEEMO:hasChatMessage::" + sightcallExtension.chatMessage.user + ":" + sightcallExtension.chatMessage.targetUser);
-                    if (chatApplication !== undefined) {
-                        var roomToCheck = "";
-                        if (sightcallExtension.chatMessage.room !== undefined) roomToCheck = sightcallExtension.chatMessage.room;
-                        chatApplication.checkIfMeetingStarted(roomToCheck, function(callStatus) {
-                            if (callStatus === 1 && optionsWeemo.type === "call-on") {
-                                // Call is already created, not allowed.
-                                sightcallExtension.initChatMessage();
-                                sightcallExtension.hangup();
-                                return;
-                            }
-                            if (callStatus === 0 && optionsWeemo.type === "call-off") {
-                                // Call is already terminated, no need to terminate again
-                                return;
-                            }
-
-                            chatApplication.chatRoom.sendFullMessage(
-                                sightcallExtension.chatMessage.user,
-                                sightcallExtension.chatMessage.token,
-                                sightcallExtension.chatMessage.targetUser,
-                                sightcallExtension.chatMessage.room,
-                                messageWeemo,
-                                optionsWeemo,
-                                "true"
-                            );
-
-                            if (eventName === "terminate") {
-                                sightcallExtension.initChatMessage();
-                            }
-                        });
+                    if (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "one_callee") {
+                        var toUser = jzGetParam("stToUser", "");
+                        SightCallNotification.showCallDroped(toUser);
                     }
                 }
 
@@ -446,7 +368,7 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
 SightCallExtension.prototype.createWeemoCall = function(targetUser, targetFullname, chatMessage) {
 
 
-    if (this.weemoKey !== "" && this.callActive === false) {
+    if (this.weemoKey !== "") {
 
         if (chatMessage !== undefined) {
             this.setChatMessage(chatMessage);
@@ -456,13 +378,11 @@ SightCallExtension.prototype.createWeemoCall = function(targetUser, targetFullna
             this.setUidToCall("weemo" + targetUser);
             this.setDisplaynameToCall(targetFullname);
             this.setCallType("internal");
-            this.setCallOwner(true);
             this.rtcc.createCall(this.uidToCall, this.callType, this.displaynameToCall);
         } else {
             this.setUidToCall(this.rtcc.getToken());
             this.setDisplaynameToCall(this.rtcc.getDisplayName());
             this.setCallType("host");
-            this.setCallOwner(true);
             this.meetingPoint = this.rtcc.createMeetingPoint('adhoc');
         }
     }
@@ -472,12 +392,11 @@ SightCallExtension.prototype.createWeemoCall = function(targetUser, targetFullna
  *
  */
 SightCallExtension.prototype.joinWeemoCall = function(chatMessage) {
-    if (this.weemoKey !== "" && this.callActive === false) {
+    if (this.weemoKey !== "") {
         if (chatMessage !== undefined) {
             this.setChatMessage(chatMessage);
         }
         this.setCallType("attendee");
-        this.setCallOwner(false);
         this.rtcc.joinConfCall(this.meetingPointId);
     }
 };
