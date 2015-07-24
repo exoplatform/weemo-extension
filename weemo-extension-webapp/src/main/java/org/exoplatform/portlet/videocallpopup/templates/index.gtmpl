@@ -14,17 +14,22 @@
 </div>
 
 <% if (mode.equals("one")) {%>
+<div class="videoCallCont">
     <div id="sightCallConnectionStatus" class="callling center">
         <div class="calleeAvatar"><i class="iconChatLarge"></i></div>
         <div class="inProgress">Connecting...</div>
-        <div id="video-container" style="display:none"></div>
     </div>
+    <div id="video-container" class="center" style="display:none"></div>
+</div>
+
 <% } else if (mode.equals("one_callee")) { %>
+<div class="videoCallCont">
     <div id="sightCallConnectionStatus" class="callling center">
         <div class="calleeAvatar"><i class="iconChatLarge"></i></div>
         <div class="inProgress">Connecting...</div>
-        <div id="video-container" style="display:none"></div>
     </div>
+    <div id="video-container" class="center" style="display:none"></div>
+</div>
 <% } %>
 
 <% if (mode.equals("busy")) {%>

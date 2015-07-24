@@ -199,7 +199,7 @@
             incommingHtml += '    		<i class="uiIconClose uiIconWhite"></i>';
             incommingHtml += '    	</div>';
             incommingHtml += '    	<div class="avatar pull-left">';
-            incommingHtml += '    		<img src="/weemo-extension/img/MaryJane36x36.png" alt="#" />';
+            incommingHtml += '    		<img src="/rest/weemo/getAvatarURL/' + fromUser + '" alt="' + fromFullName + '" />';
             incommingHtml += '    	</div>';
             incommingHtml += '    	<div class="name pull-left">' + fromFullName + ' Calling</div>';
             incommingHtml += '    </div>';
@@ -242,9 +242,9 @@
             gj(".inProgress", $sightCallConnectionStatus).remove();
             var $calleeAvatar = gj(".calleeAvatar", $sightCallConnectionStatus);
             $calleeAvatar.after('<div class="calleeStatus">' + sightcallExtension.calleeFullName + ' is busy</div>');
-            $calleeAvatar.after('<div class="callingStt"><i class="iconCallDropped"></i>Call dropped</div>');
+            $calleeAvatar.after('<div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>');
             $calleeAvatar.after('<div class="actionBtn">');
-            $calleeAvatar.after('  <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>');
+            $calleeAvatar.after('  <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>');
             $calleeAvatar.after('  <button class="btn">Close</button>');
             $calleeAvatar.after('</div>');
 
@@ -272,13 +272,13 @@
         },
         showNoAnswer: function() {
             var noAnserForm  =
-                           '<div id="sightCallConnectionStatus" class="callling center">';
+                           '<div id="sightCallConnectionStatus" class="callling noAnswer center">';
             noAnserForm += '  <div class="calleeAvatar">';
             noAnserForm += '    <img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee  + '" alt="' + sightcallExtension.calleeFullName + '" />';
             noAnserForm += '  </div>';
-            noAnserForm += '  <div class="callingStt"><i class="iconCallIdle"></i>No answer</div>';
+            noAnserForm += '  <div class="callingStt"><i class="iconCallIdle"></i><span>No answer</span></div>';
             noAnserForm += '  <div class="actionBtn">';
-            noAnserForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>';
+            noAnserForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
             noAnserForm += '    <button class="btn">Close</button>';
             noAnserForm += '  </div>';
             noAnserForm += '</div>';
@@ -294,9 +294,9 @@
             connectionLostForm += '    <img src="/rest/weemo/getAvatarURL/' + toUserId  + '" alt="' + toUserId + '" />';
             connectionLostForm += '  </div>';
             connectionLostForm += '  <div class="calleeStatus">Connection Lost</div>';
-            connectionLostForm += '  <div class="callingStt"><i class="iconCallDropped"></i>Call dropped</div>';
+            connectionLostForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
             connectionLostForm += '  <div class="actionBtn">';
-            connectionLostForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>';
+            connectionLostForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
             connectionLostForm += '    <button class="btn">Close</button>';
             connectionLostForm += '  </div>';
             connectionLostForm += '</div>';

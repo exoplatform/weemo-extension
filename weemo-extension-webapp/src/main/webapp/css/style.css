@@ -152,12 +152,6 @@
     margin-top: 10px!important;
 }
 
-#video-container {
-	width: 320px;
-	height: 180px;
-	background: blue;
-}
-
 #sightCallIncommingForm {
 	display:none;
 }
