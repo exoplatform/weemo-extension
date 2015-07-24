@@ -245,7 +245,7 @@
             $calleeAvatar.after('<div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>');
             $calleeAvatar.after('<div class="actionBtn">');
             $calleeAvatar.after('  <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>');
-            $calleeAvatar.after('  <button class="btn">Close</button>');
+            $calleeAvatar.after('  <button class="btn" onclick="javascript:window.close();">Close</button>');
             $calleeAvatar.after('</div>');
 
             this.clearHistory();
@@ -259,7 +259,7 @@
             callDropForm +=  '  <div class="callingStt"><i class="iconCallDropped"></i>Call dropped</div>';
             callDropForm +=  '  <div class="actionBtn">';
             callDropForm +=  '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>';
-            callDropForm +=  '    <button class="btn">Close</button>';
+            callDropForm +=  '    <button class="btn" onclick="javascript:window.close();">Close</button>';
             callDropForm +=  '  </div>';
             callDropForm +=  '</div>';
 
@@ -279,7 +279,7 @@
             noAnserForm += '  <div class="callingStt"><i class="iconCallIdle"></i><span>No answer</span></div>';
             noAnserForm += '  <div class="actionBtn">';
             noAnserForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
-            noAnserForm += '    <button class="btn">Close</button>';
+            noAnserForm += '    <button class="btn" onclick="javascript:window.close();">Close</button>';
             noAnserForm += '  </div>';
             noAnserForm += '</div>';
 
@@ -297,7 +297,7 @@
             connectionLostForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
             connectionLostForm += '  <div class="actionBtn">';
             connectionLostForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
-            connectionLostForm += '    <button class="btn">Close</button>';
+            connectionLostForm += '    <button class="btn" onclick="javascript:window.close();">Close</button>';
             connectionLostForm += '  </div>';
             connectionLostForm += '</div>';
 
@@ -307,9 +307,14 @@
         },
         showVideoToCenter: function() {
             var $sightCallConnectionStatus = gj("#sightCallConnectionStatus");
+            var width = Math.floor(screen.width * 0.8 * 0.7 );
+            var height = Math.floor(screen.height * 0.8 * 0.7 );
             gj(".calleeAvatar", $sightCallConnectionStatus).remove();
             gj(".inProgress", $sightCallConnectionStatus).remove();
             gj("#video-container").show();
+            gj("#video-container").width(width);
+            gj("#video-container").height(height);
+
         },
         storeLastSentMessage: function(fromUser, toUser, callMode, messageType) {
             jzStoreParam("stCallMode", callMode, 14400);
