@@ -181,19 +181,21 @@
             if (window.location.href.indexOf("videocallpopup") > -1) return; // Not show this on popup
             jzStoreParam("isBusy", true, 15);
 
-            var incommingHtml = '<div id="sightCallOneOneIncommingForm" class=" incoming-call" style="position:fixed; bottom: 0; right: 0; cursor: move;">';
-            
+            var incommingHtml = '<div id="sightCallOneOneIncommingForm" class="incoming-call">';
             incommingHtml += '    <div class="picto clearfix">';
-            incommingHtml += '    	<div class="calleeAvatar avatar pull-left">';
-            incommingHtml += '    		<img src="/rest/weemo/getAvatarURL/' + fromUser + '" alt="' + fromFullName + '" />';
+            incommingHtml += '    	<div class="pull-right">';
+            incommingHtml += '    		<i class="uiIconClose uiIconWhite"></i>';
+            incommingHtml += '    	</div>';
+            incommingHtml += '    	<div class="avatar pull-left">';
+            incommingHtml += '    		<img src="/weemo-extension/img/MaryJane36x36.png" alt="#" />';
             incommingHtml += '    	</div>';
             incommingHtml += '    	<div class="name pull-left">' + fromFullName + ' Calling</div>';
             incommingHtml += '    </div>';
-            incommingHtml += '    <div class="actionBtn">';
-            incommingHtml += '    	<a class="btn btn-primary video" href="#" id ="sightCallAcceptButton">Accept</a>';
-            incommingHtml += '    	<a class="btn ignore" href="#" id="sightCallDecleinButton">decline</a>';
+            incommingHtml += '    <div class="actionBtn center">';
+            incommingHtml += '    	<a class="btn btn-primary video" href="#" id ="sightCallAcceptButton"><i class="uiIconWeemoWhite"></i>&nbsp;Accept</a>';
+            incommingHtml += '    	<a class="btn ignore" href="#" id="sightCallDecleinButton"><i class="iconCallDecline"></i>&nbsp;Decline</a>';
             incommingHtml += '    </div>';
-            incommingHtml += '</div>';
+            incommingHtml += '	</div>';
             gj('body').append(incommingHtml);
 
             gj("#sightCallDecleinButton").click(function(e) {
@@ -210,7 +212,7 @@
 
             window.setTimeout(function() {
                 SightCallNotification.hideIncomming();
-            }, 15000);
+            }, 150000);
 
         },
         hideIncomming: function() {

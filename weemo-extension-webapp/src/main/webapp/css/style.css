@@ -168,16 +168,24 @@
 
 
 /** video call **/
+.videoCallCont {
+  background: #333;
+  height: 100%;
+  position: fixed;
+  width: 100%;  
+  overflow: auto;
+}
 
 #sightCallConnectionStatus {
-  background: #333;
-  height: 100%;    
-  width: 100%;
   color: #fff;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .callling {
-    padding: 50px 0;  
+  padding: 50px 0;  
 }
 
 .callling .calleeAvatar img {
@@ -191,12 +199,12 @@
 .callling .calleeStatus {
   font-size: 16px;
   font-weight: bold;
-  margin: 20px 0;
+  margin: 20px 0 10px;
 }
 
 .callling .callingStt {
-    line-height: 32px;
-    vertical-align: text-top;
+  line-height: 32px;
+  vertical-align: text-top;
 }
 
 .callling .callingStt span {
@@ -278,9 +286,59 @@
 }
 
 #sightCallConnectionStatus .pluginIntro .instruction ul li:nth-child(2) {
-  margin: 0 170px;
+  margin: 0 160px 0 182px;
 }
 
 #sightCallConnectionStatus .pluginIntro .instruction ul li span {
   font-size: 24px;
+}
+
+/*************/
+.incoming-call {
+  background: #999;
+  border-radius: 3px;
+  bottom: 0;
+  padding: 15px;
+  position: fixed;
+  right: 0;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px -1px rgba(35, 44, 48, 0.18);
+  -moz-box-shadow: 0 2px 4px -1px rgba(35, 44, 48, 0.18);
+  -webkit-box-shadow: 0 2px 4px -1px rgba(35, 44, 48, 0.18);
+}
+
+.incoming-call .picto {
+  margin-bottom: 15px;
+}
+
+.incoming-call .picto div .uiIconClose {
+  margin: -10px -10px 0 10px;
+  opacity: 1;
+}
+
+.incoming-call .picto .avatar img {
+  border-radius: 3px;
+  width: 36px;
+  height: 36px;
+}
+
+.incoming-call .name {
+  margin-left: 15px; 
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  padding-top: 5px;
+}
+
+.incoming-call .actionBtn a {
+  margin: 0 5px;
+}
+
+.iconCallDecline {
+  background: url('/weemo-extension/img/iconCallDecline.png') no-repeat;
+  height: 16px;
+  line-height: 16px;
+  vertical-align: text-top;
+  width: 16px;
+  display: inline-block;
 }
