@@ -101,36 +101,6 @@ SightCallExtension.prototype.getCookie = function(cname) {
 }
 
 SightCallExtension.prototype.showSightcallInstaller = function() {
-    if (!sightcallExtension.isSupport || sightcallExtension.connectedWeemoDriver || weemoExtension.isTurnOff === "true") {
-        jqchat("#sightcall-alert").hide();
-        return;
-    }
-    var isDismiss = sightcallExtension.getCookie('isDismiss');
-    if (!sightcallExtension.isConnected) {
-        if ((typeof(isDismiss) == "undefined" && isDismiss == null) || !isDismiss) {
-            var uiToolbarContainer = jqchat("#UIToolbarContainer");
-            var height = uiToolbarContainer.outerHeight() - jqchat(".alert").css("marginTop").replace('px', '');
-
-            jqchat("#sightcall-alert").css({
-                top: height + 'px'
-            });
-            jqchat("#sightcall-alert").show();
-            var downloadUrl = sightcallExtension.getCookie("downloadUrl");
-            jqchat("#sightcall-alert-download").click(function() {
-                jqchat("#sightcall-alert").hide();
-                location.href = downloadUrl;
-            });
-
-            jqchat("#sightcall-alert-dismiss").click(function() {
-                sightcallExtension.setCookie("isDismiss", "true", 365);
-                jqchat("#sightcall-alert").hide();
-            });
-            var closeElem = jqchat("#sightcall-alert").find(".uiIconClose:first");
-            jqchat(closeElem).click(function() {
-                jqchat("#sightcall-alert").hide();
-            });
-        }
-    }
 }
 
 SightCallExtension.prototype.setKey = function(weemoKey) {
@@ -260,6 +230,11 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
 
                     });
                 }
+
+                if (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "one_callee") {
+                    var toUser = jzGetParam("stToUser", "");
+                    SightCallNotification.showConnectionLost(toUser);
+                }
             }
         });
 
@@ -296,6 +271,11 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
         this.rtcc.on('cloud.sip.ko', function() {
             if (sightcallExtension.rtcc.getConnectionMode() === "plugin" || sightcallExtension.rtcc.getConnectionMode() === "webrtc") {
                 sightcallExtension.isConnected = false;
+
+                if (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "one_callee") {
+                    var toUser = jzGetParam("stToUser", "");
+                    SightCallNotification.showConnectionLost(toUser);
+                }
             }
         });
 
@@ -309,14 +289,9 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
         });
 
         this.rtcc.on('plugin.missing', function(downloadUrl) {
-            sightcallExtension.setCookie("isNotInstallWeemoPlugin", "true", 365);
-            sightcallExtension.setCookie("downloadUrl", downloadUrl, 365);
-            sightcallExtension.showSightcallInstaller();
-            if (navigator.platform !== "Linux") {
-                jqchat("#weemo-alert-download").click(function() {
-                    jqchat("#weemo-alert").hide();
-                    location.href = downloadUrl;
-                });
+            SightCallNotification.showPluginNotInstalled();
+            if (sightcallExtension.callMode === "one_callee") {
+                SightCallNotification.sendPluginNotInstalled(sightcallExtension.caller);
             }
         });
 
@@ -430,9 +405,21 @@ SightCallExtension.prototype.initPopup = function() {
     // Set popup title
     if ("one" === sightcallExtension.callMode) {
         document.title = "Video Call : " + sightcallExtension.calleeFullName;
+        if (sightcallExtension.callee.length === 0 ) {
+            sightcallExtension.showWrongParams();
+        }
     } else if ("one_callee" === sightcallExtension.callMode) {
         document.title = "Video Call : " + sightcallExtension.callerFullName;
+        if (jzGetParam("stMessageType","") !== "accepted" || jzGetParam("rvMessageType","") !== "calling" ) {
+            window.close();
+        }
+        if (sightcallExtension.caller.length === 0 ) {
+            sightcallExtension.showWrongParams();
+        }
+    } else {
+        sightcallExtension.showNotSupported();
     }
+
 };
 
 SightCallExtension.prototype.checkConnectingTimeout = function() {
@@ -448,6 +435,14 @@ SightCallExtension.prototype.checkConnectingTimeout = function() {
                 sightcallExtension.rtcc.destroy();
         }
     }, 30000);
+};
+
+SightCallExtension.prototype.showNotSupported = function() {
+    jqchat('body').html('<div class = "center">NOT SUPPORTED</div>')
+};
+
+SightCallExtension.prototype.showWrongParams =  function() {
+    jqchat('body').html('<div class = "center">Wrong or missing query parameter(s)</div>')
 };
 
 /**
@@ -480,7 +475,10 @@ var sightcallExtension = new SightCallExtension();
             "calleeFullName": $sightcallApplication.attr("data-callee-full-name")
         });
 
-        if (navigator.platform.indexOf("Linux") >= 0 && !jqchat.browser.chrome) return;
+        if ((navigator.platform.indexOf("Linux") >= 0 && !jqchat.browser.chrome) || window.opener === null  ) {
+            sightcallExtension.showNotSupported();
+            return;
+        }
 
         sightcallExtension.cometdUserToken = $sightcallApplication.attr("cometd-user-token");
         sightcallExtension.cometdContextName = $sightcallApplication.attr("cometd-context-name");

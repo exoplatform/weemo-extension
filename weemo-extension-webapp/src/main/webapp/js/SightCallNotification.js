@@ -23,12 +23,13 @@
         },
         sendCalling: function(toUser) {
             if (this.isBeingOnPopup()) {
+                this.clearHistory();
 
                 this.sendMessage(toUser, "calling", "one");
 
 
                 window.setTimeout(function() {
-                    if (SightCallNotification.isCalleeAnswerTimeout()) {
+                    if (SightCallNotification.isCalleeAnswerTimeout() && jzGetParam("stMessageType","") === "calling") {
                         SightCallNotification.showNoAnswer();
                     }
                 }, 15000);
@@ -62,7 +63,7 @@
             }
         },
         sendReady: function(toUser) {
-            if (this.isBeingOnPopup()) {
+            if (this.isBeingOnPopup() && jzGetParam("stMessageType","") === "accepted") {
                 this.sendMessage(toUser, "ready", "one");
             }
         },
@@ -87,7 +88,9 @@
             gj.ajax("/rest/weemo/sendMessage/" + toUser + "/" + messageType + "/" + callMode)
                 .done(function() {
                     SightCallNotification.storeLastSentMessage(SightCallNotification.currentUser, toUser, callMode, messageType);
-                })
+                  console.log("Sent " + toUser + "  " + messageType);
+
+              })
                 .fail(function() {
                     SightCallNotification.showConnectionLost(toUser);
                     console.log("Cannot send " + toUser + "  " + messageType);
@@ -168,6 +171,9 @@
         receivingCallDropped: function(message) {
             if (this.isBeingOnPopup() && (jzGetParam("stMessageType","") === "ready" || jzGetParam("rvMessageType","") === "ready")) {
                 SightCallNotification.showCallDroped(message.fromUser);
+
+                SightCallNotification.storeLastReceivedMessage(message);
+
             }
         },
         receivingReady: function(message) {
@@ -211,7 +217,10 @@
             gj('body').append(incommingHtml);
 
             gj("#sightCallDecleinButton").click(function(e) {
-                SightCallNotification.sendDecline(fromUser);
+                SightCallNotification.hideIncomming();
+            });
+
+            gj(".uiIconClose", "#sightCallOneOneIncommingForm").click(function(e) {
                 SightCallNotification.hideIncomming();
             });
 
@@ -224,7 +233,7 @@
 
             window.setTimeout(function() {
                 SightCallNotification.hideIncomming();
-            }, 150000);
+            }, 15000);
 
         },
         hideIncomming: function() {
@@ -238,43 +247,51 @@
             gj(".inProgress", $sightCallConnectionStatus).text("Calling...");
         },
         showBusy: function() {
-            var $sightCallConnectionStatus = gj("#sightCallConnectionStatus");
-            gj(".inProgress", $sightCallConnectionStatus).remove();
-            var $calleeAvatar = gj(".calleeAvatar", $sightCallConnectionStatus);
-            $calleeAvatar.after('<div class="calleeStatus">' + sightcallExtension.calleeFullName + ' is busy</div>');
-            $calleeAvatar.after('<div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>');
-            $calleeAvatar.after('<div class="actionBtn">');
-            $calleeAvatar.after('  <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>');
-            $calleeAvatar.after('  <button class="btn" onclick="javascript:window.close();">Close</button>');
-            $calleeAvatar.after('</div>');
+            if (jzGetParam("stTime","") !== "" || jzGetParam("rvTime","") !== "") {
 
-            this.clearHistory();
+                var busyForm
+                  = '<div id="sightCallConnectionStatus" class="callling center">';
+                busyForm += '  <div class="calleeAvatar">';
+                busyForm += '    <img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee + '" alt="' + sightcallExtension.calleeFullName + '" />';
+                busyForm += '  </div>';
+                busyForm += '  <div class="calleeStatus">' + sightcallExtension.calleeFullName + ' is busy</div>';
+                busyForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
+                busyForm += '  <div class="actionBtn">';
+                busyForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
+                busyForm += '    <button class="btn"  onclick="javascript:window.close();">Close</button>';
+                busyForm += '  </div>';
+                busyForm += '</div>';
+
+                gj("#sightCallConnectionStatus").replaceWith(busyForm);
+
+                this.clearHistory();
+            }
         },
         showCallDroped: function(toUserId) {
-            var callDropForm =
-                             '<div id="sightCallConnectionStatus" class="callling center">';
-            callDropForm +=  '  <div class="calleeAvatar">';
-            callDropForm +=  '    <img src="/rest/weemo/getAvatarURL/' + toUserId  + '" alt="' + toUserId + '" />';
-            callDropForm +=  '  </div>';
-            callDropForm +=  '  <div class="callingStt"><i class="iconCallDropped"></i>Call dropped</div>';
-            callDropForm +=  '  <div class="actionBtn">';
-            callDropForm +=  '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>Call</button>';
-            callDropForm +=  '    <button class="btn" onclick="javascript:window.close();">Close</button>';
-            callDropForm +=  '  </div>';
-            callDropForm +=  '</div>';
+            if (jzGetParam("stTime","") !== "" || jzGetParam("rvTime","") !== "") {
 
-            gj("#sightCallConnectionStatus").replaceWith(callDropForm);
+                var callDropForm =
+                  '<div id="sightCallConnectionStatus" class="callling center">';
+                callDropForm += '  <div class="calleeAvatar">';
+                callDropForm += '    <img src="/rest/weemo/getAvatarURL/' + toUserId + '" alt="' + toUserId + '" />';
+                callDropForm += '  </div>';
+                callDropForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
+                callDropForm += '  <div class="actionBtn">';
+                //callDropForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i></i>&nbsp;Call</button>';
+                //callDropForm += '    <button class="btn" onclick="javascript:window.close();">Close</button>';
+                callDropForm += '  </div>';
+                callDropForm += '</div>';
 
-            var $sightCallConnectionStatus = gj("#sightCallConnectionStatus");
+                gj("#sightCallConnectionStatus").replaceWith(callDropForm);
 
-
-            this.clearHistory();
+                this.clearHistory();
+            }
         },
         showNoAnswer: function() {
-            var noAnserForm  =
-                           '<div id="sightCallConnectionStatus" class="callling noAnswer center">';
+            var noAnserForm =
+              '<div id="sightCallConnectionStatus" class="callling noAnswer center">';
             noAnserForm += '  <div class="calleeAvatar">';
-            noAnserForm += '    <img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee  + '" alt="' + sightcallExtension.calleeFullName + '" />';
+            noAnserForm += '    <img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee + '" alt="' + sightcallExtension.calleeFullName + '" />';
             noAnserForm += '  </div>';
             noAnserForm += '  <div class="callingStt"><i class="iconCallIdle"></i><span>No answer</span></div>';
             noAnserForm += '  <div class="actionBtn">';
@@ -288,22 +305,25 @@
             this.clearHistory();
         },
         showConnectionLost: function(toUserId) {
-            var connectionLostForm =
-                                  '<div id="sightCallConnectionStatus" class="callling center">';
-            connectionLostForm += '  <div class="calleeAvatar">';
-            connectionLostForm += '    <img src="/rest/weemo/getAvatarURL/' + toUserId  + '" alt="' + toUserId + '" />';
-            connectionLostForm += '  </div>';
-            connectionLostForm += '  <div class="calleeStatus">Connection Lost</div>';
-            connectionLostForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
-            connectionLostForm += '  <div class="actionBtn">';
-            connectionLostForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
-            connectionLostForm += '    <button class="btn" onclick="javascript:window.close();">Close</button>';
-            connectionLostForm += '  </div>';
-            connectionLostForm += '</div>';
+            if (jzGetParam("stTime","") !== "" || jzGetParam("rvTime","") !== "") {
 
-            gj("#sightCallConnectionStatus").replaceWith(connectionLostForm);
+                var connectionLostForm =
+                  '<div id="sightCallConnectionStatus" class="callling center">';
+                connectionLostForm += '  <div class="calleeAvatar">';
+                connectionLostForm += '    <img src="/rest/weemo/getAvatarURL/' + toUserId + '" alt="' + toUserId + '" />';
+                connectionLostForm += '  </div>';
+                connectionLostForm += '  <div class="calleeStatus">Connection Lost</div>';
+                connectionLostForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
+                connectionLostForm += '  <div class="actionBtn">';
+                connectionLostForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
+                connectionLostForm += '    <button class="btn" onclick="javascript:window.close();">Close</button>';
+                connectionLostForm += '  </div>';
+                connectionLostForm += '</div>';
 
-            this.clearHistory();
+                gj("#sightCallConnectionStatus").replaceWith(connectionLostForm);
+
+                this.clearHistory();
+            }
         },
         showVideoToCenter: function() {
             var $sightCallConnectionStatus = gj("#sightCallConnectionStatus");
@@ -314,6 +334,10 @@
             gj("#video-container").show();
             gj("#video-container").width(width);
             gj("#video-container").height(height);
+
+        },
+        showPluginNotInstalled: function() {
+            this.clearHistory();
 
         },
         storeLastSentMessage: function(fromUser, toUser, callMode, messageType) {
@@ -330,6 +354,8 @@
             jzStoreParam("rvToUser", message.toUser, 14400);
             jzStoreParam("rvFromUser", message.fromUser, 14400);
             jzStoreParam("rvTime", Math.floor(new Date() / 1000), 14400);
+            console.log("received " + message.fromUser + "  " + message.type);
+
         },
         clearHistory: function() {
             localStorage.removeItem("stCallMode");
