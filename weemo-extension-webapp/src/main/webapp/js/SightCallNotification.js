@@ -8,8 +8,7 @@
             me.Cometd.configure({
                 url: loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '') + '/' + contextName + '/cometd',
                 'exoId': eXoUser,
-                'exoToken': eXoToken,
-                logLevel: 'debug'
+                'exoToken': eXoToken
             });
 
             if (me.currentUser !== eXoUser || me.currentUser === '') {
@@ -60,6 +59,8 @@
         sendPluginNotInstalled: function(toUser) {
             if (this.isBeingOnPopup() && jzGetParam("stMessageType", "") === "accepted" && jzGetParam("rvMessageType","") === "calling") {
                 this.sendMessage(toUser, "notinstalled", "one");
+
+                this.clearHistory();
             }
         },
         sendReady: function(toUser) {
@@ -257,7 +258,7 @@
                 busyForm += '  <div class="calleeStatus">' + sightcallExtension.calleeFullName + ' is busy</div>';
                 busyForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
                 busyForm += '  <div class="actionBtn">';
-                busyForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
+                busyForm += '    <button class="btn btn-primary" onclick="javascript:location.reload();"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
                 busyForm += '    <button class="btn"  onclick="javascript:window.close();">Close</button>';
                 busyForm += '  </div>';
                 busyForm += '</div>';
@@ -295,7 +296,7 @@
             noAnserForm += '  </div>';
             noAnserForm += '  <div class="callingStt"><i class="iconCallIdle"></i><span>No answer</span></div>';
             noAnserForm += '  <div class="actionBtn">';
-            noAnserForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
+            noAnserForm += '    <button class="btn btn-primary" onclick="javascript:location.reload(true);"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
             noAnserForm += '    <button class="btn" onclick="javascript:window.close();">Close</button>';
             noAnserForm += '  </div>';
             noAnserForm += '</div>';
@@ -315,7 +316,11 @@
                 connectionLostForm += '  <div class="calleeStatus">Connection Lost</div>';
                 connectionLostForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
                 connectionLostForm += '  <div class="actionBtn">';
-                connectionLostForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
+                if (sightcallExtension.callMode === "one" && sightcallExtension.callee === toUser) {
+                    connectionLostForm += '    <button class="btn btn-primary" onclick="javascript:location.reload(true);"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
+                } else if (sightcallExtension.callMode === "one_callee" && sightcallExtension.caller === toUser) {
+                    connectionLostForm += '    <button class="btn btn-primary" onclick="javascript:window.location.replace("/portal/intranet/videocallpopup?mode=one&callee=' + toUser + '");"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
+                }
                 connectionLostForm += '    <button class="btn" onclick="javascript:window.close();">Close</button>';
                 connectionLostForm += '  </div>';
                 connectionLostForm += '</div>';
@@ -336,7 +341,36 @@
             gj("#video-container").height(height);
 
         },
-        showPluginNotInstalled: function() {
+        showPluginNotInstalled: function(downloadUrl) {
+            var pluginNotInstalledForm =
+                                      '<div id="sightCallConnectionStatus">';
+            pluginNotInstalledForm += '  <div class="pluginIntro">';
+            pluginNotInstalledForm += '    <div class="info">';
+            pluginNotInstalledForm += '      <i class="iconWarning"></i>';
+            pluginNotInstalledForm += '      <p>';
+            pluginNotInstalledForm += '        You will need to install the plugin to enable video calls.';
+            pluginNotInstalledForm += '        <br/>';
+            pluginNotInstalledForm += '        <a href="' + downloadUrl + '" title="Download the plugin">Download the plugin</a>';
+            pluginNotInstalledForm += '       </p>';
+            pluginNotInstalledForm += '    </div>';
+            pluginNotInstalledForm += '    <div class="instruction center">';
+            if (navigator.appVersion.indexOf("Win")!=-1) {
+                pluginNotInstalledForm += '      <img src="/weemo-extension/img/windowInstructionImg.png" alt="instruction image" />';
+            }
+            else if (navigator.appVersion.indexOf("Mac")!=-1) {
+                pluginNotInstalledForm += '      <img src="/weemo-extension/img/macInstructionImg.png" alt="instruction image" />';
+            }
+            pluginNotInstalledForm += '      <ul>';
+            pluginNotInstalledForm += '        <li><span>1</span><br/>Open the plugin </li>';
+            pluginNotInstalledForm += '        <li><span>2</span><br/>Follow the instructions</li>';
+            pluginNotInstalledForm += '        <li><span>3</span><br/>Enjoy Video Calls</li>';
+            pluginNotInstalledForm += '      </ul>';
+            pluginNotInstalledForm += '    </div>';
+            pluginNotInstalledForm += '  </div>';
+            pluginNotInstalledForm += '</div>';
+
+            gj("#sightCallConnectionStatus").replaceWith(pluginNotInstalledForm);
+
             this.clearHistory();
 
         },

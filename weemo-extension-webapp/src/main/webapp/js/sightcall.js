@@ -29,6 +29,7 @@ function SightCallExtension() {
     this.caller = "";
     this.calleeFullName = "";
     this.callerFullName = "";
+    this.connectingTimeout = 0;
 
     var ieVersionNumber = GetIEVersion();
 
@@ -289,10 +290,22 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
         });
 
         this.rtcc.on('plugin.missing', function(downloadUrl) {
-            SightCallNotification.showPluginNotInstalled();
-            if (sightcallExtension.callMode === "one_callee") {
-                SightCallNotification.sendPluginNotInstalled(sightcallExtension.caller);
-            }
+            window.require(["SHARED/SightCallNotification"], function(sightCallNotification) {
+                clearTimeout(sightcallExtension.connectingTimeout);
+
+                SightCallNotification.initCometd(weemoExtension.username, weemoExtension.cometdUserToken, weemoExtension.cometdContextName);
+                if (sightcallExtension.callMode === "one_callee") {
+
+                    SightCallNotification.sendPluginNotInstalled(sightcallExtension.caller);
+
+                    SightCallNotification.showPluginNotInstalled(downloadUrl);
+
+                } else if (sightcallExtension.callMode === "one") {
+                    SightCallNotification.showPluginNotInstalled(downloadUrl);
+
+                }
+
+            });
         });
 
         this.rtcc.on('meetingpoint.create.success', function(meetinPointObject) {
@@ -423,7 +436,7 @@ SightCallExtension.prototype.initPopup = function() {
 };
 
 SightCallExtension.prototype.checkConnectingTimeout = function() {
-    window.setTimeout(function() {
+    sightcallExtension.connectingTimeout = window.setTimeout(function() {
         if (sightcallExtension.isConnected == false && sightcallExtension.weemoKey !== "" && sightcallExtension.tokenKey.length > 0 ) {
             if ("one_callee" === sightcallExtension.callMode) {
                 SightCallNotification.showConnectionLost(sightcallExtension.caller);
