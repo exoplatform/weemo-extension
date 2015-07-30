@@ -18,7 +18,7 @@
     <div id="sightCallConnectionStatus" class="callling center">
         <div class="calleeAvatar"><i class="iconChatLarge"></i></div>
         <div class="inProgress">Connecting...</div>
-        <div id="video-container" class="center" style="display:none"></div>
+        <div id="video-container" class="center"></div>
     </div>
 
 </div>
@@ -28,7 +28,7 @@
     <div id="sightCallConnectionStatus" class="callling center">
         <div class="calleeAvatar"><i class="iconChatLarge"></i></div>
         <div class="inProgress">Connecting...</div>
-        <div id="video-container" class="center" style="display:none"></div>
+        <div id="video-container" class="center"></div>
     </div>
 </div>
 <% } %>

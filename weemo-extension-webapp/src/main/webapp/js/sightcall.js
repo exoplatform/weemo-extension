@@ -442,6 +442,7 @@ SightCallExtension.prototype.checkConnectingTimeout = function() {
                 SightCallNotification.showConnectionLost(sightcallExtension.caller);
                 SightCallNotification.sendConnectionLost(sightcallExtension.caller);
             } else if ("one" === sightcallExtension.callMode) {
+                jzStoreParam("stTime", 0);
                 SightCallNotification.showConnectionLost(sightcallExtension.callee);
             }
             if (sightcallExtension.rtcc !== undefined)

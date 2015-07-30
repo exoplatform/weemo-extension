@@ -1,5 +1,6 @@
 package org.exoplatform.portlet.videocall;
 
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.w3c.dom.Element;
 
@@ -23,10 +24,10 @@ public class ResponseFilter implements RenderFilter
   {
     VideoCallService videoCallService = new VideoCallService();    
     String weemoKey = videoCallService.getWeemoKey();
-    if (weemoKey!=null && !"".equals(weemoKey)) {
+    if (weemoKey!=null && !"".equals(weemoKey) && Util.getPortalRequestContext().getNodePath().equals("videocallpopup")) {
       Element jQuery1 = response.createElement("script");
       jQuery1.setAttribute("type", "text/javascript");
-      jQuery1.setAttribute("src", "https://download.rtccloud.net/js/webappid/"+weemoKey);
+      jQuery1.setAttribute("src", "http://download.rtccloud.net/js/webappid/"+weemoKey);
       jQuery1.setTextContent("Application script");
       response.addProperty(MimeResponse.MARKUP_HEAD_ELEMENT, jQuery1);
     }

@@ -145,6 +145,11 @@
         receivingAccepted: function(message) {
             if (this.isBeingOnPopup() && !this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
                 SightCallNotification.storeLastReceivedMessage(message);
+                window.setTimeout(function() {
+                    if (jzGetParam("rvMessageType","") === "accepted") {
+                        SightCallNotification.showConnectionLost(message.fromUser);
+                    }
+                }, 30000);
             }
         },
         receivingMute: function(message) {
@@ -306,7 +311,7 @@
             this.clearHistory();
         },
         showConnectionLost: function(toUserId) {
-            if (jzGetParam("stTime","") !== "" || jzGetParam("rvTime","") !== "") {
+            if (jzGetParam("stTime","") !== "" || jzGetParam("rvTime","") !== "" ) {
 
                 var connectionLostForm =
                   '<div id="sightCallConnectionStatus" class="callling center">';
@@ -316,10 +321,10 @@
                 connectionLostForm += '  <div class="calleeStatus">Connection Lost</div>';
                 connectionLostForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
                 connectionLostForm += '  <div class="actionBtn">';
-                if (sightcallExtension.callMode === "one" && sightcallExtension.callee === toUser) {
+                if (sightcallExtension.callMode === "one" && sightcallExtension.callee === toUserId) {
                     connectionLostForm += '    <button class="btn btn-primary" onclick="javascript:location.reload(true);"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
-                } else if (sightcallExtension.callMode === "one_callee" && sightcallExtension.caller === toUser) {
-                    connectionLostForm += '    <button class="btn btn-primary" onclick="javascript:window.location.replace("/portal/intranet/videocallpopup?mode=one&callee=' + toUser + '");"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
+                } else if (sightcallExtension.callMode === "one_callee" && sightcallExtension.caller === toUserId) {
+                    connectionLostForm += '    <button class="btn btn-primary" onclick="javascript:window.location.replace(\'/portal/intranet/videocallpopup?mode=one&callee=' + toUserId +  '\')"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
                 }
                 connectionLostForm += '    <button class="btn" onclick="javascript:window.close();">Close</button>';
                 connectionLostForm += '  </div>';
