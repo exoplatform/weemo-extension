@@ -412,21 +412,23 @@ var console = console || {
 /**
  * Init Chat Interval
  */
-SightCallExtension.prototype.initPopup = function() {
+SightCallExtension.prototype.initPopup = function () {
     jqchat("#PlatformAdminToolbarContainer").css("display", "none");
 
     // Set popup title
     if ("one" === sightcallExtension.callMode) {
         document.title = "Video Call : " + sightcallExtension.calleeFullName;
-        if (sightcallExtension.callee.length === 0 ) {
+        if (sightcallExtension.callee.length === 0) {
             sightcallExtension.showWrongParams();
         }
     } else if ("one_callee" === sightcallExtension.callMode) {
         document.title = "Video Call : " + sightcallExtension.callerFullName;
-        if (jzGetParam("stMessageType","") !== "accepted" || jzGetParam("rvMessageType","") !== "calling" ) {
-            window.close();
+        if (jzGetParam("stMessageType", "") !== "accepted" || jzGetParam("rvMessageType", "") !== "calling") {
+            window.require(["SHARED/SightCallNotification"], function (sightCallNotification) {
+                SightCallNotification.showCallDroped(sightcallExtension.caller);
+            });
         }
-        if (sightcallExtension.caller.length === 0 ) {
+        if (sightcallExtension.caller.length === 0) {
             sightcallExtension.showWrongParams();
         }
     } else {
@@ -435,9 +437,9 @@ SightCallExtension.prototype.initPopup = function() {
 
 };
 
-SightCallExtension.prototype.checkConnectingTimeout = function() {
-    sightcallExtension.connectingTimeout = window.setTimeout(function() {
-        if (sightcallExtension.isConnected == false && sightcallExtension.weemoKey !== "" && sightcallExtension.tokenKey.length > 0 ) {
+SightCallExtension.prototype.checkConnectingTimeout = function () {
+    sightcallExtension.connectingTimeout = window.setTimeout(function () {
+        if (sightcallExtension.isConnected == false && sightcallExtension.weemoKey !== "" && sightcallExtension.tokenKey.length > 0) {
             if ("one_callee" === sightcallExtension.callMode) {
                 SightCallNotification.showConnectionLost(sightcallExtension.caller);
                 SightCallNotification.sendConnectionLost(sightcallExtension.caller);
@@ -447,6 +449,10 @@ SightCallExtension.prototype.checkConnectingTimeout = function() {
             }
             if (sightcallExtension.rtcc !== undefined)
                 sightcallExtension.rtcc.destroy();
+        } else if (sightcallExtension.isConnected === true && sightcallExtension.callObj === undefined) {
+            if ("one_callee" === sightcallExtension.callMode) {
+                SightCallNotification.showCallDroped(sightcallExtension.caller);
+            }
         }
     }, 30000);
 };

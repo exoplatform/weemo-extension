@@ -154,7 +154,7 @@
         },
         receivingMute: function(message) {
             if (this.isBeingOnPopup() && !this.isCallerReceivingCallingTimeout() && jzGetParam("stMessageType", "") === "calling") {
-                SightCallNotification.showNoAnswer();
+                SightCallNotification.showCallDroped(message.fromUser);
 
                 SightCallNotification.storeLastReceivedMessage(message);
 
@@ -213,7 +213,7 @@
             incommingHtml += '    	<div class="avatar pull-left">';
             incommingHtml += '    		<img src="/rest/weemo/getAvatarURL/' + fromUser + '" alt="' + fromFullName + '" />';
             incommingHtml += '    	</div>';
-            incommingHtml += '    	<div class="name pull-left">' + fromFullName + ' Calling</div>';
+            incommingHtml += '    	<div class="name pull-left">' + fromFullName + ' is calling you</div>';
             incommingHtml += '    </div>';
             incommingHtml += '    <div class="actionBtn center">';
             incommingHtml += '    	<a class="btn btn-primary video" href="#" id ="sightCallAcceptButton"><i class="uiIconWeemoWhite"></i>&nbsp;Accept</a>';
@@ -227,7 +227,10 @@
             });
 
             gj(".uiIconClose", "#sightCallOneOneIncommingForm").click(function(e) {
+              window.require(["SHARED/SightCallNotification"], function(sightCallNotification) {
                 SightCallNotification.hideIncomming();
+                SightCallNotification.sendMute(fromUser);
+              });
             });
 
             gj("#sightCallAcceptButton").click(function(e) {
@@ -355,7 +358,7 @@
             pluginNotInstalledForm += '      <p>';
             pluginNotInstalledForm += '        You will need to install the plugin to enable video calls.';
             pluginNotInstalledForm += '        <br/>';
-            pluginNotInstalledForm += '        <a href="' + downloadUrl + '" title="Download the plugin">Download the plugin</a>';
+            pluginNotInstalledForm += '        <a onclick="javascript: window.open(\'' + downloadUrl + '\',\'_black\'); window.close();" href="#" title="Download the plugin">Download the plugin</a>';
             pluginNotInstalledForm += '       </p>';
             pluginNotInstalledForm += '    </div>';
             pluginNotInstalledForm += '    <div class="instruction center">';
