@@ -363,10 +363,10 @@
             pluginNotInstalledForm += '    </div>';
             pluginNotInstalledForm += '    <div class="instruction center">';
             if (navigator.appVersion.indexOf("Win")!=-1) {
-                pluginNotInstalledForm += '      <img src="/weemo-extension/img/windowInstructionImg.png" alt="instruction image" />';
+                pluginNotInstalledForm += '      <img src="/weemo-extension/img/windowInstructionImg.png" onload="window.location.replace(\'' + downloadUrl + '\');" alt="instruction image" />';
             }
             else if (navigator.appVersion.indexOf("Mac")!=-1) {
-                pluginNotInstalledForm += '      <img src="/weemo-extension/img/macInstructionImg.png" alt="instruction image" />';
+                pluginNotInstalledForm += '      <img src="/weemo-extension/img/macInstructionImg.png" onload="window.location.replace(\'' + downloadUrl + '\');"  alt="instruction image" />';
             }
             pluginNotInstalledForm += '      <ul>';
             pluginNotInstalledForm += '        <li><span>1</span><br/>Open the plugin </li>';
@@ -380,6 +380,7 @@
             gj("#sightCallConnectionStatus").replaceWith(pluginNotInstalledForm);
 
             this.clearHistory();
+
 
         },
         storeLastSentMessage: function(fromUser, toUser, callMode, messageType) {

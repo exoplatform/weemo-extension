@@ -451,6 +451,7 @@ SightCallExtension.prototype.checkConnectingTimeout = function () {
                 sightcallExtension.rtcc.destroy();
         } else if (sightcallExtension.isConnected === true && sightcallExtension.callObj === undefined) {
             if ("one_callee" === sightcallExtension.callMode) {
+                jzStoreParam("stTime", 0);
                 SightCallNotification.showCallDroped(sightcallExtension.caller);
             }
         }
