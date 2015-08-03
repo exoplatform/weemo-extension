@@ -32,50 +32,20 @@ function WeemoExtension() {
   this.meetingPointId = "";
   this.isCloudRunning = 'false';
 
-  //This block code for fix the issue PLF-5688
-  var platform = navigator.platform;
-  if (platform.indexOf("Linux") < 0) {
-      var wsUri = "wss://localhost:34679";
-      var protocol = "weemodriver-protocol";
-      if ('WebSocket' in window) {
-          var websock = new WebSocket(wsUri, protocol);
-          websock.onerror = function(evt) {
-              weemoExtension.setNotInstallWeemoDriver();
-          };
-          websock.onopen = function(evt) {
-              weemoExtension.setInstallWeemoDriver();
-          };
-      } else {
-          setInterval(function() {
-          var longpollId = Math.random().toString().substring(2);
-              jqchat.ajax({
-                  url: "https://localhost:34679",
-                  data: {
-                      command: longpollId + ":<poll></poll>"
-                  },
-                  success: function(data) {
-                      weemoExtension.setInstallWeemoDriver();
-                  },
-                  error: function(data) {
-                      weemoExtension.setNotInstallWeemoDriver();
-                  },
-
-                  dataType: "jsonp"
-              });
-          }, 10000);
-
-          console.log("WebSocket is NOT supported by this browser.");
-      }
-  }
-
   var ieVersionNumber = GetIEVersion();
 
   try {
-    if (ieVersionNumber < 11 && ieVersionNumber > 0 ) {
-      var options = { useJquery:true };
-      this.rtcc = new Rtcc('', '', 'internal', options);
+    if (ieVersionNumber < 11 && ieVersionNumber > 0) {
+        var options = {
+            useJquery: true,
+            mode_parameter: 'plugin_webrtc'
+        };
+        this.rtcc = new Rtcc('', '', 'internal', options);
     } else {
-      this.rtcc = new Rtcc('', '', 'internal', '');
+        var options = {
+            mode_parameter: 'plugin_webrtc'
+        };
+        this.rtcc = new Rtcc('', '', 'internal', options);
     }
 
   } catch (err) {
@@ -89,8 +59,8 @@ function WeemoExtension() {
      
   this.callObj;
 
-  this.callOwner = jzGetParam("callOwner", false);
-  this.callActive = jzGetParam("callActive", "false").toLowerCase() === "true";
+  this.callOwner = false;//jzGetParam("callOwner", false);
+  this.callActive = false;//jzGetParam("callActive", "false").toLowerCase() === "true";
   this.callType = jzGetParam("callType", "");
 
   this.uidToCall = jzGetParam("uidToCall", "");
@@ -106,9 +76,9 @@ function WeemoExtension() {
 }
 
 WeemoExtension.prototype.setNotInstallWeemoDriver = function() {
-  var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");      
-  if(!isNotInstallWeemoDriver || 0 === isNotInstallWeemoDriver.length) {
-    weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
+  var isNotInstallWeemoPlugin = weemoExtension.getCookie("isNotInstallWeemoPlugin");      
+  if(!isNotInstallWeemoPlugin || 0 === isNotInstallWeemoPlugin.length) {
+    weemoExtension.setCookie("isNotInstallWeemoPlugin", "true", 365);
     var downloadUrl = "https://download.weemo.com/file/release/3";
     if (this.rtcc) downloadUrl = this.rtcc.getDownloadUrl();
     weemoExtension.setCookie("downloadUrl", downloadUrl, 365);    
@@ -117,9 +87,9 @@ WeemoExtension.prototype.setNotInstallWeemoDriver = function() {
 };
 
 WeemoExtension.prototype.setInstallWeemoDriver = function() {
-	var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver"); 
-        if(isNotInstallWeemoDriver == 'true') {          
-          weemoExtension.setCookie("isNotInstallWeemoDriver", "false", 365);
+	var isNotInstallWeemoPlugin = weemoExtension.getCookie("isNotInstallWeemoPlugin"); 
+        if(isNotInstallWeemoPlugin == 'true') {          
+          weemoExtension.setCookie("isNotInstallWeemoPlugin", "false", 365);
         }
 	jqchat("#weemo-alert").hide();
 }
@@ -130,25 +100,6 @@ WeemoExtension.prototype.initOptions = function(options) {
   this.urlHasOneOneCallPermission = options.urlHasOneOneCallPermission;
   this.weemoIntervalNotif = options.notificationInterval;
   this.getStateURL = this.jzGetState;
-};
-
-WeemoExtension.prototype.checkWeemoDriver = function () {
-  var platform = navigator.platform;
-  if (platform.indexOf("Linux") < 0) {
-    var wsUri = "wss://localhost:34679";
-    var protocol = "weemodriver-protocol";
-    if ('WebSocket' in window) {
-      var websock = new WebSocket(wsUri, protocol);
-      websock.onerror = function (evt) {
-        //weemoExtension.setNotInstallWeemoDriver();
-      };
-      websock.onopen = function (evt) {
-        weemoExtension.setInstallWeemoDriver();
-      };
-    } else {
-      console.log("WebSocket is NOT supported by this browser.");
-    }
-  }
 };
 
 WeemoExtension.prototype.log = function() {
@@ -314,23 +265,9 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     this.rtcc.setDebugLevel(1); // Activate debug in JavaScript console
     this.rtcc.setWebAppId(this.weemoKey);
     this.rtcc.setToken("weemo"+$uid);
-    try {
-      this.rtcc.initialize();
-    } catch(err) {
-        if(window.console)
-          console.log("Can not initialize weemo: " + err);
-    }
-    var fn = jqchat(".label-user").text();
-    var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
-    if (fullname!=="") {
-      this.rtcc.setDisplayName(fullname); // Configure the display name
-    } else if (fn!=="") {
-      this.rtcc.setDisplayName(fn); // Configure the display name
-    }
-    this.changeStatus("Red");
 
     this.rtcc.on('client.connect', function (connectionMode) {
-      if ("driver" === connectionMode) {
+      if ("plugin" === connectionMode || "webrtc" === connectionMode) {
         weemoExtension.connectedWeemoDriver = true;
         weemoExtension.setInstallWeemoDriver();
         //this.authenticate();
@@ -345,13 +282,20 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
             // Also Update record status
             if (recordStatus !== 0) {
-                var msgType = "type-meeting-stop";
                 var options = {
-                    type: msgType,
+                    type: "type-meeting-stop",
                     fromUser: chatApplication.username,
                     fromFullname: chatApplication.fullname
                 };
-                chatApplication.chatRoom.sendMessage("", options, "true");
+                chatApplication.chatRoom.sendFullMessage(
+                  weemoExtension.chatMessage.user,
+                  weemoExtension.chatMessage.token,
+                  weemoExtension.chatMessage.targetUser,
+                  roomToCheck,
+                  "",
+                  options,
+                  "true"
+                );
             }
 
             var options = {};
@@ -374,7 +318,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     });
 
     this.rtcc.on('client.disconnect', function() {
-        if (weemoExtension.rtcc.getConnectionMode() === "driver") {
+        if (weemoExtension.rtcc.getConnectionMode() === "plugin" || weemoExtension.rtcc.getConnectionMode() === "webrtc") {
             weemoExtension.isConnected = false;
             weemoExtension.setCallActive(false);
             if (weemoExtension.hasChatMessage() && (chatApplication !== undefined)) {
@@ -386,13 +330,20 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
                     // Also Update record status
                     if (recordStatus !== 0) {
-                        var msgType = "type-meeting-stop";
                         var options = {
-                            type: msgType,
+                            type: "type-meeting-stop",
                             fromUser: chatApplication.username,
                             fromFullname: chatApplication.fullname
                         };
-                        chatApplication.chatRoom.sendMessage("", options, "true");
+                        chatApplication.chatRoom.sendFullMessage(
+                          weemoExtension.chatMessage.user,
+                          weemoExtension.chatMessage.token,
+                          weemoExtension.chatMessage.targetUser,
+                          roomToCheck,
+                          "",
+                          options,
+                          "true"
+                        );
                     }
 
                     var options = {};
@@ -415,7 +366,7 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     });
 
     this.rtcc.on('cloud.sip.ok', function() {
-        if (weemoExtension.rtcc.getConnectionMode() === "driver") {
+        if (weemoExtension.rtcc.getConnectionMode() === "plugin" || weemoExtension.rtcc.getConnectionMode() === "webrtc") {
             weemoExtension.isConnected = true;
             weemoExtension.changeStatus("Green");
 
@@ -430,13 +381,13 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
     });
 
     this.rtcc.on('cloud.loggedasotheruser', function() {
-        if (weemoExtension.rtcc.getConnectionMode() === "driver") {
+        if (weemoExtension.rtcc.getConnectionMode() === "plugin" || weemoExtension.rtcc.getConnectionMode() === "webrtc") {
             weemoExtension.rtcc.authenticate(1);
         }
     });
 
     this.rtcc.on('cloud.sip.ko', function() {
-      if (weemoExtension.rtcc.getConnectionMode() === "driver") {
+        if (weemoExtension.rtcc.getConnectionMode() === "plugin" || weemoExtension.rtcc.getConnectionMode() === "webrtc") {
         weemoExtension.isConnected = false;
         weemoExtension.changeStatus("Warning");
       }
@@ -451,8 +402,8 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
           weemoExtension.isConnected = false;
     });
 
-    this.rtcc.on('driver.missing', function(downloadUrl) {
-        weemoExtension.setCookie("isNotInstallWeemoDriver", "true", 365);
+    this.rtcc.on('plugin.missing', function(downloadUrl) {
+        weemoExtension.setCookie("isNotInstallWeemoPlugin", "true", 365);
         weemoExtension.setCookie("downloadUrl", downloadUrl, 365);
         weemoExtension.showWeemoInstaller();
         if (navigator.platform !== "Linux") {
@@ -480,10 +431,10 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
             if (eventName === "terminate") weemoExtension.setCallOwner(false);
 
             if (weemoExtension.callType === "internal" || eventName === "terminate") {
-                messageWeemo = "Call " + status;
+                messageWeemo = "Call " + eventName;
                 optionsWeemo.timestamp = ts;
             } else if (weemoExtension.callType === "host") {
-                messageWeemo = "Call " + status;
+                messageWeemo = "Call " + eventName;
                 optionsWeemo.timestamp = ts;
                 optionsWeemo.uidToCall = weemoExtension.uidToCall;
                 optionsWeemo.displaynameToCall = weemoExtension.displaynameToCall;
@@ -532,13 +483,20 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
                   // Also Update record status
                   if (optionsWeemo.type === "call-off" && recordStatus !== 0) {
-                      var msgType = "type-meeting-stop";
                       var options = {
-                          type: msgType,
+                          type: "type-meeting-stop",
                           fromUser: chatApplication.username,
                           fromFullname: chatApplication.fullname
                       };
-                      chatApplication.chatRoom.sendMessage("", options, "true");
+                      chatApplication.chatRoom.sendFullMessage(
+                        weemoExtension.chatMessage.user,
+                        weemoExtension.chatMessage.token,
+                        weemoExtension.chatMessage.targetUser,
+                        weemoExtension.chatMessage.room,
+                        "",
+                        options,
+                        "true"
+                      );
                   }
 
                   chatApplication.chatRoom.sendFullMessage(
@@ -553,15 +511,21 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
                   // Also Update record status
                   if (optionsWeemo.type === "call-on" && recordStatus !== 1) {
-                      var msgType = "type-meeting-start";
                       var options = {
-                          type: msgType,
+                          type: "type-meeting-start",
                           fromUser: chatApplication.username,
                           fromFullname: chatApplication.fullname
                       };
 
-                      chatApplication.chatRoom.sendMessage("", options, "true");
-
+                     chatApplication.chatRoom.sendFullMessage(
+                        weemoExtension.chatMessage.user,
+                        weemoExtension.chatMessage.token,
+                        weemoExtension.chatMessage.targetUser,
+                        weemoExtension.chatMessage.room,
+                        "",
+                        options,
+                        "true"
+                      );
                   }
 
                   if (eventName==="terminate") {
@@ -573,6 +537,22 @@ WeemoExtension.prototype.initCall = function($uid, $name) {
 
         });
     });
+
+    try {
+      this.rtcc.initialize();
+    } catch(err) {
+        if(window.console)
+          console.log("Can not initialize weemo: " + err);
+    }
+    var fn = jqchat(".label-user").text();
+    var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
+    if (fullname!=="") {
+      this.rtcc.setDisplayName(fullname); // Configure the display name
+    } else if (fn!=="") {
+      this.rtcc.setDisplayName(fn); // Configure the display name
+    }
+    this.changeStatus("Red");
+
   }
 };
 
@@ -996,25 +976,19 @@ var weemoExtension = new WeemoExtension();
     }
     weemoExtension.isTurnOff = $notificationApplication.attr("data-weemo-turnoff");
     if(weemoExtension.isTurnOff == "true") return;
-    if(navigator.platform.indexOf("Linux") >= 0) return;
+    if(navigator.platform.indexOf("Linux") >= 0 && !jqchat.browser.chrome) return;
     weemoExtension.isTurnOffForUser = $notificationApplication.attr("data-weemo-turnoff-user");
     weemoExtension.isTurnOffForGroupCall = $notificationApplication.attr("data-weemo-turnoff-group");
     weemoExtension.isSameUserLogged = $notificationApplication.attr("is-same-user-logged");
 
-    var isNotInstallWeemoDriver = weemoExtension.getCookie("isNotInstallWeemoDriver");
-
-//    var checkWeemoDriverEvent = window.clearInterval(checkWeemoDriverEvent);
-//    checkWeemoDriverEvent = setInterval($.proxy(weemoExtension.checkWeemoDriver, weemoExtension), 3*1000);
-    weemoExtension.checkWeemoDriver();
+    var isNotInstallWeemoPlugin = weemoExtension.getCookie("isNotInstallWeemoPlugin");
 
     weemoExtension.videoCallVersion = $notificationApplication.attr("videoCallVersion");
     if(weemoExtension.videoCallVersion.length > 0) {
       var oldVersion = weemoExtension.getCookie("videoCallVersion");
-      //console.log(weemoExtension.videoCallVersion + " = " + oldVersion);
-      //console.log(document.cookie);
 
       if(weemoExtension.videoCallVersion  > oldVersion) {
-        if(isNotInstallWeemoDriver == 'true') {
+        if(isNotInstallWeemoPlugin == 'true') {
           weemoExtension.removeCookie("isDismiss");
           weemoExtension.showWeemoInstaller();
       }
@@ -1023,7 +997,7 @@ var weemoExtension = new WeemoExtension();
     }
 
    
-    if(isNotInstallWeemoDriver == 'true') {
+    if(isNotInstallWeemoPlugin == 'true') {
       weemoExtension.showWeemoInstaller();
     }
     // WEEMO : GETTING AND SETTING KEY

@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.exoplatform.addons.weemo</groupId>
   <artifactId>weemo-extension</artifactId>
-  <version>1.1.x-master-SNAPSHOT</version>
+  <version>1.2.x-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Video Calls Addon</name>
   <description>Video Calls Addon obtained via integration with Weemo</description>
@@ -29,11 +29,11 @@
   </scm>
   <properties>
     <!-- 3rd party libraries versions -->
-    <commons-lang3.version>3.1</commons-lang3.version>
-    <exoplatform.version>4.2.0-RC1</exoplatform.version>
+    <commons-lang3.version>3.2</commons-lang3.version>
+    <exoplatform.version>4.2.x-SNAPSHOT</exoplatform.version>
     <javax.enterprise.cdi.version>1.0-SP4</javax.enterprise.cdi.version>
     <juzu.version>1.0.0</juzu.version>
-    <mongodb-java-driver.version>2.11.1</mongodb-java-driver.version> 
+    <mongodb-java-driver.version>2.12.2</mongodb-java-driver.version> 
   </properties>
   <dependencyManagement>
     <dependencies>   
