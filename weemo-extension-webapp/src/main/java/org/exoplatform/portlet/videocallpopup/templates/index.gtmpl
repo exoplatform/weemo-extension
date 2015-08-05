@@ -10,6 +10,7 @@
      data-callee-full-name="<%=calleeFullName%>"
      data-caller="<%=caller%>"
      data-caller-full-name="<%=callerFullName%>"
+     data-has-chat-message="<%=hasChatMessage%>"
      style="display: none;">
 </div>
 
@@ -29,6 +30,15 @@
         <div class="calleeAvatar"><i class="iconChatLarge"></i></div>
         <div class="inProgress">Connecting...</div>
         <div id="video-container" class="center"></div>
+    </div>
+</div>
+<% } else if (mode.equals("host")) { %>
+<div class="videoCallCont">
+    <div id="sightCallConnectionStatus" class="callling center">
+        <div class="calleeAvatar">
+            <img src="/weemo-extension/img/MaryJane.png" alt="callee's avatar" />
+        </div>
+        <div class="inProgress">Calling...</div>
     </div>
 </div>
 <% } %>

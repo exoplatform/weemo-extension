@@ -73,6 +73,7 @@ public class VideoCallPopupApplication {
     String calleeFullName = VideoCallService.getFullName(callee);
     String caller = getParam("caller");
     String callerFullName = VideoCallService.getFullName(caller);
+    boolean hasChatMessage = Boolean.parseBoolean(getParam("hasChatMessage"));
 
 
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
@@ -120,6 +121,7 @@ public class VideoCallPopupApplication {
             .set("calleeFullName", calleeFullName)
             .set("caller", caller)
             .set("callerFullName", callerFullName)
+            .set("hasChatMessage", hasChatMessage)
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
             .set("videoCallVersion", videoCallVersion)

@@ -185,7 +185,19 @@
         receivingReady: function(message) {
             if (this.isBeingOnPopup() && jzGetParam("rvMessageType", "") === "accepted" && jzGetParam("stMessageType","") === "calling") {
                 if (!this.isCalleeConnectingTimeout()) {
-                    sightcallExtension.createWeemoCall(message.fromUser, message.fromUser);
+                    if (sightcallExtension.hasChatMsg === "true") {
+                        var chatMessage = {
+                            "url": jzGetParam("jzChatSend"),
+                            "user": message.toUser,
+                            "fullname": message.toFullName,
+                            "targetUser": message.fromUser,
+                            "room": jzGetParam("room"),
+                            "token": chatNotification.token
+                        };
+                        sightcallExtension.createWeemoCall(message.fromUser, message.toFullName, chatMessage);
+                    } else {
+                        sightcallExtension.createWeemoCall(message.fromUser, message.fromUser);
+                    }
                 } else if (this.isCalleeConnectingTimeout()) {
                     SightCallNotification.showConnectionLost(message.fromUser);
                 }
