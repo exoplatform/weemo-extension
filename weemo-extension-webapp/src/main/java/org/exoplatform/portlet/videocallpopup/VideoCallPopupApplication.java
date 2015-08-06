@@ -74,6 +74,8 @@ public class VideoCallPopupApplication {
     String caller = getParam("caller");
     String callerFullName = VideoCallService.getFullName(caller);
     boolean hasChatMessage = Boolean.parseBoolean(getParam("hasChatMessage"));
+    boolean isSpace = Boolean.parseBoolean(getParam("isSpace"));
+    String spaceOrTeamName = getParam("spaceOrTeamName");
 
 
     VideoCallModel videoCallModel = videoCallService_.getVideoCallProfile();
@@ -122,6 +124,8 @@ public class VideoCallPopupApplication {
             .set("caller", caller)
             .set("callerFullName", callerFullName)
             .set("hasChatMessage", hasChatMessage)
+            .set("isSpace", isSpace)
+            .set("spaceOrTeamName", spaceOrTeamName)
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
             .set("videoCallVersion", videoCallVersion)

@@ -30,7 +30,10 @@ function SightCallExtension() {
     this.calleeFullName = "";
     this.callerFullName = "";
     this.hasChatMsg = "false";
+    this.isSpace = "false";
+    this.spaceOrTeamName = "";
     this.connectingTimeout = 0;
+
 
     var ieVersionNumber = GetIEVersion();
 
@@ -80,6 +83,8 @@ SightCallExtension.prototype.initOptions = function(options) {
     this.calleeFullName = options.calleeFullName;
     this.callerFullName = options.callerFullName;
     this.hasChatMsg = options.hasChatMsg;
+    this.isSpace = options.isSpace;
+    this.spaceOrTeamName = options.spaceOrTeamName;
 };
 
 
@@ -275,6 +280,9 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
                 if (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "one_callee") {
                     var toUser = jzGetParam("stToUser", "");
                     SightCallNotification.showConnectionLost(toUser);
+                } else if (sightcallExtension.callMode === "host" || sightcallExtension.callMode === "attendee") {
+                    var spaceName = sightcallExtension.spaceOrTeamName;
+                    SightCallNotification.showGroupCallDroped(jzGetParam("isSpace"), spaceName);
                 }
             }
         });
@@ -336,6 +344,9 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
                 if (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "one_callee") {
                     var toUser = jzGetParam("stToUser", "");
                     SightCallNotification.showConnectionLost(toUser);
+                } else if (sightcallExtension.callMode === "host" || sightcallExtension.callMode === "attendee") {
+                    var spaceName = sightcallExtension.spaceOrTeamName;
+                    SightCallNotification.showGroupCallDroped(jzGetParam("isSpace"), spaceName);
                 }
             }
         });
@@ -368,6 +379,11 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
             });
         });
 
+        this.rtcc.on('meetingpoint.create.error', function(errorObject) {
+            var spaceName = jzGetParam("targetFullname","").toLowerCase().split(" ").join("_");
+            SightCallNotification.showGroupCallDroped(jzGetParam("isSpace"), spaceName);
+        });
+
         this.rtcc.on('meetingpoint.create.success', function(meetinPointObject) {
             meetinPointObject.autoaccept_mode();
             meetinPointObject.host();
@@ -387,6 +403,8 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
                     if (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "one_callee") {
                         var toUser = jzGetParam("stToUser", "");
                         SightCallNotification.showCallDroped(toUser);
+                    } else if (sightcallExtension.callMode === "host" || sightcallExtension.callMode === "attendee") {
+                        SightCallNotification.showGroupCallDroped(sightcallExtension.isSpace, sightcallExtension.spaceOrTeamName);
                     }
                 }
 
@@ -523,7 +541,7 @@ SightCallExtension.prototype.createWeemoCall = function(targetUser, targetFullna
             this.setCallType("internal");
             this.rtcc.createCall(this.uidToCall, this.callType, this.displaynameToCall);
         } else {
-            this.setUidToCall(this.rtcc.getToken());
+            this.setUidToCall("weemo" + sightcallExtension.username);
             this.setDisplaynameToCall(this.rtcc.getDisplayName());
             this.setCallType("host");
             this.meetingPoint = this.rtcc.createMeetingPoint('adhoc');
@@ -653,7 +671,9 @@ var sightcallExtension = new SightCallExtension();
             "caller": $sightcallApplication.attr("data-caller"),
             "callerFullName": $sightcallApplication.attr("data-caller-full-name"),
             "calleeFullName": $sightcallApplication.attr("data-callee-full-name"),
-            "hasChatMsg": $sightcallApplication.attr("data-has-chat-message")
+            "hasChatMsg": $sightcallApplication.attr("data-has-chat-message"),
+            "isSpace": $sightcallApplication.attr("data-is-space"),
+            "spaceOrTeamName" :  $sightcallApplication.attr("data-space-or-team-name")
         });
 
         if ((navigator.platform.indexOf("Linux") >= 0 && !jqchat.browser.chrome) || window.opener === null  ) {
@@ -697,6 +717,50 @@ var sightcallExtension = new SightCallExtension();
 
         var username = $sightcallApplication.attr("data-username");
         sightcallExtension.initCall(username, username);
+
+        $(window).on('beforeunload', function(){
+            if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined)) {
+                var roomToCheck = sightcallExtension.chatMessage.room;
+                chatNotification.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
+                    if (callStatus === 0) { // Already terminated
+                        return;
+                    }
+
+                    // Also Update record status
+                    if (recordStatus !== 0) {
+                        var options = {
+                            type: "type-meeting-stop",
+                            fromUser: chatNotification.username,
+                            fromFullname: chatNotification.username
+                        };
+                        chatNotification.sendFullMessage(
+                          sightcallExtension.chatMessage.user,
+                          sightcallExtension.chatMessage.token,
+                          sightcallExtension.chatMessage.targetUser,
+                          roomToCheck,
+                          "",
+                          options,
+                          "true"
+                        );
+                    }
+
+                    var options = {};
+                    options.timestamp = Math.round(new Date().getTime() / 1000);
+                    options.type = "call-off";
+                    chatNotification.sendFullMessage(
+                      sightcallExtension.chatMessage.user,
+                      sightcallExtension.chatMessage.token,
+                      sightcallExtension.chatMessage.targetUser,
+                      roomToCheck,
+                      chatBundleData.exoplatform_chat_call_terminated,
+                      options,
+                      "true"
+                    );
+
+                    sightcallExtension.initChatMessage();
+                });
+            }
+        });
 
     });
 

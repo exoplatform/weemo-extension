@@ -308,6 +308,25 @@
                 this.clearHistory();
             }
         },
+        showGroupCallDroped: function(isSpace, spaceOrTeamName) {
+            var groupCallDropForm =
+              '<div id="sightCallConnectionStatus" class="callling center">';
+            groupCallDropForm += '  <div class="calleeAvatar">';
+            if (isSpace === "true") {
+                groupCallDropForm += '    <img src="/rest/weemo/getSpaceAvartar/' + spaceOrTeamName + '" alt="' + spaceOrTeamName + '" />';
+            } else {
+                groupCallDropForm += '    <img src="/weemo-extension/img/TeamChatAvatar.png" alt="' + spaceOrTeamName + '" />';
+            }
+            groupCallDropForm += '  </div>';
+            groupCallDropForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
+            groupCallDropForm += '  <div class="actionBtn">';
+            groupCallDropForm += '  </div>';
+            groupCallDropForm += '</div>';
+
+            gj("#sightCallConnectionStatus").replaceWith(groupCallDropForm);
+
+            this.clearHistory();
+        },
         showNoAnswer: function() {
             var noAnserForm =
               '<div id="sightCallConnectionStatus" class="callling noAnswer center">';

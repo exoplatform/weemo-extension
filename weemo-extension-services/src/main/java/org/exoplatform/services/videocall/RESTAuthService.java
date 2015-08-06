@@ -172,7 +172,7 @@ public class  RESTAuthService implements ResourceContainer {
       in = con.getInputStream();
     } catch (Exception e) {
       try {
-        URL url = new URL(serverBase + "/eXoSkin/skin/images/system/SpaceAvtDefault.png");
+        URL url = new URL(serverBase + "/weemo-extension/img/SpaceChatAvatar.png");
         URLConnection con = url.openConnection();
         con.setDoOutput(true);
         in = con.getInputStream();
