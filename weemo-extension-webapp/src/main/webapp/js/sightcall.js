@@ -38,22 +38,11 @@ function SightCallExtension() {
     var ieVersionNumber = GetIEVersion();
 
     try {
-        if (ieVersionNumber < 11 && ieVersionNumber > 0) {
-            var options = {
-                useJquery: true,
-                mode_parameter: 'plugin_webrtc',
-                container: 'video-container'
-
-            };
-            this.rtcc = new Rtcc('', '', 'internal', options);
-        } else {
-            var options = {
-                mode_parameter: 'plugin_webrtc',
-                container: 'video-container'
-            };
-            this.rtcc = new Rtcc('', '', 'internal', options);
-        }
-
+        var options = {
+            mode_parameter: 'plugin_webrtc',
+            container: 'video-container'
+        };
+        this.rtcc = new Rtcc('', '', 'internal', options);
     } catch (err) {
         console.log("WEEMO NOT AVAILABLE YET " + err);
         this.rtcc = undefined;
@@ -179,9 +168,9 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
 
     if (this.weemoKey !== "" && this.rtcc !== undefined) {
 
-        this.rtcc.setDebugLevel(1); // Activate debug in JavaScript console
+        this.rtcc.setDebugLevel(3); // Activate debug in JavaScript console
         this.rtcc.setWebAppId(this.weemoKey);
-        this.rtcc.setToken("weemo" + $uid);
+        this.rtcc.setToken(this.tokenKey);
 
         this.rtcc.on('client.connect', function(connectionMode) {
             if ("plugin" === connectionMode || "webrtc" === connectionMode) {
@@ -326,7 +315,7 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
                         "room": jzGetParam("room"),
                         "token": chatNotification.token
                     };
-                    sightcallExtension.joinWeemoCall(jzGetParam("targetUser"), jzGetParam("targetFullname"), chatMessage);
+                    sightcallExtension.joinWeemoCall(chatMessage);
                 }
             }
         });
