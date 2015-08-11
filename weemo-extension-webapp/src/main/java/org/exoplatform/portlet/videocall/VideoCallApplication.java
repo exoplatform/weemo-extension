@@ -22,6 +22,7 @@ import org.exoplatform.services.videocall.AuthService;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.utils.videocall.PropertyManager;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
@@ -41,7 +42,7 @@ public class VideoCallApplication {
   @Path("index.gtmpl")
   Template                 index;
 
-  String                   REST_URL         = "/rest/cloud/addons/";
+  String                   REST_URL         = "/mgt-rest/v1/addons/";
 
   String                   DEFAULT_PROTOCOL = "http";
 
@@ -157,17 +158,21 @@ public class VideoCallApplication {
       String encodedKey = "Basic "
               + new sun.misc.BASE64Encoder().encode((username + ":" + password).getBytes());
       if (!StringUtils.isEmpty(trialInformation)) {
-        JSONObject output = new JSONObject(trialInformation);
-        trialStatus = output.getString("status");
-        trialDay = output.getInt("trialDay");
-        long endDate = output.getLong("endDate");
-        long currentTime = System.currentTimeMillis();
-        if ((currentTime > endDate) && trialStatus.equals("active")) {
-          trialStatus = "expired";
-          callBOService(restUrl + "/" + trialStatus, username, password);
-        }
-        if (trialStatus.equals("active")) {
-          remainDay = (int) ((endDate - currentTime) / (24 * 60 * 60 * 1000)) + 1;
+        try {
+          JSONObject output = new JSONObject(trialInformation);
+          trialStatus = output.getString("status");
+          trialDay = output.getInt("trialDay");
+          long endDate = output.getLong("endDate");
+          long currentTime = System.currentTimeMillis();
+          if ((currentTime > endDate) && trialStatus.equals("active")) {
+            trialStatus = "expired";
+            callBOService(restUrl + "/" + trialStatus, username, password);
+          }
+          if (trialStatus.equals("active")) {
+            remainDay = (int) ((endDate - currentTime) / (24 * 60 * 60 * 1000)) + 1;
+          }
+        } catch (JSONException jse) {
+          LOG.warn("Cannot load addon's trial information");
         }
       }
 
