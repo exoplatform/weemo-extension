@@ -360,9 +360,8 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
 
                     SightCallNotification.showPluginNotInstalled(downloadUrl);
 
-                } else if (sightcallExtension.callMode === "one") {
+                } else  {
                     SightCallNotification.showPluginNotInstalled(downloadUrl);
-
                 }
 
             });
@@ -544,10 +543,10 @@ SightCallExtension.prototype.createWeemoCall = function(targetUser, targetFullna
 SightCallExtension.prototype.joinWeemoCall = function(chatMessage) {
     if (this.weemoKey !== "") {
         if (chatMessage !== undefined) {
-            this.setChatMessage(chatMessage);
+            //this.setChatMessage(chatMessage);
         }
         this.setCallType("attendee");
-        this.rtcc.joinConfCall(this.meetingPointId);
+        this.rtcc.joinConfCall(jzGetParam("meetingPointId"));
     }
 };
 
@@ -612,7 +611,9 @@ SightCallExtension.prototype.checkConnectingTimeout = function () {
             } else if ("one" === sightcallExtension.callMode) {
                 jzStoreParam("stTime", 0);
                 SightCallNotification.showConnectionLost(sightcallExtension.callee);
-            }
+            } else {
+                var spaceName = sightcallExtension.spaceOrTeamName;
+                SightCallNotification.showGroupCallDroped(jzGetParam("isSpace"), spaceName);            }
             if (sightcallExtension.rtcc !== undefined)
                 sightcallExtension.rtcc.destroy();
         } else if (sightcallExtension.isConnected === true && sightcallExtension.callObj === undefined) {
@@ -648,6 +649,53 @@ var sightcallExtension = new SightCallExtension();
 (function($) {
 
     $(document).ready(function() {
+
+        $(window).on('beforeunload unload', function(){
+            if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined)) {
+                var roomToCheck = sightcallExtension.chatMessage.room;
+
+                chatNotification.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
+
+                    if (callStatus === 0) { // Already terminated
+                        return;
+                    }
+
+                    // Also Update record status
+                    if (recordStatus !== 0) {
+                        var options = {
+                            type: "type-meeting-stop",
+                            fromUser: chatNotification.username,
+                            fromFullname: chatNotification.username
+                        };
+                        chatNotification.sendFullMessage(
+                          sightcallExtension.chatMessage.user,
+                          sightcallExtension.chatMessage.token,
+                          sightcallExtension.chatMessage.targetUser,
+                          roomToCheck,
+                          "",
+                          options,
+                          "true"
+                        );
+                    }
+
+                    var options = {};
+                    options.timestamp = Math.round(new Date().getTime() / 1000);
+                    options.type = "call-off";
+                    chatNotification.sendFullMessage(
+                      sightcallExtension.chatMessage.user,
+                      sightcallExtension.chatMessage.token,
+                      sightcallExtension.chatMessage.targetUser,
+                      roomToCheck,
+                      chatBundleData.exoplatform_chat_call_terminated,
+                      options,
+                      "true"
+                    );
+
+                    sightcallExtension.initChatMessage();
+                });
+            }
+        });
+
         //GETTING DOM CONTEXT
         var $sightcallApplication = $("#sightcall-status");
 
@@ -706,51 +754,6 @@ var sightcallExtension = new SightCallExtension();
 
         var username = $sightcallApplication.attr("data-username");
         sightcallExtension.initCall(username, username);
-
-        $(window).on('beforeunload', function(){
-            if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined)) {
-                var roomToCheck = sightcallExtension.chatMessage.room;
-                chatNotification.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
-                    if (callStatus === 0) { // Already terminated
-                        return;
-                    }
-
-                    // Also Update record status
-                    if (recordStatus !== 0) {
-                        var options = {
-                            type: "type-meeting-stop",
-                            fromUser: chatNotification.username,
-                            fromFullname: chatNotification.username
-                        };
-                        chatNotification.sendFullMessage(
-                          sightcallExtension.chatMessage.user,
-                          sightcallExtension.chatMessage.token,
-                          sightcallExtension.chatMessage.targetUser,
-                          roomToCheck,
-                          "",
-                          options,
-                          "true"
-                        );
-                    }
-
-                    var options = {};
-                    options.timestamp = Math.round(new Date().getTime() / 1000);
-                    options.type = "call-off";
-                    chatNotification.sendFullMessage(
-                      sightcallExtension.chatMessage.user,
-                      sightcallExtension.chatMessage.token,
-                      sightcallExtension.chatMessage.targetUser,
-                      roomToCheck,
-                      chatBundleData.exoplatform_chat_call_terminated,
-                      options,
-                      "true"
-                    );
-
-                    sightcallExtension.initChatMessage();
-                });
-            }
-        });
-
     });
 
 })(jqchat);
