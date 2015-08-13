@@ -76,6 +76,10 @@ SightCallExtension.prototype.initOptions = function(options) {
     this.spaceOrTeamName = options.spaceOrTeamName;
 };
 
+    SightCallExtension.prototype.setConnectionStatus = function(isConnected) {
+        this.isConnected = isConnected;
+        jzStoreParam("isSightCallConnected", isConnected);
+    };
 
 SightCallExtension.prototype.setCookie = function(cname, cvalue, exdays) {
     var d = new Date();
@@ -222,7 +226,7 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
 
         this.rtcc.on('client.disconnect', function() {
             if (sightcallExtension.rtcc.getConnectionMode() === "plugin" || sightcallExtension.rtcc.getConnectionMode() === "webrtc") {
-                sightcallExtension.isConnected = false;
+                    sightcallExtension.setConnectionStatus(false);
                 if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined)) {
                     var roomToCheck = sightcallExtension.chatMessage.room;
                     chatNotification.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
@@ -278,7 +282,7 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
 
         this.rtcc.on('cloud.sip.ok', function() {
             if (sightcallExtension.rtcc.getConnectionMode() === "plugin" || sightcallExtension.rtcc.getConnectionMode() === "webrtc") {
-                sightcallExtension.isConnected = true;
+                sightcallExtension.setConnectionStatus(true);
 
                 var fn = jqchat(".label-user").text();
                 var fullname = jqchat("#UIUserPlatformToolBarPortlet > a:first").text().trim();
@@ -328,7 +332,7 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
 
         this.rtcc.on('cloud.sip.ko', function() {
             if (sightcallExtension.rtcc.getConnectionMode() === "plugin" || sightcallExtension.rtcc.getConnectionMode() === "webrtc") {
-                sightcallExtension.isConnected = false;
+                sightcallExtension.setConnectionStatus(false);
 
                 if (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "one_callee") {
                     var toUser = jzGetParam("stToUser", "");
@@ -346,7 +350,7 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
 
         this.rtcc.on('error.ossupport', function() {
             sightcallExtension.isSupport = false;
-            sightcallExtension.isConnected = false;
+            sightcallExtension.setConnectionStatus(false);
         });
 
         this.rtcc.on('plugin.missing', function(downloadUrl) {
@@ -421,6 +425,7 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
                     optionsWeemo.type = "call-proceed";
                 }
 
+                if (eventName === "terminate"  && sightcallExtension.callMode === "attendee") return;
                 if (sightcallExtension.hasChatMessage()) {
                     if (chatNotification !== undefined) {
                         var roomToCheck = "";
@@ -543,7 +548,7 @@ SightCallExtension.prototype.createWeemoCall = function(targetUser, targetFullna
 SightCallExtension.prototype.joinWeemoCall = function(chatMessage) {
     if (this.weemoKey !== "") {
         if (chatMessage !== undefined) {
-            //this.setChatMessage(chatMessage);
+            this.setChatMessage(chatMessage);
         }
         this.setCallType("attendee");
         this.rtcc.joinConfCall(jzGetParam("meetingPointId"));
@@ -651,6 +656,7 @@ var sightcallExtension = new SightCallExtension();
     $(document).ready(function() {
 
         $(window).on('beforeunload unload', function(){
+            sightcallExtension.setConnectionStatus(false);
             if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined)) {
                 var roomToCheck = sightcallExtension.chatMessage.room;
 
