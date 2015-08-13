@@ -66,7 +66,7 @@ function SightCallExtension() {
 
 SightCallExtension.prototype.initOptions = function(options) {
     this.username = options.username;
-    this.callMode = options.callMode;
+    this.callMode = options.callMode; jzStoreParam("callMode", options.callMode, 14400);
     this.callee = options.callee;
     this.caller = options.caller;
     this.calleeFullName = options.calleeFullName;
@@ -180,7 +180,8 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
             if ("plugin" === connectionMode || "webrtc" === connectionMode) {
                 sightcallExtension.connectedWeemoDriver = true;
 
-                if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined)) {
+                if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined)
+                 && (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "host")) {
                     var roomToCheck = sightcallExtension.chatMessage.room;
                     chatNotification.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
                         if (callStatus === 0) { // Already terminated
@@ -217,17 +218,17 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
                             options,
                             "true"
                         );
-
-                        sightcallExtension.initChatMessage();
                     });
                 }
+                sightcallExtension.initChatMessage();
             }
         });
 
         this.rtcc.on('client.disconnect', function() {
             if (sightcallExtension.rtcc.getConnectionMode() === "plugin" || sightcallExtension.rtcc.getConnectionMode() === "webrtc") {
                     sightcallExtension.setConnectionStatus(false);
-                if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined)) {
+                if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined) 
+                    && (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "host")) {
                     var roomToCheck = sightcallExtension.chatMessage.room;
                     chatNotification.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
                         if (callStatus === 0) { // Already terminated
@@ -657,7 +658,8 @@ var sightcallExtension = new SightCallExtension();
 
         $(window).on('beforeunload unload', function(){
             sightcallExtension.setConnectionStatus(false);
-            if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined)) {
+            if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined)
+             && (sightcallExtension.callMode ==='one' || sightcallExtension.callMode ==='host' )) {
                 var roomToCheck = sightcallExtension.chatMessage.room;
 
                 chatNotification.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
