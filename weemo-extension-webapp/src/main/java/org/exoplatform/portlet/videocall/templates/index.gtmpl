@@ -8,7 +8,6 @@
   data-weemo-turnoff-group="<%=turnOffVideoGroupCallForUser%>"
   call-label="&{exoplatform.videocall.Call}"
   make-call-label="&{exoplatform.videocall.makeCall}"
-  is-same-user-logged="<%=isSameUserLogged%>"
   cometd-user-token="<%=cometdUserToken%>"
   cometd-context-name="<%=cometdContextName%>"
   is-cloud-running="<%=isCloudRunning%>"

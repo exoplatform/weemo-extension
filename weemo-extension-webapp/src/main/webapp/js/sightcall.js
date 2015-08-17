@@ -13,16 +13,10 @@
  */
 function SightCallExtension() {
     this.username = "";
-    this.weemoIntervalNotif = "";
-    this.notifEventInt = "";
-    this.isSupport = true;
     this.tokenKey = "";
     this.weemoKey = "";
     this.isValidWeemoKey = true;
-    this.connectedWeemoDriver = false;
-    this.videoCallVersion = "";
     this.meetingPoint;
-    this.meetingPointId = "";
     this.callMode = "";
     this.callee = "";
     this.firstLoad = true;
@@ -33,9 +27,6 @@ function SightCallExtension() {
     this.isSpace = "false";
     this.spaceOrTeamName = "";
     this.connectingTimeout = 0;
-
-
-    var ieVersionNumber = GetIEVersion();
 
     try {
         var options = {
@@ -60,8 +51,6 @@ function SightCallExtension() {
     this.chatMessage = JSON.parse(jzGetParam("chatMessage", '{}'));
 
     this.isConnected = false;
-
-
 };
 
 SightCallExtension.prototype.initOptions = function(options) {
@@ -76,33 +65,10 @@ SightCallExtension.prototype.initOptions = function(options) {
     this.spaceOrTeamName = options.spaceOrTeamName;
 };
 
-    SightCallExtension.prototype.setConnectionStatus = function(isConnected) {
-        this.isConnected = isConnected;
-        jzStoreParam("isSightCallConnected", isConnected);
-    };
-
-SightCallExtension.prototype.setCookie = function(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires=" + d.toGMTString();
-    document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/";
-}
-
-SightCallExtension.prototype.removeCookie = function(cname) {
-    document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
-}
-SightCallExtension.prototype.getCookie = function(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i].trim();
-        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
-    }
-    return "";
-}
-
-SightCallExtension.prototype.showSightcallInstaller = function() {
-}
+SightCallExtension.prototype.setConnectionStatus = function(isConnected) {
+    this.isConnected = isConnected;
+    jzStoreParam("isSightCallConnected", isConnected);
+};
 
 SightCallExtension.prototype.setKey = function(weemoKey) {
     this.weemoKey = weemoKey;
@@ -130,10 +96,6 @@ SightCallExtension.prototype.setDisplaynameToCall = function(displaynameToCall) 
     jzStoreParam("displaynameToCall", displaynameToCall, 14400);
 };
 
-SightCallExtension.prototype.setMeetingPointId = function(meetingPointId) {
-    this.meetingPointId = meetingPointId;
-    jzStoreParam("meetingPointId", meetingPointId, 14400);
-};
 /**
  * A JSON Object like :
  * { "url" : url,
@@ -178,7 +140,6 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
 
         this.rtcc.on('client.connect', function(connectionMode) {
             if ("plugin" === connectionMode || "webrtc" === connectionMode) {
-                sightcallExtension.connectedWeemoDriver = true;
 
                 if (sightcallExtension.hasChatMessage() && (chatNotification !== undefined)
                  && (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "host")) {
@@ -350,7 +311,6 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
         });
 
         this.rtcc.on('error.ossupport', function() {
-            sightcallExtension.isSupport = false;
             sightcallExtension.setConnectionStatus(false);
         });
 
@@ -729,27 +689,8 @@ var sightcallExtension = new SightCallExtension();
         sightcallExtension.cometdUserToken = $sightcallApplication.attr("cometd-user-token");
         sightcallExtension.cometdContextName = $sightcallApplication.attr("cometd-context-name");
 
-
-        var isNotInstallWeemoPlugin = sightcallExtension.getCookie("isNotInstallWeemoPlugin");
-
-        sightcallExtension.videoCallVersion = $sightcallApplication.attr("videoCallVersion");
-        if (sightcallExtension.videoCallVersion.length > 0) {
-            var oldVersion = sightcallExtension.getCookie("videoCallVersion");
-
-            if (sightcallExtension.videoCallVersion > oldVersion) {
-                if (isNotInstallWeemoPlugin == 'true') {
-                    sightcallExtension.removeCookie("isDismiss");
-                    sightcallExtension.showSightcallInstaller();
-                }
-                sightcallExtension.setCookie("videoCallVersion", sightcallExtension.videoCallVersion, 365);
-            }
-        }
-
         sightcallExtension.initPopup();
 
-        if (isNotInstallWeemoPlugin == 'true') {
-            sightcallExtension.showSightcallInstaller();
-        }
         // WEEMO : GETTING AND SETTING KEY
         var weemoKey = $sightcallApplication.attr("data-weemo-key");
         sightcallExtension.setKey(weemoKey);

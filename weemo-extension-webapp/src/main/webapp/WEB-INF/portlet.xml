@@ -108,7 +108,7 @@
 	
    <filter-mapping>
      <filter-name>ResponseFilterWeemo</filter-name>
-     <portlet-name>VideoCallApplication</portlet-name>
+     <portlet-name>VideoCallPopupApplication</portlet-name>
    </filter-mapping>
   
 </portlet-app>

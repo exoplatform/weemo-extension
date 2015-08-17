@@ -24,7 +24,7 @@ public class ResponseFilter implements RenderFilter
   {
     VideoCallService videoCallService = new VideoCallService();    
     String weemoKey = videoCallService.getWeemoKey();
-    if (weemoKey!=null && !"".equals(weemoKey) && Util.getPortalRequestContext().getNodePath().equals("videocallpopup")) {
+    if (weemoKey!=null && !"".equals(weemoKey)) {
       Element jQuery1 = response.createElement("script");
       jQuery1.setAttribute("type", "text/javascript");
       jQuery1.setAttribute("src", "http://download.rtccloud.net/js/webappid/"+weemoKey);

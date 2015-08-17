@@ -127,19 +127,12 @@ public class VideoCallApplication {
     boolean turnOffVideoCallForUser = videoCallService_.isTurnOffVideoCallForUser();
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
 
-    // Check if same account loggin on other place
-    boolean isSameUserLogged = false;
-    if (!remoteUser_.equals("__anonim_") && conversationRegistry_.getStateKeys(remoteUser_).size() > 1) {
-      isSameUserLogged = true;
-    }
-
     juzu.template.Template.Builder builder =  index.with().set("user", remoteUser_)
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
             .set("turnOffVideoCallForUser", turnOffVideoCallForUser)
             .set("turnOffVideoCall", turnOffVideoCall)
             .set("videoCallVersion", videoCallVersion)
-            .set("isSameUserLogged", isSameUserLogged)
             .set("isCloudRunning", VideoCallService.isCloudRunning())
             .set("cometdUserToken", continuationService_.getUserToken(remoteUser_))
             .set("cometdContextName", (exoContinuationBayeux_ == null ? "cometd" : exoContinuationBayeux_.getCometdContextName()));
