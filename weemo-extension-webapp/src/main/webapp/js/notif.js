@@ -1029,6 +1029,7 @@ var weemoExtension = new WeemoExtension();
           var url = "/mgt-rest/v1/addons/trial/" + tenantName + "/EXO_VIDEO_CALL/active";
           $.ajax({
             url: url,
+            type: "PUT",
             dataType: "json",
             beforeSend: function (jqXHR) {
               jqXHR.setRequestHeader('Authorization', auth);
