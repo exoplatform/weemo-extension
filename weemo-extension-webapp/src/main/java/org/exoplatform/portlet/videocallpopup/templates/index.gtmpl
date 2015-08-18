@@ -31,7 +31,7 @@
             <%} %>
         </div>
      <% } %>
-        <div class="inProgress">Connecting...</div>
+        <div class="inProgress">&{exoplatform.videocall.connecting.message}</div>
         <div id="video-container" class="center"></div>
     </div>
 </div>

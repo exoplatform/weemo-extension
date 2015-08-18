@@ -204,11 +204,11 @@
             incommingHtml += '    	<div class="avatar pull-left">';
             incommingHtml += '    		<img src="/rest/weemo/getAvatarURL/' + fromUser + '" alt="' + fromFullName + '" />';
             incommingHtml += '    	</div>';
-            incommingHtml += '    	<div class="name pull-left">' + fromFullName + ' is calling you</div>';
+            incommingHtml += '    	<div class="name pull-left">' + weemoBundleData.exoplatform_videocall_incomming_message.replace('{0}', fromFullName) + '</div>';
             incommingHtml += '    </div>';
             incommingHtml += '    <div class="actionBtn center">';
-            incommingHtml += '    	<a class="btn btn-primary video" href="#" id ="sightCallAcceptButton"><i class="uiIconWeemoWhite"></i>&nbsp;Accept</a>';
-            incommingHtml += '    	<a class="btn ignore" href="#" id="sightCallDecleinButton"><i class="iconCallDecline"></i>&nbsp;Decline</a>';
+            incommingHtml += '    	<a class="btn btn-primary video" href="#" id ="sightCallAcceptButton"><i class="uiIconWeemoWhite"></i>&nbsp;' + weemoBundleData.exoplatform_videocall_action_accept +'</a>';
+            incommingHtml += '    	<a class="btn ignore" href="#" id="sightCallDecleinButton"><i class="iconCallDecline"></i>&nbsp;' + weemoBundleData.exoplatform_videocall_action_decline + '</a>';
             incommingHtml += '    </div>';
             incommingHtml += '	</div>';
             gj('body').append(incommingHtml);
@@ -243,7 +243,7 @@
         showCalling: function() {
             var $sightCallConnectionStatus = gj("#sightCallConnectionStatus");
             gj(".calleeAvatar", $sightCallConnectionStatus).html('<img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee  + '" alt="' + sightcallExtension.calleeFullName + '" />');
-            gj(".inProgress", $sightCallConnectionStatus).text("Calling...");
+            gj(".inProgress", $sightCallConnectionStatus).text(weemoBundleData.exoplatform_videocall_calling_message);
         },
         showBusy: function() {
             if (jzGetParam("stTime","") !== "" || jzGetParam("rvTime","") !== "") {
@@ -253,11 +253,11 @@
                 busyForm += '  <div class="calleeAvatar">';
                 busyForm += '    <img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee + '" alt="' + sightcallExtension.calleeFullName + '" />';
                 busyForm += '  </div>';
-                busyForm += '  <div class="calleeStatus">' + sightcallExtension.calleeFullName + ' is busy</div>';
-                busyForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
+                busyForm += '  <div class="calleeStatus">' + weemoBundleData.exoplatform_videocall_busy_message.replace('{0}', sightcallExtension.calleeFullName) + '</div>';
+                busyForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>' + weemoBundleData.exoplatform_videocall_callDrop_message + '</span></div>';
                 busyForm += '  <div class="actionBtn">';
-                busyForm += '    <button class="btn btn-primary" onclick="javascript:location.reload();"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
-                busyForm += '    <button class="btn"  onclick="javascript:window.close();">Close</button>';
+                busyForm += '    <button class="btn btn-primary" onclick="javascript:location.reload();"><i class="uiIconWeemoWhite"></i>&nbsp;' + weemoBundleData.exoplatform_videocall_action_call +  '</button>';
+                busyForm += '    <button class="btn"  onclick="javascript:window.close();">' + weemoBundleData.exoplatform_videocall_action_close + '</button>';
                 busyForm += '  </div>';
                 busyForm += '</div>';
 
@@ -274,7 +274,7 @@
                 callDropForm += '  <div class="calleeAvatar">';
                 callDropForm += '    <img src="/rest/weemo/getAvatarURL/' + toUserId + '" alt="' + toUserId + '" />';
                 callDropForm += '  </div>';
-                callDropForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
+                callDropForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>' + weemoBundleData.exoplatform_videocall_callDrop_message + '</span></div>';
                 callDropForm += '  <div class="actionBtn">';
                 //callDropForm += '    <button class="btn btn-primary"><i class="uiIconWeemoWhite"></i></i>&nbsp;Call</button>';
                 //callDropForm += '    <button class="btn" onclick="javascript:window.close();">Close</button>';
@@ -296,7 +296,7 @@
                 groupCallDropForm += '    <img src="/weemo-extension/img/TeamChatAvatar.png" alt="' + spaceOrTeamName + '" />';
             }
             groupCallDropForm += '  </div>';
-            groupCallDropForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
+            groupCallDropForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>' + weemoBundleData.exoplatform_videocall_callDrop_message + '</span></div>';
             groupCallDropForm += '  <div class="actionBtn">';
             groupCallDropForm += '  </div>';
             groupCallDropForm += '</div>';
@@ -311,10 +311,10 @@
             noAnserForm += '  <div class="calleeAvatar">';
             noAnserForm += '    <img src="/rest/weemo/getAvatarURL/' + sightcallExtension.callee + '" alt="' + sightcallExtension.calleeFullName + '" />';
             noAnserForm += '  </div>';
-            noAnserForm += '  <div class="callingStt"><i class="iconCallIdle"></i><span>No answer</span></div>';
+            noAnserForm += '  <div class="callingStt"><i class="iconCallIdle"></i><span>' + weemoBundleData.exoplatform_videocall_noAnswer_message + '</span></div>';
             noAnserForm += '  <div class="actionBtn">';
-            noAnserForm += '    <button class="btn btn-primary" onclick="javascript:location.reload(true);"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
-            noAnserForm += '    <button class="btn" onclick="javascript:window.close();">Close</button>';
+            noAnserForm += '    <button class="btn btn-primary" onclick="javascript:location.reload(true);"><i class="uiIconWeemoWhite"></i>&nbsp;' + weemoBundleData.exoplatform_videocall_action_call + '</button>';
+            noAnserForm += '    <button class="btn" onclick="javascript:window.close();">' + weemoBundleData.exoplatform_videocall_action_close + '</button>';
             noAnserForm += '  </div>';
             noAnserForm += '</div>';
 
@@ -330,15 +330,15 @@
                 connectionLostForm += '  <div class="calleeAvatar">';
                 connectionLostForm += '    <img src="/rest/weemo/getAvatarURL/' + toUserId + '" alt="' + toUserId + '" />';
                 connectionLostForm += '  </div>';
-                connectionLostForm += '  <div class="calleeStatus">Connection Lost</div>';
-                connectionLostForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>Call dropped</span></div>';
+                connectionLostForm += '  <div class="calleeStatus">' + weemoBundleData.exoplatform_videocall_connectionLost_message + '</div>';
+                connectionLostForm += '  <div class="callingStt"><i class="iconCallDropped"></i><span>' + weemoBundleData.exoplatform_videocall_callDrop_message + '</span></div>';
                 connectionLostForm += '  <div class="actionBtn">';
                 if (sightcallExtension.callMode === "one" && sightcallExtension.callee === toUserId) {
-                    connectionLostForm += '    <button class="btn btn-primary" onclick="javascript:location.reload(true);"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
+                    connectionLostForm += '    <button class="btn btn-primary" onclick="javascript:location.reload(true);"><i class="uiIconWeemoWhite"></i>&nbsp;' + weemoBundleData.exoplatform_videocall_action_call + '</button>';
                 } else if (sightcallExtension.callMode === "one_callee" && sightcallExtension.caller === toUserId) {
-                    connectionLostForm += '    <button class="btn btn-primary" onclick="javascript:window.location.replace(\'/portal/intranet/videocallpopup?mode=one&callee=' + toUserId +  '\')"><i class="uiIconWeemoWhite"></i>&nbsp;Call</button>';
+                    connectionLostForm += '    <button class="btn btn-primary" onclick="javascript:window.location.replace(\'/portal/intranet/videocallpopup?mode=one&callee=' + toUserId +  '\')"><i class="uiIconWeemoWhite"></i>&nbsp;' + weemoBundleData.exoplatform_videocall_action_call + '</button>';
                 }
-                connectionLostForm += '    <button class="btn" onclick="javascript:window.close();">Close</button>';
+                connectionLostForm += '    <button class="btn" onclick="javascript:window.close();">' + weemoBundleData.exoplatform_videocall_action_close + '</button>';
                 connectionLostForm += '  </div>';
                 connectionLostForm += '</div>';
 
@@ -371,10 +371,10 @@
             pluginNotInstalledForm += '    </div>';
             pluginNotInstalledForm += '    <div class="instruction center">';
             if (navigator.appVersion.indexOf("Win")!=-1) {
-                pluginNotInstalledForm += '      <img src="/weemo-extension/img/windowInstructionImg.png" onload="window.location.replace(\'' + downloadUrl + '\');" alt="instruction image" />';
+                pluginNotInstalledForm += '      <img src="/weemo-extension/img/windowInstructionImg.png" onload="window.location.replace(\'' + downloadUrl + '\');" />';
             }
             else if (navigator.appVersion.indexOf("Mac")!=-1) {
-                pluginNotInstalledForm += '      <img src="/weemo-extension/img/macInstructionImg.png" onload="window.location.replace(\'' + downloadUrl + '\');"  alt="instruction image" />';
+                pluginNotInstalledForm += '      <img src="/weemo-extension/img/macInstructionImg.png" onload="window.location.replace(\'' + downloadUrl + '\');"  />';
             }
             pluginNotInstalledForm += '      <ul>';
             pluginNotInstalledForm += '        <li><span>1</span><br/>Open the plugin </li>';

@@ -3,7 +3,9 @@ package org.exoplatform.portlet.videocall;
 import juzu.Path;
 import juzu.Response;
 import juzu.View;
+import juzu.request.ApplicationContext;
 import juzu.request.SecurityContext;
+import juzu.request.UserContext;
 import juzu.template.Template;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -36,7 +38,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 public class VideoCallApplication {
 
@@ -62,6 +66,9 @@ public class VideoCallApplication {
 
   ConversationRegistry     conversationRegistry_;
 
+  @Inject
+  BundleService bundleService_;
+
   ContinuationService continuationService_;
 
   EXoContinuationBayeux exoContinuationBayeux_;
@@ -79,7 +86,7 @@ public class VideoCallApplication {
   }
 
   @View
-  public Response.Content index(SecurityContext securityContext) throws Exception {
+  public Response.Content index(ApplicationContext applicationContext, SecurityContext securityContext,  UserContext userContext) throws Exception {
     PortalRequestContext requestContext = Util.getPortalRequestContext();
 
     HttpServletRequest request = requestContext.getRequest();
@@ -127,12 +134,18 @@ public class VideoCallApplication {
     boolean turnOffVideoCallForUser = videoCallService_.isTurnOffVideoCallForUser();
     boolean turnOffVideoCall = videoCallService_.isTurnOffVideoCall();
 
+    // Get bundle messages
+    Locale locale = userContext.getLocale();
+    ResourceBundle bundle= applicationContext.resolveBundle(locale) ;
+    String messages = bundleService_.getBundle("weemoBundleData", bundle, locale);
+
     juzu.template.Template.Builder builder =  index.with().set("user", remoteUser_)
             .set("weemoKey", weemoKey)
             .set("tokenKey", tokenKey)
             .set("turnOffVideoCallForUser", turnOffVideoCallForUser)
             .set("turnOffVideoCall", turnOffVideoCall)
             .set("videoCallVersion", videoCallVersion)
+            .set("messages", messages)
             .set("isCloudRunning", VideoCallService.isCloudRunning())
             .set("cometdUserToken", continuationService_.getUserToken(remoteUser_))
             .set("cometdContextName", (exoContinuationBayeux_ == null ? "cometd" : exoContinuationBayeux_.getCometdContextName()));
