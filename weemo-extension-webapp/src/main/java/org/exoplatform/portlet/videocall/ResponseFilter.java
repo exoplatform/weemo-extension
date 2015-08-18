@@ -13,28 +13,25 @@ import javax.portlet.filter.FilterConfig;
 import javax.portlet.filter.RenderFilter;
 import java.io.IOException;
 
-public class ResponseFilter implements RenderFilter
-{
+public class ResponseFilter implements RenderFilter {
 
-  public void init(FilterConfig filterConfig) throws PortletException
-  {
+  public void init(FilterConfig filterConfig) throws PortletException {
   }
 
-  public void doFilter(RenderRequest request, RenderResponse response, FilterChain chain) throws IOException, PortletException
-  {
-    VideoCallService videoCallService = new VideoCallService();    
+  public void doFilter(RenderRequest request, RenderResponse response, FilterChain chain) throws IOException,
+          PortletException {
+    VideoCallService videoCallService = new VideoCallService();
     String weemoKey = videoCallService.getWeemoKey();
-    if (weemoKey!=null && !"".equals(weemoKey)) {
+    if (weemoKey != null && !"".equals(weemoKey)) {
       Element jQuery1 = response.createElement("script");
       jQuery1.setAttribute("type", "text/javascript");
-      jQuery1.setAttribute("src", "http://download.rtccloud.net/js/webappid/"+weemoKey);
+      jQuery1.setAttribute("src", "http://download.rtccloud.net/js/webappid/" + weemoKey);
       jQuery1.setTextContent("Application script");
       response.addProperty(MimeResponse.MARKUP_HEAD_ELEMENT, jQuery1);
     }
     chain.doFilter(request, response);
   }
 
-  public void destroy()
-  {
+  public void destroy() {
   }
 }

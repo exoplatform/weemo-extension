@@ -42,18 +42,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Path("/weemo/")
-public class  RESTAuthService implements ResourceContainer {
-  /** The Constant LAST_MODIFIED_PROPERTY. */
-  protected static final String LAST_MODIFIED_PROPERTY = "Last-Modified";
+public class RESTAuthService implements ResourceContainer {
+  /* The Constant LAST_MODIFIED_PROPERTY */
+  private static final String LAST_MODIFIED_PROPERTY = "Last-Modified";
 
-  /** The Constant IF_MODIFIED_SINCE_DATE_FORMAT. */
-  protected static final String IF_MODIFIED_SINCE_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
+  /* The Constant IF_MODIFIED_SINCE_DATE_FORMAT */
+  private static final String IF_MODIFIED_SINCE_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
 
   private AuthService authService;
-  
-  public RESTAuthService() {     
+
+  public RESTAuthService() {
   }
-  
+
   @GET
   @Path("/auth/")
   @RolesAllowed("users")
@@ -61,25 +61,25 @@ public class  RESTAuthService implements ResourceContainer {
     authService = new AuthService();
     String profileId = PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE);
     String content = authService.authenticate(null, profileId);
-    return Response.ok(content, MediaType.APPLICATION_JSON).build();    
+    return Response.ok(content, MediaType.APPLICATION_JSON).build();
   }
-  
+
   @GET
   @Path("/verify/")
   @RolesAllowed("users")
   public Response verifyPermission(@QueryParam("permissionId") String permissionId) throws Exception {
-    authService = new AuthService(); 
-    JSONObject json = authService.verifyPermission(permissionId);     
-    return Response.ok(json.toString(), MediaType.APPLICATION_JSON).build();    
+    authService = new AuthService();
+    JSONObject json = authService.verifyPermission(permissionId);
+    return Response.ok(json.toString(), MediaType.APPLICATION_JSON).build();
   }
-  
+
   @GET
   @Path("/auth/{profileId}/")
   @RolesAllowed("users")
   public Response auth(@PathParam("profileId") String profileId) {
-    authService = new AuthService(); 
-    String content = authService.authenticate(null, profileId);    
-    return Response.ok(content, MediaType.APPLICATION_JSON).build();    
+    authService = new AuthService();
+    String content = authService.authenticate(null, profileId);
+    return Response.ok(content, MediaType.APPLICATION_JSON).build();
   }
 
   @GET
@@ -110,47 +110,17 @@ public class  RESTAuthService implements ResourceContainer {
   @Path("/getAvatarURL/{userId}/")
   @RolesAllowed("users")
   public Response getAvatarURL(@PathParam("userId") String userId, @Context UriInfo uri) {
-
-    CacheControl cacheControl = new CacheControl();
-    DateFormat dateFormat = new SimpleDateFormat(IF_MODIFIED_SINCE_DATE_FORMAT);
-
-    // Get server base
-    String scheme = uri.getBaseUri().getScheme();
-    String serverName = uri.getBaseUri().getHost();
-    int serverPort = uri.getBaseUri().getPort();
-    String serverBase = scheme + "://" + serverName;
-    if (serverPort != 80) serverBase += ":" + serverPort;
-
-    // Get avatar
-    InputStream in = null;
-    try {
-      URL url = new URL(serverBase +
-              "/rest/jcr/repository/social/production/soc:providers/soc:organization/soc:" + userId +
-              "/soc:profile/soc:avatar");
-      URLConnection con = url.openConnection();
-      con.setDoOutput(true);
-      in = con.getInputStream();
-    } catch (Exception e) {
-      try {
-        URL url = new URL(serverBase + "/eXoSkin/skin/images/themes/default/social/skin/ShareImages/UserAvtDefault.png");
-        URLConnection con = url.openConnection();
-        con.setDoOutput(true);
-        in = con.getInputStream();
-      } catch (Exception e1) {
-        return Response.status(Status.NOT_FOUND).build();
-      }
-    }
-
-    return Response.ok(in, "Image").cacheControl(cacheControl)
-            .header(LAST_MODIFIED_PROPERTY, dateFormat.format(new Date()))
-            .build();
+    return getAvartar(false, userId, uri);
   }
 
   @GET
   @Path("/getSpaceAvartar/{spaceName}/")
   @RolesAllowed("users")
   public Response getSpaceAvartar(@PathParam("spaceName") String spaceName, @Context UriInfo uri) {
+    return getAvartar(true, spaceName, uri);
+  }
 
+  private Response getAvartar(boolean isSpace, String spaceOrUserId, UriInfo uri) {
     CacheControl cacheControl = new CacheControl();
     DateFormat dateFormat = new SimpleDateFormat(IF_MODIFIED_SINCE_DATE_FORMAT);
 
@@ -163,16 +133,20 @@ public class  RESTAuthService implements ResourceContainer {
 
     // Get avatar
     InputStream in = null;
+    URL url = null;
+    String avartarURL = "/rest/jcr/repository/social/production/soc:providers/soc:";
+    avartarURL = (isSpace) ? avartarURL.concat("space") : avartarURL.concat("organization");
+    avartarURL = avartarURL.concat("/soc:").concat(spaceOrUserId).concat("/soc:profile/soc:avatar");
     try {
-      URL url = new URL(serverBase +
-              "/rest/jcr/repository/social/production/soc:providers/soc:space/soc:" + spaceName +
-              "/soc:profile/soc:avatar");
+      url = new URL(serverBase.concat(avartarURL));
       URLConnection con = url.openConnection();
       con.setDoOutput(true);
       in = con.getInputStream();
     } catch (Exception e) {
       try {
-        URL url = new URL(serverBase + "/weemo-extension/img/SpaceChatAvatar.png");
+        String defaultAvartarURL = "/eXoSkin/skin/images/themes/default/social/skin/ShareImages/UserAvtDefault.png";
+        if (isSpace) defaultAvartarURL = "/weemo-extension/img/SpaceChatAvatar.png";
+        url = new URL(serverBase + defaultAvartarURL);
         URLConnection con = url.openConnection();
         con.setDoOutput(true);
         in = con.getInputStream();

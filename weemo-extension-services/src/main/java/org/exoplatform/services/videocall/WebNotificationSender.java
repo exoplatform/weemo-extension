@@ -1,7 +1,7 @@
 package org.exoplatform.services.videocall;
 
-import org.exoplatform.model.videocall.MessageInfo;
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.model.videocall.MessageInfo;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.ws.frameworks.cometd.ContinuationService;
@@ -11,6 +11,7 @@ import org.exoplatform.ws.frameworks.json.value.JsonValue;
 public class WebNotificationSender {
   private final static Log LOG = ExoLogger.getLogger(WebNotificationSender.class);
   private final static String SIGHT_CALL_CHANNEL = "/eXo/Application/web/SightCall";
+
   /**
    * @param remoteId
    * @param message

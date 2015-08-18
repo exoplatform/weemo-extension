@@ -7,12 +7,9 @@ import juzu.request.SecurityContext;
 import juzu.template.Template;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.model.videocall.VideoCallModel;
-import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.organization.User;
 import org.exoplatform.services.security.ConversationRegistry;
-import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.videocall.AuthService;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -25,12 +22,9 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.InputStream;
-import java.util.Hashtable;
 import java.util.Properties;
 
 public class VideoCallPopupApplication {
-
-  private static final String MODE_ONEONE_CALLER = "oneone_caller";
 
   @Inject
   @Path("index.gtmpl")
@@ -53,7 +47,8 @@ public class VideoCallPopupApplication {
   @Inject
   public VideoCallPopupApplication(OrganizationService organizationService, SpaceService spaceService,
                                    VideoCallService videoCallService, ConversationRegistry conversationRegistry,
-                                   ContinuationService continuationService, EXoContinuationBayeux exoContinuationBayeux) {
+                                   ContinuationService continuationService, EXoContinuationBayeux
+                                           exoContinuationBayeux) {
     organizationService_ = organizationService;
     spaceService_ = spaceService;
     videoCallService_ = videoCallService;

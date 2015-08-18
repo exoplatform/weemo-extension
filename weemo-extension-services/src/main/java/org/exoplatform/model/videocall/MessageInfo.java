@@ -69,24 +69,4 @@ public class MessageInfo {
   public String getToFullName() {
     return toFullName;
   }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    MessageInfo that = (MessageInfo) o;
-
-    if (!fromUser.equals(that.fromUser)) return false;
-    if (!toUser.equals(that.toUser)) return false;
-
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = fromUser.hashCode();
-    result = 31 * result + toUser.hashCode();
-    return result;
-  }
 }
