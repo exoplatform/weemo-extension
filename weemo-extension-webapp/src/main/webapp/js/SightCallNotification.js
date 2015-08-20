@@ -284,6 +284,10 @@
                 gj("#sightCallConnectionStatus").replaceWith(callDropForm);
 
                 this.clearHistory();
+
+                sightcallExtension.hangup();
+                if (sightcallExtension.rtcc !== undefined)
+                    sightcallExtension.rtcc.destroy();
             }
         },
         showGroupCallDroped: function(isSpace, spaceOrTeamName) {

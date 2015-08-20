@@ -145,12 +145,12 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
                  && (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "host")) {
                     var roomToCheck = sightcallExtension.chatMessage.room;
                     chatNotification.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
-                        if (callStatus === 0) { // Already terminated
+                        if (callStatus !== 1) { // Already terminated
                             return;
                         }
 
                         // Also Update record status
-                        if (recordStatus !== 0) {
+                        if (recordStatus === 1) {
                             var options = {
                                 type: "type-meeting-stop",
                                 fromUser: chatNotification.username,
@@ -192,12 +192,12 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
                     && (sightcallExtension.callMode === "one" || sightcallExtension.callMode === "host")) {
                     var roomToCheck = sightcallExtension.chatMessage.room;
                     chatNotification.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
-                        if (callStatus === 0) { // Already terminated
+                        if (callStatus !== 1) { // Already terminated
                             return;
                         }
 
                         // Also Update record status
-                        if (recordStatus !== 0) {
+                        if (recordStatus === 1) {
                             var options = {
                                 type: "type-meeting-stop",
                                 fromUser: chatNotification.username,
@@ -404,7 +404,7 @@ SightCallExtension.prototype.initCall = function($uid, $name) {
                             }
 
                             // Also Update record status
-                            if (optionsWeemo.type === "call-off" && recordStatus !== 0) {
+                            if (optionsWeemo.type === "call-off" && recordStatus === 1) {
                                 var options = {
                                     type: "type-meeting-stop",
                                     fromUser: chatNotification.username,
@@ -624,12 +624,12 @@ var sightcallExtension = new SightCallExtension();
 
                 chatNotification.checkIfMeetingStarted(roomToCheck, function(callStatus, recordStatus) {
 
-                    if (callStatus === 0) { // Already terminated
+                    if (callStatus !== 1) { // Already terminated
                         return;
                     }
 
                     // Also Update record status
-                    if (recordStatus !== 0) {
+                    if (recordStatus === 1) {
                         var options = {
                             type: "type-meeting-stop",
                             fromUser: chatNotification.username,
