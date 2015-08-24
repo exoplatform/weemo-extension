@@ -544,12 +544,12 @@ SightCallExtension.prototype.initPopup = function () {
 
     // Set popup title
     if ("one" === sightcallExtension.callMode) {
-        document.title = "Video Call : " + sightcallExtension.calleeFullName;
+        document.title = weemoBundleData.exoplatform_videocall_popup_title.replace('{0}', sightcallExtension.calleeFullName);
         if (sightcallExtension.callee.length === 0) {
             sightcallExtension.showWrongParams();
         }
     } else if ("one_callee" === sightcallExtension.callMode) {
-        document.title = "Video Call : " + sightcallExtension.callerFullName;
+        document.title = weemoBundleData.exoplatform_videocall_popup_title.replace('{0}', sightcallExtension.callerFullName);
         if (jzGetParam("stMessageType", "") !== "accepted" || jzGetParam("rvMessageType", "") !== "calling") {
             window.require(["SHARED/SightCallNotification"], function (sightCallNotification) {
                 SightCallNotification.showCallDroped(sightcallExtension.caller);
@@ -559,9 +559,9 @@ SightCallExtension.prototype.initPopup = function () {
             sightcallExtension.showWrongParams();
         }
     } else if ("host" === sightcallExtension.callMode) {
-        document.title = "Video Call : " + jzGetParam("targetFullname");
+        document.title = weemoBundleData.exoplatform_videocall_popup_title.replace('{0}', jzGetParam("targetFullname"));
     } else if ("attendee" === sightcallExtension.callMode) {
-        document.title = "Video Call : " + jzGetParam("targetFullname");
+        document.title = weemoBundleData.exoplatform_videocall_popup_title.replace('{0}', jzGetParam("targetFullname"));
     }
     else {
         sightcallExtension.showNotSupported();
