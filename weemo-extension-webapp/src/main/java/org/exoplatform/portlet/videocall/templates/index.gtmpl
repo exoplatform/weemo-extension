@@ -132,7 +132,7 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
                 <div id="activeStatus" style="display: none; margin-left: 10px;">
                     <i class="uiVideoCallIconWarning"></i><span> &{popup.trial.status.msg}</span>
                     <div class="uiAction uiActionBorder">
-                        <button type="button" class="btn btn-primary" onclick="window.open('/buy')">&{popup.buy.button}</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.open('/buy')">&{popup.buy.button}</button>
                         <button type="button" class="btn startVideoCall" data-dismiss="modal">&{popup.continue.button}</button>
                     </div>
                 </div>
@@ -140,7 +140,7 @@ installKey-cancelButton="&{exoplatform.videocall.installKey.cancelButton}">
                 <div id="expiredStatus" style="display: none; margin-left: 10px;">
                     <i class="uiVideoCallIconError"></i><span> &{popup.trial.expired.msg}</span>
                     <div class="uiAction uiActionBorder">
-                        <button type="button" class="btn btn-primary" onclick="window.open('/buy')">&{popup.buy.button}</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.open('/buy')">&{popup.buy.button}</button>
                         <button type="button" class="btn" data-dismiss="modal">&{exoplatform.videocall.installKey.cancelButton}</button>
                     </div>
                 </div>

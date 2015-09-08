@@ -321,26 +321,9 @@ public class VideoCallService {
             videoCallModel.setDomainId(videoCallNode.getProperty(VIDEO_DOMAIN_ID).getString());
           }          
           if(videoCallNode.hasProperty(VIDEO_PERMISSIONS_PROP)) {
-            StringBuilder outputPermission = new StringBuilder();
             String inputPermission = videoCallNode.getProperty(VIDEO_PERMISSIONS_PROP).getString();
-            if (VideoCallService.isCloudRunning()) {
-              String[] arrPermissions = inputPermission.split(",");
-              for (String permissions : arrPermissions) {
-                if (StringUtils.isNotBlank(outputPermission.toString())) {
-                  outputPermission.append(",");
-                }
-
-                if (permissions.split("#").length == 2) {
-                  permissions = permissions.concat("#true");
-                }
-
-                outputPermission.append(permissions);
-              }
-              videoCallModel.setVideoCallPermissions(outputPermission.toString());
-            } else {
-              videoCallModel.setVideoCallPermissions(inputPermission);
-            }
-          }          
+            videoCallModel.setVideoCallPermissions(inputPermission);
+          }
           videoCallModel.setCustomerCertificatePassphrase(videoCallNode.getProperty(VIDEO_PASSPHARSE).getString());
           videoCallModel.setAuthId(videoCallNode.getProperty(VIDEO_AUTH_ID).getString());
           videoCallModel.setAuthSecret(videoCallNode.getProperty(VIDEO_AUTH_SECRET).getString());
@@ -509,7 +492,7 @@ public class VideoCallService {
       //Put list of permission into a map
       HashMap<String, String> permissionsMap = new HashMap<String, String>();
       String[] arrs = videoCallsPermissions.split(",");
-      ArrayList<String> memberships = new ArrayList();
+      ArrayList<String> memberships = new ArrayList<String>();
       for (String string : arrs) {
           if(string.split("#").length < 3) continue;
         String permission = string.split("#")[0];
@@ -542,14 +525,11 @@ public class VideoCallService {
   }
 
   public static boolean isCloudRunning() {
-    if (isCloudRunning == null) {
+    ConversationState current = ConversationState.getCurrent();
+    if (current != null) {
+      isCloudRunning = StringUtils.isNotEmpty((String) current.getAttribute("currentTenant"));
+    } else {
       isCloudRunning = false;
-
-      ConversationState current = ConversationState.getCurrent();
-
-      if (current != null) {
-        isCloudRunning = StringUtils.isNotEmpty((String) current.getAttribute("currentTenant"));
-      }
     }
     return isCloudRunning;
   }
