@@ -314,20 +314,17 @@ public class VideoCallAdministration {
         sb.append(str);
       }
       scan.close();
-      try {
-        JSONObject json = new JSONObject(sb.toString());
+      if (sb.toString().contains("Not allowed (disabled)")){
         videoCalls.setAuthDisplaySuccessMsg(false);
         httpSession.setAttribute(MODEL_FROM_AUTH, videoCallModel);
         return VideoCallAdministration_.index();
-      } catch (JSONException ex) {
-        LOG.info("Weemo key is right");
       }
     }
     //Check for other parametters in case weemoKey is right
     AuthService authService = new AuthService();
     String profileId = PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE);
     String content = authService.authenticate(videoCallModel, profileId);
-    if (content != null && content.length() > 0) {
+    if (content != null && content.contains("token")) {
       videoCalls.setAuthDisplaySuccessMsg(true);
     } else {
       videoCalls.setAuthDisplaySuccessMsg(false);
