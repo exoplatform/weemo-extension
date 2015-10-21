@@ -109,7 +109,7 @@ public class VideoCallApplication {
       String profile_id = PropertyManager.getProperty(PropertyManager.PROPERTY_VIDEO_PROFILE);
       AuthService authService = new AuthService();
       String content = authService.authenticate(null, profile_id);
-      if (!StringUtils.isEmpty(content)) {
+      if (!StringUtils.isEmpty(content) && content.contains("token")) {
         JSONObject json = new JSONObject(content);
         tokenKey = json.get("token").toString();
         httpSession.setAttribute("tokenKey", tokenKey);

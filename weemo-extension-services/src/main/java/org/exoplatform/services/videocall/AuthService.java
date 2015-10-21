@@ -214,7 +214,7 @@ public class AuthService {
       responseContent = sbuilder.toString();
       // Set new token key
       String tokenKey = "";
-      if (!StringUtils.isEmpty(responseContent)) {
+      if (!StringUtils.isEmpty(responseContent) && responseContent.contains("token")) {
         JSONObject json = new JSONObject(responseContent);
         tokenKey = json.get("token").toString();
       } else {
