@@ -31,7 +31,8 @@ function SightCallExtension() {
     try {
         var options = {
             mode_parameter: 'plugin_webrtc',
-            container: 'video-container'
+            container: 'video-container',
+            debugLevel: '3'
         };
         this.rtcc = new Rtcc('', '', 'internal', options);
     } catch (err) {
