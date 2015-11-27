@@ -477,9 +477,10 @@ var weemoExtension = new WeemoExtension();
         var auth = $notificationApplication.attr("data-userkey");
         if (trialStatus.indexOf("none") != -1) {
           var tenantName = $notificationApplication.attr("data-tenantname");
-          var url = "/rest/cloud/addons/trial/" + tenantName + "/EXO_VIDEO_CALL/active";
+          var url = "/mgt-rest/v1/addons/trial/" + tenantName + "/EXO_VIDEO_CALL/active";
           $.ajax({
             url: url,
+            type: "PUT",
             dataType: "json",
             beforeSend: function (jqXHR) {
               jqXHR.setRequestHeader('Authorization', auth);
