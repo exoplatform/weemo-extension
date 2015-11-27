@@ -4,7 +4,7 @@
   <parent>
     <artifactId>addons-parent-pom</artifactId>
     <groupId>org.exoplatform.addons</groupId>
-    <version>4</version>
+    <version>6</version>
     <relativePath />
   </parent>
   <groupId>org.exoplatform.addons.weemo</groupId>
@@ -13,14 +13,14 @@
   <packaging>pom</packaging>
   <name>Video Calls Addon</name>
   <description>Video Calls Addon obtained via integration with Weemo</description>
-  
+
   <modules>
-    <module>weemo-extension-config</module>  
+    <module>weemo-extension-config</module>
     <module>weemo-extension-webapp</module>
     <module>weemo-extension-services</module>
     <module>weemo-extension-pkg</module>
   </modules>
-  
+
   <scm>
     <connection>scm:git:git://github.com/exo-addons/weemo-extension.git</connection>
     <developerConnection>scm:git:git@github.com:exo-addons/weemo-extension.git</developerConnection>
@@ -30,23 +30,23 @@
   <properties>
     <!-- 3rd party libraries versions -->
     <commons-lang3.version>3.2</commons-lang3.version>
-    <exoplatform.version>4.3.x-SNAPSHOT</exoplatform.version>
+    <exoplatform.version>4.3.0-RC1-1</exoplatform.version>
     <javax.enterprise.cdi.version>1.0-SP4</javax.enterprise.cdi.version>
-    <juzu.version>1.1.0-M1</juzu.version>
-    <mongodb-java-driver.version>2.12.2</mongodb-java-driver.version> 
+    <juzu.version>1.1.0</juzu.version>
+    <mongodb-java-driver.version>2.12.2</mongodb-java-driver.version>
   </properties>
   <dependencyManagement>
-    <dependencies>   
+    <dependencies>
       <dependency>
         <groupId>javax.enterprise</groupId>
         <artifactId>cdi-api</artifactId>
         <version>${javax.enterprise.cdi.version}</version>
-      </dependency>   
+      </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commons-lang3.version}</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.exoplatform.addons.weemo</groupId>
         <artifactId>weemo-extension-webapp</artifactId>
@@ -58,13 +58,13 @@
         <artifactId>weemo-extension-config</artifactId>
         <version>${project.version}</version>
         <type>jar</type>
-      </dependency>   
+      </dependency>
       <dependency>
         <groupId>org.exoplatform.addons.weemo</groupId>
         <artifactId>weemo-extension-services</artifactId>
         <version>${project.version}</version>
         <type>jar</type>
-      </dependency>     
+      </dependency>
       <!-- Import versions from platform project -->
       <dependency>
         <groupId>org.exoplatform.platform</groupId>
@@ -98,7 +98,7 @@
         <groupId>org.juzu</groupId>
         <artifactId>juzu-plugins-upload</artifactId>
         <version>${juzu.version}</version>
-      </dependency>      
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>
