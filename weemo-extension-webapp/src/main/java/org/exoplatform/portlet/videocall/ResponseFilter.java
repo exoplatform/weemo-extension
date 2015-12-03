@@ -1,6 +1,5 @@
 package org.exoplatform.portlet.videocall;
 
-import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.videocall.VideoCallService;
 import org.w3c.dom.Element;
 
@@ -24,8 +23,15 @@ public class ResponseFilter implements RenderFilter {
     String weemoKey = videoCallService.getWeemoKey();
     if (weemoKey != null && !"".equals(weemoKey)) {
       Element jQuery1 = response.createElement("script");
+      StringBuilder protocolBuilder = new StringBuilder();
+      if(request.isSecure()) {
+        protocolBuilder = protocolBuilder.append("https");
+      } else {
+        protocolBuilder = protocolBuilder.append("http");
+      }
+      protocolBuilder.append("://download.rtccloud.net/js/webappid/").append(weemoKey);
       jQuery1.setAttribute("type", "text/javascript");
-      jQuery1.setAttribute("src", "http://download.rtccloud.net/js/webappid/" + weemoKey);
+      jQuery1.setAttribute("src", protocolBuilder.toString());
       jQuery1.setTextContent("Application script");
       response.addProperty(MimeResponse.MARKUP_HEAD_ELEMENT, jQuery1);
     }
