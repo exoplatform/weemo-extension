@@ -23,12 +23,7 @@ public class ResponseFilter implements RenderFilter {
     String weemoKey = videoCallService.getWeemoKey();
     if (weemoKey != null && !"".equals(weemoKey)) {
       Element jQuery1 = response.createElement("script");
-      StringBuilder protocolBuilder = new StringBuilder();
-      if(request.isSecure()) {
-        protocolBuilder = protocolBuilder.append("https");
-      } else {
-        protocolBuilder = protocolBuilder.append("http");
-      }
+      StringBuilder protocolBuilder = new StringBuilder(request.getScheme());
       protocolBuilder.append("://download.rtccloud.net/js/webappid/").append(weemoKey);
       jQuery1.setAttribute("type", "text/javascript");
       jQuery1.setAttribute("src", protocolBuilder.toString());
