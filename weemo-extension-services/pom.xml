@@ -28,9 +28,8 @@
   </parent>
   <artifactId>weemo-extension-services</artifactId>
   <packaging>jar</packaging>
-  <name>eXo Addons - Weemo Extension Services</name>
+  <name>eXo Add-on::  Weemo Extension Services</name>
   <description>eXo Video Call Extension Services</description>
-  
   <dependencies>
     <dependency>
       <groupId>javax.enterprise</groupId>
@@ -44,7 +43,7 @@
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
     </dependency>
-    <!-- Application dependencies-->  
+    <!-- Application dependencies-->
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
@@ -112,7 +111,6 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <!-- Filtered main resources -->
@@ -133,5 +131,4 @@
       </resource>
     </resources>
   </build>
-
 </project>

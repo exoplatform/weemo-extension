@@ -28,9 +28,8 @@
   </parent>
   <artifactId>weemo-extension-webapp</artifactId>
   <packaging>war</packaging>
-  <name>eXo Addons - Weemo Extension Webapp</name>
+  <name>eXo Add-on::  Weemo Extension Webapp</name>
   <description>eXo Video Call Extension Webapp</description>
-  
   <dependencies>
     <dependency>
       <groupId>javax.enterprise</groupId>
@@ -117,16 +116,12 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-  
   <build>
     <finalName>weemo-extension</finalName>
     <plugins>
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-        <configuration>
-          <providerSelection>1.7</providerSelection>
-        </configuration>
         <executions>
           <execution>
             <goals>
@@ -144,6 +139,9 @@
             </configuration>
           </execution>
         </executions>
+        <configuration>
+          <providerSelection>1.7</providerSelection>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>

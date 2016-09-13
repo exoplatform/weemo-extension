@@ -28,6 +28,6 @@
   </parent>
   <artifactId>weemo-extension-config</artifactId>
   <packaging>jar</packaging>
-  <name>eXo Addons - Weemo Extension Configuration</name>
+  <name>eXo Add-on::  Weemo Extension Configuration</name>
   <description>eXo Video Call Extension Configuration</description>
 </project>

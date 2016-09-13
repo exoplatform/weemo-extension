@@ -28,26 +28,26 @@
   </parent>
   <artifactId>weemo-extension-pkg</artifactId>
   <packaging>pom</packaging>
-  <name>eXo Addons - Weemo Extension Package</name>
+  <name>eXo Add-on::  Weemo Extension Package</name>
   <description>eXo Video Call Extension Package</description>
   <dependencies>
     <dependency>
       <groupId>org.exoplatform.addons.weemo</groupId>
       <artifactId>weemo-extension-webapp</artifactId>
-			<scope>provided</scope>
       <type>war</type>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.addons.weemo</groupId>
       <artifactId>weemo-extension-config</artifactId>
-			<scope>provided</scope>
       <type>jar</type>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.exoplatform.addons.weemo</groupId>
       <artifactId>weemo-extension-services</artifactId>
-			<scope>provided</scope>
       <type>jar</type>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>
@@ -65,7 +65,7 @@
               <goal>single</goal>
             </goals>
             <configuration>
-		          <appendAssemblyId>false</appendAssemblyId>
+              <appendAssemblyId>false</appendAssemblyId>
               <descriptors>
                 <descriptor>src/main/assemblies/addon.xml</descriptor>
               </descriptors>

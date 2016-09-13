@@ -10,7 +10,7 @@
     </parent>
     <artifactId>weemo-example</artifactId>
     <packaging>war</packaging>
-    <name>Sample Extension reusing weemo-extension</name>
+    <name>eXo Add-on::  Sample Extension reusing weemo-extension</name>
 
     <dependencies>
         <dependency>
