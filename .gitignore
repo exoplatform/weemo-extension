@@ -1,5 +1,5 @@
 target/
-
+**/pom.xml.versionsBackup
 # Binaries
 *.7z
 *.dmg
