@@ -24,7 +24,7 @@
   <parent>
     <artifactId>weemo-extension</artifactId>
     <groupId>org.exoplatform.addons.weemo</groupId>
-    <version>1.4.x-SNAPSHOT</version>
+    <version>1.4.3-RC03</version>
   </parent>
   <artifactId>weemo-extension-webapp</artifactId>
   <packaging>war</packaging>
